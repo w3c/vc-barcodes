@@ -14,7 +14,7 @@
     <script type="text/javascript" class="remove">
       var respecConfig = {
         subtitle: "Embedding Verifiable Credentials in optical barcodes",
-        // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+        // specification status (e.g., WD, LCWD, NOTE, etc.). If in doubt use ED.
         group: "credentials",
         specStatus: "CG-DRAFT",
 
@@ -553,8 +553,8 @@ privacy-invasive "phone home" to a source-of-truth database.
             </li>
             <li>
 <b>Simplicity</b>: Verifiable Credential Barcodes reuse existing optical barcodes on
-documents (e.g. PDF417s on the back of AAMVA compliant Driver's Licenses) or add a
-new barcode in an easily consumable form (e.g. a QR code).
+documents (e.g., PDF417s on the back of AAMVA compliant Driver's Licenses) or add a
+new barcode in an easily consumable form (e.g., a QR code).
             </li>
             <li>
 <b>Conformance</b>: the Verifiable Credential Barcodes technology stack is aligned with
@@ -657,7 +657,7 @@ in the PDF417 are digitally signed. `protectedComponentIndex` MUST be a three by
 multibase-base64url encoded for a total of 5 characters in the JSON-LD credential. There are 22
 mandatory fields in an AAMVA compliant driver's license PDF417 [[aamva-dl-id-card-design-standard]],
 and the first 22 bits of the `protectedComponentIndex` value correspond to these fields. Each AAMVA mandatory
-field begins with a three character element ID (e.g. `DBA` for document expiration date). To construct
+field begins with a three character element ID (e.g., `DBA` for document expiration date). To construct
 a mapping between bits in the `protectedComponentIndex` value and these fields, sort these element IDs
 according to Unicode code point order. Then, if a bit in position `i` of `protectedComponentIndex` is `1`, the
 AAMVA mandatory field in position `i` of the sorted element IDs is protected by the digital signature. The last two
@@ -964,7 +964,7 @@ After <a>verifiable credential</a> verification has been performed, the
 algorithm takes an `OpticalBarcodeCredential` <a>verifiable credential</a>
 ([=struct=] |vc|), an integer |listLength| containing the number of entries
 in the `BitstringStatusListCredential` associated with |vc|, and a string
-|statusPurpose| (e.g. 'revocation', 'suspension'...) as input and returns
+|statusPurpose| (e.g., 'revocation', 'suspension'...) as input and returns
 a 'BitstringStatusListEntry' object.
           </p>
 
@@ -974,7 +974,7 @@ Set |result| to be an empty [=map=].
             </li>
             <li>
 Set |listIndex| to |vc|.|credentialStatus|.|terseStatusListIndex|/|listLength| rounded down
-to the next lowest integer (i.e. apply the `floor()` operation).
+to the next lowest integer (i.e., apply the `floor()` operation).
             </li>
             <li>
 Set |statusListIndex| to |vc|.|credentialStatus|.|terseStatusListIndex| % |listLength|.
@@ -1124,7 +1124,7 @@ Set |bitfieldDecoded| to be first 22 bits of the length 24 bitstring resulting f
                 </li>
                 <li>
 Set |fieldsAlphabetized| to be an array containing the 22 AAMVA mandatory PDF417 Element IDs
-  [[aamva-dl-id-card-design-standard]] sorted in Unicode code point order (i.e. ['DAC', 'DAD' ... 'DDG']).
+  [[aamva-dl-id-card-design-standard]] sorted in Unicode code point order (i.e., ['DAC', 'DAD' ... 'DDG']).
                 </li>
                 <li>
 For each bit with value `1` in |bitfieldDecoded|:
@@ -1312,8 +1312,8 @@ This section contains examples of Verifiable Credential Barcodes as well
 as step-by-step processes for how they are generated and how they are verified.
       </p>
       <p>
-Throughout this section we will analyze two running examples, one a VCB securing
-the MRZ of a Utopia Employment Authorization Document, and one a VCB securing
+In this section we will analyze two running examples: a VCB securing
+the MRZ of a Utopia Employment Authorization Document, and a VCB securing
 the PDF417 of a Utopia Driver's License.
       </p>
       <section>
@@ -1356,9 +1356,9 @@ Creating `opticalDataBytes`
 
             <p>
 Assume for simplicity that the only data in the PDF417 that you want to sign is first
-name (DAC), last name (DCS), and license number (DAQ). The bitstring value for use in
+name (`DAC`), last name (`DCS`), and license number (`DAQ`). The bitstring value for use in
 `protectedComponentIndex` is then |100000100000000000100000|, and the value of
-`protectedComponentIndex` is "uggAg". Applying
+`protectedComponentIndex` is `"uggAg"`. Applying
 <a href="#create-opticaldatabytes"></a>, we get
             </p>
             <pre class="example nohighlight"
@@ -1372,7 +1372,7 @@ opticalDataBytes:
             </pre>
           </section>
           <p>
-We now can use this hash value with
+We can now use this hash value with
 <a href="#hashing-ecdsa-xi-2023"></a> to sign the VC.
 Executing  <a href="#encode-opticalbarcodecredential"></a> with a
 `BitstringStatusListCredential`, we get the following JSON-LD VC:
@@ -1417,14 +1417,14 @@ Example VC
           <section>
             <h4>CBOR-LD Compression and Encoding</h4>
             <p>
-We can now apply CBOR-LD compression to this VC. Here we use the newest
-version of CBOR-LD, however at the end of the section we provide VCBs
+We can now apply CBOR-LD compression to this VC. Here, we use the newest
+version of CBOR-LD; however, at the end of the section, we provide VCBs
 encoded using older versions of CBOR-LD for interoperability testing
 with CBOR-LD implementations that are not up to date.
             </p>
             <p>
 For this specficiation, we have reserved the CBOR-LD registry entry
-with value 100 (i.e. these payloads will begin with tag 0x0664). The parameters
+with value `100` (i.e., these payloads will begin with tag `0x0664`). The parameters
 to encode using CBOR-LD, which can be found in the registry in the CBOR-LD
 specification, are then as follows:
             </p>
@@ -1450,11 +1450,11 @@ typeTable:
 }
             </pre>
             <p>
-The term to ID mapping that should result from processing the contexts and assigning
+The term-to-ID mapping that should result from processing the contexts and assigning
 integer values to context terms is as follows:
             </p>
             <pre class="example nohighlight"
-            title="The term to ID map created by CBOR-LD when compressing a Utopia DL">
+            title="The term-to-ID map created by CBOR-LD when compressing a Utopia DL">
 Map(97) {
   '@context' => 0,
   '@type' => 2,
@@ -1585,7 +1585,7 @@ diagnostic:
 ])
             </pre>
             <p>
-Encoding the Driver's License CBORLD as base64url and inserting the result into the
+Encoding the Driver's License CBOR-LD as base64url and inserting the result into the
 PDF417 bytes in the 'ZZA' field in the 'ZZ' subfile:
             </p>
             <pre class="example nohighlight"
@@ -1612,7 +1612,7 @@ A VCB from a Utopia driver's license.
 We start with the data that will be signed by the VCB (i.e an MRZ):
           </p>
           <pre class="example nohighlight"
-              title="A Machine Readable Zone that might appear on a Utopia EAD">
+              title="A Machine-Readable Zone that might appear on a Utopia EAD">
 IAUTO0000007010SRC0000000701<<
 8804192M2601058NOT<<<<<<<<<<&lt5
 SMITH&#60&#60JOHN<<<<<<<<<<<<<<<<<<<
@@ -1635,7 +1635,7 @@ opticalDataBytes:
 46, 253, 9, 137, 145,  42, 192, 113]
             </pre>
             <p>
-We now can use this hash value with
+We can now use this hash value with
 <a href="#hashing-ecdsa-xi-2023"></a> to sign the VC.
 Executing  <a href="#encode-opticalbarcodecredential"></a> without
 adding status, we get the following JSON-LD VC:
@@ -1681,7 +1681,7 @@ with CBOR-LD implementations that are not up to date.
             </p>
             <p>
 For this specficiation, we have reserved the CBOR-LD registry entry
-with value 100 (i.e. these payloads will begin with tag 0x0664). The parameters
+with value `100` (i.e., these payloads will begin with tag `0x0664`). The parameters
 to encode using CBOR-LD, which can be found in the registry in the CBOR-LD
 specification, are then as follows:
             </p>
@@ -1707,11 +1707,11 @@ typeTable:
 }
             </pre>
             <p>
-The term to ID mapping that should result from processing the contexts and assigning
+The term-to-ID mapping that should result from processing the contexts and assigning
 integer values to context terms is as follows:
             </p>
             <pre class="example nohighlight"
-            title="The term to ID map created by CBOR-LD when compressing a Utopia EAD">
+            title="The term-to-ID map created by CBOR-LD when compressing a Utopia EAD">
 Map(95) {
   '@context' => 0,
   '@type' => 2,
@@ -1839,7 +1839,7 @@ diagnostic:
 ])
             </pre>
             <p>
-Encoding the EAD CBORLD as base45-multibase and prepending 'VC1-':
+Encoding the EAD CBOR-LD as base45-multibase and prepending 'VC1-':
             </p>
             <pre class="example nohighlight"
             title="An encoded Utopia EAD VCB">
@@ -1894,13 +1894,13 @@ bytes(@\n\x1e\rANSI 000000090002DL00410234ZZ02750202DLDAQF987654321\nDCSSMITH\nD
 We extract the data in field 'ZZA' in subfile 'ZZ', undoing the base encoding:
             </p>
             <pre class="example nohighlight"
-            title="A CBOR-LD compressed Utopia Driver's License VC">
+            title="A Utopia Driver's License VC compressed with CBOR-LD">
 d90664a60183198000198001198002189d82187618a418b8a3189c18a618ce18b218d01ae592208118baa2189c18a018a8447582002018be18aa18c0a5189c186c18d60418e018e618e258417ab7c2e56b49e2cce62184ce26818e15a8b173164401b5d3bb93ffd6d2b5eb8f6ac0971502ae3dd49d17ec66528164034c912685b8111bc04cdc9ec13dbadd91cc18e418ac
             </pre>
             <p>
 We now decompress with CBOR-LD to get the original JSON-LD VC to be
 verified. Again, the parameters are associated with CBOR-LD
-registry entry 100.
+registry entry `100`.
             </p>
             <pre class="example nohighlight"
             title="CBOR-LD decoding parameters">
@@ -1923,12 +1923,12 @@ typeTable:
 }
             </pre>
             <p>
-The ID to term mapping that should result from processing the contexts and assigning
+The ID-to-term mapping that should result from processing the contexts and assigning
 integer values to context terms is as follows. Note that this is the inverse of the map
 constructed during compression.
             </p>
             <pre class="example nohighlight"
-            title="The ID to term map created by CBOR-LD when decompressing a Utopia DL">
+            title="The ID-to-term map created by CBOR-LD when decompressing a Utopia DL">
 Map(97) {
   0 => '@context',
   2 => '@type',
@@ -2143,7 +2143,7 @@ d90664a50183198000198001198002189d82187618a418baa1189c18a218be18ae18c0a5189c186c
             <p>
 We now decompress with CBOR-LD to get the original JSON-LD VC to be
 verified. Again, the parameters are associated with CBOR-LD
-registry entry 100.
+registry entry `100`.
             </p>
             <pre class="example nohighlight"
             title="CBOR-LD decoding parameters">
@@ -2166,12 +2166,12 @@ typeTable:
 }
             </pre>
             <p>
-The ID to term mapping that should result from processing the contexts and assigning
+The ID-to-term mapping that should result from processing the contexts and assigning
 integer values to context terms is as follows. Note that this is the inverse of the map
 constructed during compression.
             </p>
             <pre class="example nohighlight"
-            title="The ID to term map created by CBOR-LD when decompressing a Utopia EAD">
+            title="The ID-to-term map created by CBOR-LD when decompressing a Utopia EAD">
 Map(95) {
   0 => '@context',
   2 => '@type',
@@ -2347,7 +2347,7 @@ identical contexts.
           </p>
           <p>
 In addition, note that odd numbers are used in CBOR-LD to express terms when the associated
-value is plural. For example, in the CBOR-LD term to ID and id to term maps above, "type" is
+value is plural. For example, in the CBOR-LD term-to-ID and ID-to-term maps above, "type" is
 mapped to 156, but in places where multiple types are expressed in a VC, 157 is used instead.
           </p>
         </section>
@@ -2356,7 +2356,8 @@ mapped to 156, but in places where multiple types are expressed in a VC, 157 is 
         <h3>
 Legacy CBOR-LD encoded credentials
         </h3>
-For testing if a CBOR-LD implementation that is not fully up to date is used.
+This process is used to test whether a CBOR-LD implementation that is not fully 
+up to date has been used.
 
         <section>
           <h4>
@@ -2366,7 +2367,7 @@ The process remains
 the same, with the exception of the CBOR-LD decoding step, for which the following |appContextMap|
 should be used:
           <pre class="example nohighlight"
-          title="A BitstringStatusListEntry for status purpose: suspension">
+               title="A BitstringStatusListEntry for status purpose: suspension">
 appContextMap:
 [['https://www.w3.org/ns/credentials/v2', 32768],
 ['https://w3id.org/vc-barcodes/v1', 32769],
