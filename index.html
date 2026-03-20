@@ -16,7 +16,7 @@
         subtitle: "Embedding Verifiable Credentials in optical barcodes",
         // specification status (e.g., WD, LCWD, NOTE, etc.). If in doubt use ED.
         group: "credentials",
-        specStatus: "CG-DRAFT",
+        specStatus: "CG-FINAL",
 
         // the specification's short name, as in http://www.w3.org/TR/short-name/
         shortName: "vc-barcodes",
@@ -31,7 +31,7 @@
 
         // if there a publicly available Editor's Draft, this is the link
         edDraftURI: "https://w3c-ccg.github.io/vc-barcodes/",
-        latestVersion: "https://w3c-ccg.github.io/vc-barcodes/",
+        latestVersion: "https://www.w3.org/community/reports/credentials/CG-FINAL-vc-barcodes-YYYYMMDD/",
 
         // if this is a LCWD, uncomment and set the end of its review period
         //implementationReportURI: "",
@@ -89,7 +89,7 @@
         // name (with the @w3c.org) of the public mailing to which comments are due
         //wgPublicList: "public-credentials",
 
-        github: "https://github.com/digitalbazaar/vc-barcodes/",
+        github: "https://github.com/w3c-ccg/vc-barcodes/",
 
         otherLinks: [],
 
@@ -536,32 +536,32 @@ the encoding are available as separate tabs below:
         <h3>Design Goals</h3>
         <p>
 The following are the design goals of the technology in this specification:
-          <ul>
-            <li>
-<b>Authenticity</b>: a Verifiable Credential Barcode that succesfully verifies is
+        </p>
+        <ul>
+          <li>
+<b>Authenticity</b>: a Verifiable Credential Barcode that successfully verifies is
 guaranteed to have originated from the claimed issuing authority.
-            </li>
-            <li>
+          </li>
+          <li>
 <b>Integrity</b>: data on a document with a Verifiable Credential Barcode that
-succesfully verifies is guaranteed to not have been modified as long as that data
+successfully verifies is guaranteed to not have been modified as long as that data
 is secured by the barcode.
-            </li>
-            <li>
+          </li>
+          <li>
 <b>Real-time Status</b>: verification of a Verifiable Credential Barcode proves that
 the document has not been revoked or suspended, and this is done without a
 privacy-invasive "phone home" to a source-of-truth database.
-            </li>
-            <li>
+          </li>
+          <li>
 <b>Simplicity</b>: Verifiable Credential Barcodes reuse existing optical barcodes on
 documents (e.g., PDF417s on the back of AAMVA compliant Driver's Licenses) or add a
 new barcode in an easily consumable form (e.g., a QR code).
-            </li>
-            <li>
+          </li>
+          <li>
 <b>Conformance</b>: the Verifiable Credential Barcodes technology stack is aligned with
 global standards and standards-track technologies.
-            </li>
-          </ul>
-        </p>
+          </li>
+        </ul>
       </section>
 
       <section id="terminology">
@@ -713,17 +713,18 @@ specification.
 
         <p>
 An object of type `TerseBitstringStatusListEntry` MUST have two additional properties:
-          <ul>
-            <li>
+        </p>
+        <ul>
+          <li>
 `terseStatusListBaseUrl`, which identifies the location of the status lists associated with this credential.
 `terseStatusListBaseUrl` MUST be a URL [[URL]].
-            </li>
-            <li>
+          </li>
+          <li>
 `terseStatusListIndex`, which specifies an individual status at the above URL. `terseStatusListIndex` MUST be
 representable as a 32 bit unsigned integer.
-            </li>
-          </ul>
-        </p>
+          </li>
+        </ul>
+        <p>
 To process a `TerseBitstringStatusListEntry`, apply the algorithm in Section
 [[[#convert-status-list-entries]]] to convert it to a `BitstringStatusListEntry`,
 then process it as in [[[VC-BITSTRING-STATUS-LIST]]].
@@ -780,7 +781,7 @@ provided to a CBOR-LD processor when encoding and decoding
 <a>verifiable credentials</a>. A registry for all context URLs for various
 issuers is <a href="cbor-ld-compression-table.csv">
 provided as a comma-separated value file</a> and can be updated and modified via
-<a href="https://github.com/digitalbazaar/verifiable-barcodes/pulls/">
+<a href="https://github.com/w3c-ccg/vc-barcodes/pulls/">
 change requests</a> to the file on an append-only and first-come-first-served
 basis. Implementations SHOULD retrieve and utilize the latest file on a monthly
 basis to ensure that compression and decompression supports the latest values.
@@ -989,7 +990,9 @@ Set |result|.|type| to 'BitstringStatusListEntry'.
             <li>
 Set |result|.|statusListIndex| to |statusListIndex|.
             </li>
+            <li>
 Set |result|.|statusPurpose| to |statusPurpose|.
+            </li>
             <li>
 Return |result|.
             </li>
@@ -1423,7 +1426,7 @@ encoded using older versions of CBOR-LD for interoperability testing
 with CBOR-LD implementations that are not up to date.
             </p>
             <p>
-For this specficiation, we have reserved the CBOR-LD registry entry
+For this specification, we have reserved the CBOR-LD registry entry
 with value `100` (i.e., these payloads will begin with tag `0x0664`). The parameters
 to encode using CBOR-LD, which can be found in the registry in the CBOR-LD
 specification, are then as follows:
@@ -1613,9 +1616,9 @@ We start with the data that will be signed by the VCB (i.e an MRZ):
           </p>
           <pre class="example nohighlight"
               title="A Machine-Readable Zone that might appear on a Utopia EAD">
-IAUTO0000007010SRC0000000701<<
-8804192M2601058NOT<<<<<<<<<<&lt5
-SMITH&#60&#60JOHN<<<<<<<<<<<<<<<<<<<
+IAUTO0000007010SRC0000000701&lt;&lt;
+8804192M2601058NOT&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;5
+SMITH&lt;&lt;JOHN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
           </pre>
           <section>
             <h5>
@@ -1626,8 +1629,10 @@ For the EAD, we apply <a href="#create-opticaldatabytes"></a>:
             </p>
             <pre class="example nohighlight"
             title="Data from the canonicalization of a Utopia EAD MRZ">
-canonicalizedData = 'IAUTO0000007010SRC0000000701<<\n8804192M2601058NOT<<<<<<<<<<
-&lt5\nSMITH<&#60JOHN<<<<<<<<<<<<<<<<<<<\n'
+canonicalizedData =
+  'IAUTO0000007010SRC0000000701&lt;&lt;\n' +
+  '8804192M2601058NOT&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;5\n' +
+  'SMITH&lt;&lt;JOHN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\n'
 opticalDataBytes:
 [8, 198, 126, 183,  25, 160, 166, 112,
 254, 184, 189,  47, 225, 211, 125, 210,
@@ -1851,7 +1856,7 @@ The above can now be turned into a QR code:
           </section>
           <section>
             <h5>Employment Authorization Document</h5>
-            <figure id="ead-qr">
+            <figure id="ead-qr-creating-vcbs">
               <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
                   src="diagrams/ead-qr.png"
                   alt="A VCB from a Utopia EAD.">
@@ -1862,7 +1867,7 @@ A VCB from a Utopia EAD.
             <p>
 For use with the following MRZ:
             </p>
-            <figure id="ead-back">
+            <figure id="ead-back-creating-vcbs">
               <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
                   src="diagrams/ead-back.png"
                   alt="An MRZ on a Utopia Employment Authorization Document.">
@@ -2065,6 +2070,7 @@ Decompression then yields the following credential:
     "proofValue": "z4g6G3dAZhhtPxPWgFvkiRv7krtCaeJxjokvL46fchAFCXEY3FeX2vn46MDgBaw779g1E1jswZJxxreZDCrtHg2qH"
   }
 }
+            </pre>
           </section>
           <section>
             <h4>Verifying</h4>
@@ -2311,8 +2317,10 @@ on the EAD as input for the EAD:
             </p>
             <pre class="example nohighlight"
             title="A canonicalization of a Utopia EAD MRZ">
-canonicalizedData = 'IAUTO0000007010SRC0000000701<<\n8804192M2601058NOT<<<<<<<<<<
-&lt5\nSMITH<&#60JOHN<<<<<<<<<<<<<<<<<<<\n'
+canonicalizedData =
+  'IAUTO0000007010SRC0000000701&lt;&lt;\n' +
+  '8804192M2601058NOT&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;5\n' +
+  'SMITH&lt;&lt;JOHN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\n'
 opticalDataBytes:
 [8, 198, 126, 183,  25, 160, 166, 112,
 254, 184, 189,  47, 225, 211, 125, 210,
@@ -2375,7 +2383,7 @@ appContextMap:
           </pre>
           <section>
             <h4>Utopia Driver's License</h4>
-            <figure id="dl-barcode-legacy">
+            <figure id="dl-barcode-cborld-6">
               <img style="margin: auto; display: block; border-radius:15px; width: 80%;"
                    src="diagrams/dl-barcode-cborld-6.png"
                    alt="A VCB from a Utopia driver's license encoded with legacy CBOR-LD.">
@@ -2386,7 +2394,7 @@ appContextMap:
           </section>
           <section>
             <h5>Utopia Employment Authorization Document</h5>
-            <figure id="ead-qr-legacy">
+            <figure id="ead-qr-cborld-6">
               <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
                    src="diagrams/ead-qr-cborld-6.png"
                    alt="A VCB from a Utopia EAD encoded with legacy CBOR-LD.">
@@ -2397,7 +2405,7 @@ appContextMap:
             <p>
   For use with the following MRZ:
             </p>
-            <figure id="ead-back">
+            <figure id="ead-back-cborld-6">
               <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
                    src="diagrams/ead-back.png"
                    alt="An MRZ on a Utopia Employment Authorization Document.">
@@ -2413,7 +2421,7 @@ CBOR-LD Version 7.X
           </h4>
           <section>
             <h4>Utopia Driver's License</h4>
-            <figure id="dl-barcode-legacy">
+            <figure id="dl-barcode-cborld-7">
               <img style="margin: auto; display: block; border-radius:15px; width: 80%;"
                    src="diagrams/dl-barcode-cborld-7.png"
                    alt="A VCB from a Utopia driver's license encoded with legacy CBOR-LD.">
@@ -2424,7 +2432,7 @@ CBOR-LD Version 7.X
           </section>
           <section>
             <h5>Utopia Employment Authorization Document</h5>
-            <figure id="ead-qr-legacy">
+            <figure id="ead-qr-cborld-7">
               <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
                    src="diagrams/ead-qr-cborld-7.png"
                    alt="A VCB from a Utopia EAD encoded with legacy CBOR-LD.">
@@ -2435,7 +2443,7 @@ CBOR-LD Version 7.X
             <p>
   For use with the following MRZ:
             </p>
-            <figure id="ead-back">
+            <figure id="ead-back-cborld-7">
               <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
                    src="diagrams/ead-back.png"
                    alt="An MRZ on a Utopia Employment Authorization Document.">
