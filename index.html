@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Verifiable Credential Barcodes v0.7</title>
+    <title>Verifiable Credential Barcodes v0.8</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <!--
       === NOTA BENE ===
@@ -15,8 +15,8 @@
       var respecConfig = {
         subtitle: "Embedding Verifiable Credentials in optical barcodes",
         // specification status (e.g., WD, LCWD, NOTE, etc.). If in doubt use ED.
-        group: "credentials",
-        specStatus: "CG-FINAL",
+        group: "vc",
+        specStatus: "ED",
 
         // the specification's short name, as in http://www.w3.org/TR/short-name/
         shortName: "vc-barcodes",
@@ -30,8 +30,8 @@
         // previousMaturity:  "WD",
 
         // if there a publicly available Editor's Draft, this is the link
-        edDraftURI: "https://w3c-ccg.github.io/vc-barcodes/",
-        latestVersion: "https://www.w3.org/community/reports/credentials/CG-FINAL-vc-barcodes-20260320/",
+        edDraftURI: "https://w3c.github.io/vc-barcodes/",
+        //latestVersion: "https://www.w3.org/community/reports/credentials/CG-FINAL-vc-barcodes-20260320/",
 
         // if this is a LCWD, uncomment and set the end of its review period
         //implementationReportURI: "",
@@ -49,16 +49,15 @@
           company: "Digital Bazaar",
           companyURL: "https://digitalbazaar.com/"
         }, {
+          name: "Elaine Wooton",
+          url: "https://www.linkedin.com/in/ewootonidxqd/",
+          company: "Invited Expert"
+        }, {
           name: "Manu Sporny",
           url: "https://www.linkedin.com/in/manusporny/",
           company: "Digital Bazaar",
           companyURL: "https://digitalbazaar.com/",
           w3cid: 41758
-        }, {
-          name: "Yash Shah",
-          url: "https://www.linkedin.com/in/ynshah/",
-          company: "CredenceID",
-          companyURL: "https://credenceid.com/"
         }],
 
         // authors, add as many as you like.
@@ -89,9 +88,15 @@
         // name (with the @w3c.org) of the public mailing to which comments are due
         //wgPublicList: "public-credentials",
 
-        github: "https://github.com/w3c-ccg/vc-barcodes/",
+        github: "https://github.com/w3c/vc-barcodes/",
 
-        otherLinks: [],
+        otherLinks: [{
+          key: "Meetings:",
+          data: [{
+            value: "View next scheduled meeting",
+            href: "https://www.w3.org/events/meetings/8a197c4d-46a1-4377-b02c-0e05dbf1da7a/#next"
+          }]
+        }],
 
         // URI of the patent status for this WG, for Rec-track documents
         // !!!! IMPORTANT !!!!
@@ -2364,7 +2369,7 @@ mapped to 156, but in places where multiple types are expressed in a VC, 157 is 
         <h3>
 Legacy CBOR-LD encoded credentials
         </h3>
-This process is used to test whether a CBOR-LD implementation that is not fully 
+This process is used to test whether a CBOR-LD implementation that is not fully
 up to date has been used.
 
         <section>
