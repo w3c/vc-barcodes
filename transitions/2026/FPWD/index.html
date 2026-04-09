@@ -462,7 +462,7 @@ li.sd-jwt-tab {
   "localBiblio": {
     "CBOR-LD": {
       "title": "Compact Binary Object Representation for Linked Data v0.7",
-      "href": "https://json-ld.github.io/cbor-ld-spec/",
+      "href": "https://w3c.github.io/cbor-ld/",
       "id": "cbor-ld"
     },
     "ICAO9303-3": {
@@ -675,7 +675,7 @@ a credential in a privacy-protecting manner. These data formats, however, tend
 to be too large to express in an optical barcode.
       </p>
       <p>
-The <cite><a data-matched-text="[[[CBOR-LD]]]" href="https://json-ld.github.io/cbor-ld-spec/">Compact Binary Object Representation for Linked Data v0.7</a></cite> specification provides a means of compressing secured
+The <cite><a data-matched-text="[[[CBOR-LD]]]" href="https://w3c.github.io/cbor-ld/">Compact Binary Object Representation for Linked Data v0.7</a></cite> specification provides a means of compressing secured
 <a data-link-type="dfn" href="https://www.w3.org/TR/vc-data-model-2.0/#dfn-verifiable-credential">verifiable credentials</a> to the point at which it becomes feasible to
 express the information as an optical barcode, or embedded within an optical
 barcode.
@@ -919,7 +919,7 @@ the encoding are available as separate tabs below:
         <div class="marker">
     <a class="self-link" href="#example-a-verifiable-credential-expressing-a-short-form-birth-certificate">Example<bdi> 5</bdi></a><span class="example-title">: A verifiable credential expressing a short-form birth certificate</span>
   </div> 
-      <div class="vc-tabbed"><input type="radio" id="vc-tab1unsigned" name="vc-tabs1" checked=""><input type="radio" id="vc-tab1Binary" name="vc-tabs1"><input type="radio" id="vc-tab1QR Code" name="vc-tabs1"><ul class="vc-tabs"><li class="vc-tab"><label for="vc-tab1unsigned"><abbr title="Unsecured credential">Credential</abbr></label></li><li class="vc-tab"><label for="vc-tab1Binary"><abbr title="Encoded as CBOR-LD">Binary</abbr></label></li><li class="vc-tab"><label for="vc-tab1QR Code"><abbr title="Encoded as a QR Code">QR Code</abbr></label></li></ul><div class="vc-tab-content" style="min-height: 821px;"><pre class="vc nohighlight" data-vc-vm="https://vital-records.utopa.example/issuers/123" data-vc-tabs="cbor-ld qr">{
+      <div class="vc-tabbed"><input type="radio" id="vc-tab1unsigned" name="vc-tabs1" checked=""><input type="radio" id="vc-tab1Binary" name="vc-tabs1"><input type="radio" id="vc-tab1QR Code" name="vc-tabs1"><ul class="vc-tabs"><li class="vc-tab"><label for="vc-tab1unsigned"><abbr title="Unsecured credential">Credential</abbr></label></li><li class="vc-tab"><label for="vc-tab1Binary"><abbr title="Encoded as CBOR-LD">Binary</abbr></label></li><li class="vc-tab"><label for="vc-tab1QR Code"><abbr title="Encoded as a QR Code">QR Code</abbr></label></li></ul><div class="vc-tab-content" style="min-height: 570px;"><pre class="vc nohighlight" data-vc-vm="https://vital-records.utopa.example/issuers/123" data-vc-tabs="cbor-ld qr">{
   "@context": [
     "https://www.w3.org/ns/credentials/v2",
     "https://w3id.org/vital-records/v1rc1"
@@ -956,10 +956,10 @@ the encoding are available as separate tabs below:
       }]
     }
   }
-}</pre></div><div class="vc-tab-content" style="min-height: 821px;">
+}</pre></div><div class="vc-tab-content" style="min-height: 570px;">
             <strong>application/vc+cborld</strong>
             <br><br>
-            d9cb1d8201a60182782468747470733a2f2f7777772e77332e6f72672f6e732f63726564656e7469616c732f7632782468747470733a2f2f773369642e6f72672f766974616c2d7265636f7264732f7631726331189d82187618a4190130a3189c18a218cc74323032332d30392d33305431333a34343a35325a190104a618966754696d20446f65189c18ae18bc74323032332d31302d30355431343a32393a30305a18c4a6189c18b21901446655746f7069611901466b55746f70696120546f776e1901486855746f706f6c697319014a65313233343519014c6f31323320486f73706974616c20526418e2644d616c6519010b82a31896684a616e6520446f65189c18ac1901026a4a616e6520536d697468a21896684a6f686e20446f65189c18aa190134820277686f73706974616c2e6578616d706c652f697373756572190136a6189c186c1901501a69d7f4301901526f65636473612d726466632d3230313919015c19016219015e58417aeb2a67e7fc9efb3962832fc0a80cd7bbd8bc8b6b38b8d96bf0c73b88961ec12a3d02d0f7c20be25c2f4366d7fccf11b7b3e7cc485923f2fbf89a6fe991fe269e1901608219040158238024035a1f4583adf1893bfbcb8ad80056be19fa212afe13a7ae25d63b52d916a0857f1901401a651806b8
+            d9cb1d8201a60182782468747470733a2f2f7777772e77332e6f72672f6e732f63726564656e7469616c732f7632782468747470733a2f2f773369642e6f72672f766974616c2d7265636f7264732f7631726331189d82187618a4190130a3189c18a218cc74323032332d30392d33305431333a34343a35325a190104a618966754696d20446f65189c18ae18bc74323032332d31302d30355431343a32393a30305a18c4a6189c18b21901446655746f7069611901466b55746f70696120546f776e1901486855746f706f6c697319014a65313233343519014c6f31323320486f73706974616c20526418e2644d616c6519010b82a31896684a616e6520446f65189c18ac1901026a4a616e6520536d697468a21896684a6f686e20446f65189c18aa190134820277686f73706974616c2e6578616d706c652f697373756572190136a6189c186c1901501a69d7f9d01901526f65636473612d726466632d3230313919015c19016219015e58417a9172098085be4427a71ced5a930063aa7df9b801041174699e8c5a0d60d6411e5fa7458619fc8e03ec541670a1c66487bd8d9885c904bc547aae96a00f79abe1190160821904015823802402bc1bb68d19cbdc46bfcef1d47afc1139ff080d1fa27545759febad65037de36d1901401a651806b8
             <br><br>
             JSON-LD size: 1037 bytes<br>
             CBOR-LD size: 484 bytes<br>
@@ -1008,12 +1008,12 @@ the encoding are available as separate tabs below:
   },
   "proof": {
     "type": "DataIntegrityProof",
-    "created": "2026-04-09T18:47:12Z",
-    "verificationMethod": "did:key:zDnaeoj5mQ9BQhNzNNvmK7stvpJn2AixHJsJc2JuQ5qyfh2SJ",
+    "created": "2026-04-09T19:11:12Z",
+    "verificationMethod": "did:key:zDnaed6GCj1NdbBafG981YPkSnYqRG87zXxPXNgVk821fuBfi",
     "cryptosuite": "ecdsa-rdfc-2019",
     "proofPurpose": "assertionMethod",
-    "proofValue": "z5hhZvf7tge4oNajGf66NcdqMYDtXwwVBfwZ2E56mTwS5DzugDHA8LVYXSqJDDAZeih27U7jXeDSH8Gyp
-veyanR7B"
+    "proofValue": "z3ufFCHL4rudkPVe8rDYryGEokG1Qyfqb5jxYy584pWK1tu7tuWBhi2CftavWyMbE8dtGC2z77T8kLumj
+rns1N2oA"
   }
 }
             </pre>
@@ -1066,14 +1066,14 @@ veyanR7B"
       ],
       310: {
         156: 108,
-        336: 1775760432,
+        336: 1775761872,
         338: "ecdsa-rdfc-2019",
         348: 354,
-        350: h'7aeb2a67e7fc9efb3962832fc0a80cd7bbd8bc8b6b38b8d96bf0c73b88961ec12a3d02d0f7c20be25c2f4
-366d7fccf11b7b3e7cc485923f2fbf89a6fe991fe269e',
+        350: h'7a9172098085be4427a71ced5a930063aa7df9b801041174699e8c5a0d60d6411e5fa7458619fc8e03ec5
+41670a1c66487bd8d9885c904bc547aae96a00f79abe1',
         352: [
           1025,
-          h'8024035a1f4583adf1893bfbcb8ad80056be19fa212afe13a7ae25d63b52d916a0857f'
+          h'802402bc1bb68d19cbdc46bfcef1d47afc1139ff080d1fa27545759febad65037de36d'
         ]
       },
       320: 1696073400
@@ -1082,7 +1082,7 @@ veyanR7B"
             </pre></div><div class="vc-tab-content" style="min-height: 821px;">
             <strong>image/png</strong>
             <br><br>
-            <img src="data:image/gif;base64,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"><br>
+            <img src="data:image/gif;base64,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"><br>
             QR Code version: 15<br>
             Error correction: Low<br>
             <hr>
@@ -1092,9 +1092,9 @@ E006-EDAECOX5Z C04EKVC006DB6DOC1534KG$-EOXKY60$RK0XJ6MK5%PNF6QF63W5CA79L6/SAJL6:
 YEDP34W3E053I53W531VE8466L6$963W5HX6-963G7PA7646OHBW%O053M53B735T86 A/3EMEDB73R+86 A/3EMED-3454EF-DD
 70O8DHWES9EXVDZOEF70UZCQF60R6B73$T9*96%K6379WQE-EDAEC*34JTC-RS9Z9TVDB73LK1$RKT0J6I91/DP34W3E053G53B7
 3XD06I91/D+34J$DAWE6MKT0JKI949DP34W3E053E53B73WS61E059DWQE-EDAEC.%5$9FQ$DTVDW:5ZQE%$E4JE+60+:K0XJ/TD
-L70BF3ODRE96N70W3EJPCHQEOX57VC9OCNF61A6B73.SB*70B73W-BMC8O1NQYAJRDLHP WMJG4JV2/DJ2.3M97A6KJ13VARZDL%
-2W8%77X91%H33UX*5HLUETLUNK:J7Z:4J*O809N9F9LKB 5DGBI:NB7319CE73T70/L4*O4VHBKZ8O:LVFHJ$V*OH-10K1O/RVQJ
-5 L2V0MX3RELAW%2K*GB73U485ZCA%0
+L70BF3TDR%DQN70W3EJPCHQEOX57VC9OCNF61A6B73.SB*70B73W-BMC8S.JBQAZWRZ/5DEN$ AJKC-E4%7JA5QA1NZOI WAVGN3
+IPHQOHER89KF*46HEFA8$ I0EIEC7I6J8VAZ4TG-8-CVZ0KPIIYCBB7319CE73T70/L4%O45ZNN3NXB35%R7BOXPUTOF:72%AWTT
+19OK6Z8Y9KJ-L%J0 XSB73U485ZCA%0
             </pre>
             <hr>
             <strong>JSON-LD Diagnostic Mode</strong>
@@ -1140,12 +1140,12 @@ L70BF3ODRE96N70W3EJPCHQEOX57VC9OCNF61A6B73.SB*70B73W-BMC8O1NQYAJRDLHP WMJG4JV2/D
   },
   "proof": {
     "type": "DataIntegrityProof",
-    "created": "2026-04-09T18:47:13Z",
-    "verificationMethod": "did:key:zDnaeoj5mQ9BQhNzNNvmK7stvpJn2AixHJsJc2JuQ5qyfh2SJ",
+    "created": "2026-04-09T19:11:12Z",
+    "verificationMethod": "did:key:zDnaed6GCj1NdbBafG981YPkSnYqRG87zXxPXNgVk821fuBfi",
     "cryptosuite": "ecdsa-rdfc-2019",
     "proofPurpose": "assertionMethod",
-    "proofValue": "z4eHYkxCpuwi8awQjUtW87sLULHY54CqqAJNgsfWzCteH6VWmn5r2X1a6roDjo8nS9NoNMK8Ztu6yFNWj
-1kNQ395N"
+    "proofValue": "z49yGHBkWjJz83uKRFkyqVXGWCnrcSyScx4TfWVq1demixGrs128goxVWtRXuUi1vvwM9SjoaP7dwbxrr
+HeUJRAEU"
   }
 }}
             </pre></div></div></div>
@@ -1438,7 +1438,7 @@ Let <var>registryEntryId</var> be the value of <var>options</var>.<var>registryE
           </li>
           <li>
 Let <var>cborldDocument</var> be the result of the
-<a href="https://json-ld.github.io/cbor-ld-spec/#json-ld-to-cbor-ld-compression-algorithm">
+<a href="https://w3c.github.io/cbor-ld/#json-ld-to-cbor-ld-compression-algorithm">
 JSON-LD to CBOR-LD Compression Algorithm</a>, passing <var>inputDocument</var>,
 <var>typeTable</var>, and <var>registryEntryId</var> as inputs. If an encoding error occurs, an
 error <em class="rfc2119">MUST</em> be raised.
@@ -1490,7 +1490,7 @@ Let <var>cborldDocument</var> be the result of the
           </li>
           <li>
 Let <var>jsonldDocument</var> be the result of
-<a href="https://json-ld.github.io/cbor-ld-spec/#cbor-ld-to-json-ld-decompression-algorithm">
+<a href="https://w3c.github.io/cbor-ld/#cbor-ld-to-json-ld-decompression-algorithm">
 CBOR-LD to JSON-LD Decompression Algorithm</a>, passing <var>cborldDocument</var> as
 the input. If a decoding error occurs, an error <em class="rfc2119">MUST</em> be raised.
           </li>
@@ -3119,7 +3119,7 @@ standards-track process has been started.
     <dl class="bibliography"><dt id="bib-aamva-dl-id-card-design-standard">[aamva-dl-id-card-design-standard]</dt><dd>
       <a href="https://www.aamva.org/assets/best-practices,-guides,-standards,-manuals,-whitepapers/aamva-dl-id-card-design-standard-(2020)"><cite>AAMVA DL/ID Card Design Standard (2020)</cite></a>.  American Association of Motor Vehicle Administrators. 2020. URL: <a href="https://www.aamva.org/assets/best-practices,-guides,-standards,-manuals,-whitepapers/aamva-dl-id-card-design-standard-(2020)">https://www.aamva.org/assets/best-practices,-guides,-standards,-manuals,-whitepapers/aamva-dl-id-card-design-standard-(2020)</a>
     </dd><dt id="bib-cbor-ld">[CBOR-LD]</dt><dd>
-      <a href="https://json-ld.github.io/cbor-ld-spec/"><cite>Compact Binary Object Representation for Linked Data v0.7</cite></a>. URL: <a href="https://json-ld.github.io/cbor-ld-spec/">https://json-ld.github.io/cbor-ld-spec/</a>
+      <a href="https://w3c.github.io/cbor-ld/"><cite>Compact Binary Object Representation for Linked Data v0.7</cite></a>. URL: <a href="https://w3c.github.io/cbor-ld/">https://w3c.github.io/cbor-ld/</a>
     </dd><dt id="bib-cid">[CID]</dt><dd>
       <a href="https://www.w3.org/TR/cid-1.0/"><cite>Controlled Identifiers v1.0</cite></a>. Michael Jones; Manu Sporny.  W3C. 15 May 2025. W3C Recommendation. URL: <a href="https://www.w3.org/TR/cid-1.0/">https://www.w3.org/TR/cid-1.0/</a>
     </dd><dt id="bib-icao9303-3">[ICAO9303-3]</dt><dd>
