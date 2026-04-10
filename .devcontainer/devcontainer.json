@@ -1,0 +1,9 @@
+{
+  "extensions": ["ritwickdey.LiveServer"],
+  "forwardPorts": [5500],
+  "portsAttributes": {
+    "5500": {
+      "label": "Live Server"
+    }
+  }
+}
