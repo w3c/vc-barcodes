@@ -112,7 +112,7 @@
         */
         localBiblio: {
           "CBOR-LD": {
-            title: "Compact Binary Object Representation for Linked Data v0.7",
+            title: "Compact Binary Object Representation for Linked Data v1.0",
             href: "https://w3c.github.io/cbor-ld/"
           },
           "ICAO9303-3": {
@@ -149,13 +149,13 @@
             value: "The Verifiable Credentials Data Model v2.0",
             href: "https://www.w3.org/TR/vc-data-model-2.0/"
           }, {
-            value: "Verifiable Credential Data Integrity v1.0",
+            value: "Verifiable Credential Data Integrity v1.1",
             href: "https://www.w3.org/TR/vc-data-integrity/"
           }, {
-            value: "The Elliptic Curve Digital Signature Algorithm Cryptosuites v1.0",
+            value: "The Elliptic Curve Digital Signature Algorithm Cryptosuites v1.1",
             href: "https://www.w3.org/TR/vc-di-ecdsa/"
           }, {
-            value: "Compact Binary Object Representation for Linked Data v0.7",
+            value: "Compact Binary Object Representation for Linked Data v1.0",
             href: "https://json-ld.github.io/cbor-ld-spec/"
           }]
         }]
@@ -209,11 +209,6 @@ printed on physical cards using standard printing processes.
     </section>
 
     <section id="sotd">
-
-      <p>
-This specification is experimental.
-      </p>
-
     </section>
 
     <section>
@@ -254,16 +249,34 @@ barcode.
 This specification describes a mechanism to protect optical barcodes,
 such as those found on driver's licenses (PDF417) and travel documents (MRZ),
 by using a <a>verifiable credential</a> [[VC-DATA-MODEL-2.0]] to express
-information about the barcode, which is then secured using Data Integrity
-[[VC-DATA-INTEGRITY]], and then compressed using CBOR-LD [[CBOR-LD]]. The
-resulting <a>verifiable credential</a> representations are compact enough such
-that they fit in under 140 bytes and can thus be integrated with traditional
-two-dimensional barcodes that are printed on physical cards using standard
-printing processes. This adds tamper resistance to the barcode while
-optionally enhancing the barcode to provide information related to whether or
-not the physical document has been revoked or suspended by the <a>issuer</a>.
+information about either the barcode itself or the subject of the barcode.
+Next, this Verifiable Credential is secured using Data Integrity
+[[VC-DATA-INTEGRITY]], and then compressed using CBOR-LD [[CBOR-LD]].
       </p>
-
+      <p>
+There are two main mechanisms by which a Verifiable Credential can
+be used to protect a barcode:
+        <ul>
+          <li>
+A barcode containing a Verifiable Credential can be added to a document.
+This Verifiable Credential will typically contain some or all of the data
+from the document. In this use case, however, the barcode will generally
+contain only the Verifiable Credential.
+          </li>
+          <li>
+Documents that already contain barcodes can augment those barcodes with a Verifiable
+Credential for improved security. Here, the Verifiable Credential contains a digital
+signature that protects not only the Verifiable Credential itself but also the
+data that already exists in the barcode.
+          </li>
+        </ul>
+      </p>
+      <p>
+Both use cases achieve authenticity, integrity, and tamper resistance over the
+data protected by the Verifiable Credential. Additionally, for use cases that
+require it, these Verifiable Credentials can be revoked or suspended on a
+per-barcode basis.
+      </p>
       <section>
         <h2>Introductory Examples</h2>
 
