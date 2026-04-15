@@ -250,7 +250,7 @@ This specification describes a mechanism to protect optical barcodes,
 such as those found on driver's licenses (PDF417) and travel documents (MRZ),
 by using a <a>verifiable credential</a> [[VC-DATA-MODEL-2.0]] to express
 information about either the barcode itself or the subject of the barcode.
-This Verifiable Credential is then secured using Data Integrity
+Next, this Verifiable Credential is secured using Data Integrity
 [[VC-DATA-INTEGRITY]], and then compressed using CBOR-LD [[CBOR-LD]].
       </p>
       <p>
@@ -259,9 +259,9 @@ be used to protect a barcode:
         <ul>
           <li>
 A barcode containing a Verifiable Credential can be added to a document.
-This Verifiable Credential typically will contain some or all of the data
-from the document. In this use case, the barcode typically contains only the
-Verifiable Credential.
+This Verifiable Credential will typically contain some or all of the data
+from the document. In this use case, however, the barcode will generally
+contain only the Verifiable Credential.
           </li>
           <li>
 Documents that already contain barcodes can augment those barcodes with a Verifiable
