@@ -752,7 +752,9 @@ in a binary format, binary data is often inefficient or incompatible to turn int
 image formats directly. To that end, we provide requirements here for implementations.
         <p>
 It is RECOMMENDED that implementers character-encode CBOR-LD encoded `AamvaDriversLicenseScannableInformation`
-credentials as base64url before encoding them in a PDF417.
+credentials as base64url before encoding them in a PDF417. A multibase header MAY be prepended to the
+base-encoded VCB data. PDF417 field header specifications are expected to indicate whether a multibase
+header is present or absent.
         </p>
         <p>
 It is REQUIRED that implementers re-encode CBOR-LD encoded `MachineReadableZone` credentials
