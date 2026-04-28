@@ -258,16 +258,18 @@ There are two main mechanisms by which a Verifiable Credential can
 be used to protect a barcode:
         <ul>
           <li>
-A barcode containing a Verifiable Credential can be added to a document.
-This Verifiable Credential will typically contain some or all of the data
-from the document. In this use case, however, the barcode will generally
-contain only the Verifiable Credential.
+A barcode containing a Verifiable Credential can be added to a physical
+document that does not currently have a barcode on it.
+This Verifiable Credential will typically contain some or all
+of the data from the document. In this use case, the barcode will generally
+contain only a Verifiable Credential.
           </li>
           <li>
 Documents that already contain barcodes can augment those barcodes with a Verifiable
-Credential for improved security. Here, the Verifiable Credential contains a digital
-signature that protects not only the Verifiable Credential itself but also the
-data that already exists in the barcode.
+Credential for improved security. In this use case, the augmented barcode will
+typically contain both the original information from the barcode and a newly
+added Verifiable Credential that digitally signs over the other information in
+the barcode.
           </li>
         </ul>
       </p>
