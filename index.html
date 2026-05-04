@@ -315,57 +315,70 @@ contains a <a>verifiable credential</a> of the following form.
 {
   "@context": [
     "https://www.w3.org/ns/credentials/v2",
-    "https://w3id.org/vc-barcodes/v2",
-    "https://w3id.org/utopia/v1"
+    "https://w3id.org/vc-barcodes/v1",
+    "https://w3id.org/utopia/v2"
   ],
   "type": [
     "VerifiableCredential",
     "OpticalBarcodeCredential"
   ],
-  <span class="comment">// the issuer value below is defined as a URL in the 'utopia/v1' context above</span>
-  "issuer": "did:web:dmv.utopia.example",
-  "credentialStatus": {
-    "type": "TerseBitstringStatusListEntry",
-    "terseStatusListBaseUrl": "https://dmv.utopia.gov/statuses/12345/status-lists"
-    "terseStatusListIndex": 123567890
-  },
   "credentialSubject": {
     "type": "AamvaDriversLicenseScannableInformation",
-    "protectedComponentIndex": "uP_BA"
+    "protectedComponentIndex": "uggAg"
+  },
+  "issuer": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
+  "credentialStatus": {
+    "type": "TerseBitstringStatusListEntry",
+    "terseStatusListBaseUrl": "https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists",
+    "terseStatusListIndex": 3851559041
   },
   "proof": {
-    "type": "DataIntegrity",
+    "type": "DataIntegrityProof",
+    "verificationMethod": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj#zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
     "cryptosuite": "ecdsa-xi-2023",
-    <span class="comment">// the public key below is defined as a URL in the 'utopia/v1' context above</span>
-    "verificationMethod": "did:web:dmv.utopia.example#key-1",
     "proofPurpose": "assertionMethod",
-    "proofValue": "z4peo48uwK2EF4Fta8P...HzQMDYJ34r9gL"
+    "proofValue": "z4g6G3dAZhhtPxPWgFvkiRv7krtCaeJxjokvL46fchAFCXEY3FeX2vn46MDgBaw779g1E1jswZJxxreZDCrtHg2qH"
   }
 }
           </pre>
-
           <p>
-The <a>verifiable credential</a> above is then compressed using [[CBOR-LD]]
+This is an example of the use case where a barcode is augmented with
+a Verifiable Credential. As such, the subject of the credential is the
+other data in the barcode that is protected by the Verifiable Credential's
+digital signature. The `protectedComponentIndex` field in
+`credentialSubject` indicates exactly what data in the rest of the barcode
+is protected.
+          </p>
+          <p>
+The <a>verifiable credential</a> above is compressed using [[CBOR-LD]]
 to the following output (in CBOR Diagnostic Notation):
           </p>
 
           <pre class="example nohighlight"
-              title="CBOR-LD compressed Verifiable Credential (145 bytes)">
-1281{
-  1 => [ 32768, 32769, 32770],                           <span class="comment">// @context</span>
-  155 => [ 116, 164 ],                                   <span class="comment">// type</span>
-  192 => 174,                                            <span class="comment">// issuer</span>
-  186 => { 154 => 166, 206 => 178, 208 => 1234567890 },  <span class="comment">// credentialStatus</span>
-  188 => { 154 => 172, 180 => h'753FF040 },              <span class="comment">// credentialSubject</span>
-  194 => {                                               <span class="comment">// proof</span>
-    154 => 108,                                          <span class="comment">// type</span>
-    214 => 4,                                            <span class="comment">// cryptosuite</span>
-    224 => 230                                           <span class="comment">// verificationMethod</span>
-    228 => 176,                                          <span class="comment">// proofPurpose</span>
-    210 => Uint8Array(65) [ ... ],                       <span class="comment">// proofValue</span>
+              title="CBOR-LD compressed Verifiable Credential">
+51997([
+100,
+{
+  1: [32768, 32769, 32770],                     <span class="comment">// @context</span>
+  157: [118, 164],                              <span class="comment">// type</span>
+  184: {156: 166, 206: 178, 208: 3851559041},   <span class="comment">// credentialStatus</span>
+  186: {156: 160, 168: h'75820020'},            <span class="comment">// credentialSubject</span>
+  190: 170,                                     <span class="comment">// issuer</span>
+  192: {                                        <span class="comment">// proof</span>
+    156: 108,
+    214: 4,
+    224: 230,
+    226: h'7AB...',                             
+    228: 172
   }
 }
+])
           </pre>
+          <p>
+Once encoded as CBOR-LD, the Verifiable Credential is inserted into the
+PDF417. For more details regarding this example, see Section
+<a href="#test-vectors"></a>
+          </p>
 
         </section>
 
