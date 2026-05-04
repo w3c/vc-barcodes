@@ -277,15 +277,15 @@ digital signatures via [=verifiable credentials=].
           <h3>Driver's License</h3>
 
           <p>
-This section provides an example on how the technology in this specification
-can be utilized to secure the optical barcode on a driver's license that
-uses a PDF417 barcode. We start off with an example driver's license:
+This section provides an example of how the technology in this specification
+can be used to secure a PDF417 optical barcode on a driver's license. We start
+with an example driver's license:
           </p>
 
           <figure id="dl-front">
             <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
                 src="diagrams/dl-front.png"
-                alt="Picture of the front of a driver's license issued by the state of Utopia which contains a picture of the individual that is the subject of the driver's license along with their attributes, such as name, address, height, weight, eye color, and driving privileges.">
+                alt="Picture of the front of a driver's license issued by the state of Utopia, containing a picture of the individual that is the subject of the driver's license along with their attributes, such as name, address, height, weight, eye color, and driving privileges.">
             <figcaption style="text-align: center;">
   The front of a driver's license issued by the state of Utopia.
             </figcaption>
@@ -306,8 +306,8 @@ A back of a driver's license issued by the state of Utopia.
 
           <p>
 The PDF417 data contains information that is secured using the algorithms
-described in this specification. Namely, the PDF417 barcode contains a
-<a>verifiable credential</a> of the following form.
+described in this specification. More specifically, the PDF417 barcode
+contains a <a>verifiable credential</a> of the following form.
           </p>
 
           <pre class="example nohighlight"
@@ -315,8 +315,8 @@ described in this specification. Namely, the PDF417 barcode contains a
 {
   "@context": [
     "https://www.w3.org/ns/credentials/v2",
-    "https://w3id.org/vdl/v2",
-    "https://w3id.org/vdl/utopia/v1"
+    "https://w3id.org/vc-barcodes/v2",
+    "https://w3id.org/utopia/v1"
   ],
   "type": [
     "VerifiableCredential",
