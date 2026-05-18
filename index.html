@@ -834,8 +834,8 @@ Let |registryEntryId| be the value of |options|.|registryEntryId|.
           </li>
           <li>
 Let |cborldDocument| be the result of the
-<a data-cite="CBOR-LD#json-ld-to-cbor-ld-compression-algorithm">
-JSON-LD to CBOR-LD Compression Algorithm</a>, passing |inputDocument|,
+<a data-cite="CBOR-LD#json-ld-to-cbor-ld-encoding-algorithm">
+JSON-LD to CBOR-LD Encoding Algorithm</a>, passing |inputDocument|,
 |typeTable|, and |registryEntryId| as inputs. If an encoding error occurs, an
 error MUST be raised.
           </li>
@@ -886,8 +886,8 @@ Let |cborldDocument| be the result of the
           </li>
           <li>
 Let |jsonldDocument| be the result of
-<a data-cite="CBOR-LD#cbor-ld-to-json-ld-decompression-algorithm">
-CBOR-LD to JSON-LD Decompression Algorithm</a>, passing |cborldDocument| as
+<a data-cite="CBOR-LD#cbor-ld-to-json-ld-decoding-algorithm">
+CBOR-LD to JSON-LD Decoding Algorithm</a>, passing |cborldDocument| as
 the input. If a decoding error occurs, an error MUST be raised.
           </li>
           <li>
