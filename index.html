@@ -661,50 +661,90 @@ anti-fraud protections for physical documents.
         </p>
 
         <p>
-The `credentialSubject` of an `OpticalBarcodeCredential` is either of type
-`AamvaDriversLicenseScannableInformation` or a `MachineReadableZone`. A
-`AamvaDriversLicenseScannableInformation` signifies that
-the <a>verifiable credential</a> secures the PDF417 barcode on the physical
-document as well as the information expressed in the
-<a>verifiable credential</a>. A `MachineReadableZone` signifies that
-the <a>verifiable credential</a> secures the machine-readable zone on the
-physical document as well as the information expressed in the
-<a>verifiable credential</a>.
+The type of the `credentialSubject` of an `OpticalBarcodeCredential`
+identifies the kind of machine-readable data on the physical document that is
+secured by the <a>verifiable credential</a>, in addition to the information
+expressed in the <a>verifiable credential</a> itself. This specification
+defines two such types: `AamvaDriversLicenseScannableInformation` (see Section
+[[[#aamva]]]), which signifies that the
+<a>verifiable credential</a> secures the PDF417 barcode on an AAMVA-compliant
+driver's license, and `MachineReadableZone` (see Section
+[[[#machinereadablezone]]]), which signifies that the
+<a>verifiable credential</a> secures the machine-readable zone on the physical
+document. Other specifications MAY define additional `credentialSubject` types
+to secure other sorts of machine-readable data, such as PDF417 barcodes on
+birth certificates or education certificates, provided that they define how
+the protected data is extracted and sorted into a deterministic list, as
+described in Section [[[#create-opticaldatabytes]]].
         </p>
 
         <p>
-If an `OpticalBarcodeCredential` is of type `AamvaDriversLicenseScannableInformation`,
-there is a REQUIRED additional field `protectedComponentIndex` that contains information about which fields
-in the PDF417 are digitally signed. `protectedComponentIndex` MUST be a three byte/24 bit value that is
-multibase-base64url encoded for a total of 5 characters in the JSON-LD credential. There are 22
-mandatory fields in an AAMVA compliant driver's license PDF417 [[aamva-dl-id-card-design-standard]],
-and the first 22 bits of the `protectedComponentIndex` value correspond to these fields. Each AAMVA mandatory
-field begins with a three character element ID (e.g., `DBA` for document expiration date). To construct
-a mapping between bits in the `protectedComponentIndex` value and these fields, sort these element IDs
-according to Unicode code point order. Then, if a bit in position `i` of `protectedComponentIndex` is `1`, the
-AAMVA mandatory field in position `i` of the sorted element IDs is protected by the digital signature. The last two
-bits in `protectedComponentIndex` MUST be `0`. For more information, see Section [[[#create-opticaldatabytes]]].
+When the machine-readable data secured by an `OpticalBarcodeCredential` is
+composed of discrete components (such as the individual fields in a PDF417
+barcode), and only a subset of those components is digitally signed, the
+`credentialSubject` expresses which components are protected using the
+`protectedComponentIndex` property. The value of `protectedComponentIndex` is
+a multibase-base64url encoded bitstring. Each bit in position `i` of the
+bitstring corresponds to the component at index `i` of the deterministic list
+of components defined for the associated `credentialSubject` type. If the bit
+in position `i` is `1`, the component in position `i` of the deterministic
+list of components is protected by the digital signature; if the bit is `0`,
+the component is not protected. Any trailing padding bits in the bitstring
+that do not correspond to a component MUST be set to `0`. Every
+`credentialSubject` type that uses `protectedComponentIndex` MUST define the
+length of the bitstring and the deterministic list of components to which its
+bits refer; the definition for `AamvaDriversLicenseScannableInformation` is
+provided in Section [[[#aamva]]]. For more
+information on how `protectedComponentIndex` is used when generating and
+verifying digital signatures, see Section [[[#create-opticaldatabytes]]].
         </p>
-
-        <p>
-In order to achieve as much compression as possible, it is RECOMMENDED that the
-`issuer` and `verificationMethod` fields utilize terms from a JSON-LD Context,
-which can then be compressed down to a few bytes due to CBOR-LD's semantic
-compression mechanism.
-        </p>
-
         <p>
 An example of an optical barcode credential that utilizes the properties
 specified in this section is provided below:
         </p>
+        <section id="aamva">
+          <h4>AAMVA Driver License and Identification Documents</h4>
 
-        <pre class="example nohighlight"
-             title="An OpticalBarcodeCredential utilizing a TerseBitstringStatusListEntry">
+          <p>
+A `credentialSubject` of type `AamvaDriversLicenseScannableInformation`
+signifies that the <a>verifiable credential</a> secures the contents of the
+PDF417 barcode [[ISO15438-2015]] on an AAMVA-compliant driver's license
+[[aamva-dl-id-card-design-standard]].
+          </p>
+
+          <p>
+An `AamvaDriversLicenseScannableInformation` object has a REQUIRED
+`protectedComponentIndex` property that contains information about which
+fields in the PDF417 are digitally signed. `protectedComponentIndex` MUST be a
+three byte/24 bit value that is multibase-base64url encoded for a total of 5
+characters in the JSON-LD credential. There are 22 mandatory fields in an
+AAMVA-compliant driver's license PDF417
+[[aamva-dl-id-card-design-standard]], and the first 22 bits of the
+`protectedComponentIndex` value correspond to these fields. Each AAMVA
+mandatory field begins with a three character element ID (e.g., `DBA` for
+document expiration date). The deterministic list of components associated
+with this type is the list of these 22 element IDs sorted according to Unicode
+code point order (i.e., `['DAC', 'DAD' ... 'DDG']`). If a bit in position `i`
+of `protectedComponentIndex` is `1`, the AAMVA mandatory field in position `i`
+of the sorted element IDs is protected by the digital signature. The last two
+bits in `protectedComponentIndex` are padding bits and MUST be `0`. For more
+information, see Section [[[#create-opticaldatabytes]]].
+          </p>
+
+          <p>
+It is RECOMMENDED that implementers character-encode CBOR-LD encoded
+`AamvaDriversLicenseScannableInformation` credentials as base64url before
+encoding them in a PDF417. A multibase header MAY be prepended to the
+base-encoded VCB data. PDF417 field header specifications are expected to
+indicate whether a multibase header is present or absent.
+          </p>
+
+            <pre class="example nohighlight"
+            title="An OpticalBarcodeCredential utilizing a TerseBitstringStatusListEntry">
 {
   "@context": [
     "https://www.w3.org/ns/credentials/v2",
-    "https://w3id.org/vdl/v2",
-    "https://w3id.org/vdl/utopia/v1"
+    "https://w3id.org/vc-barcodes/v1"
   ],
   "type": [
     "VerifiableCredential",
@@ -721,7 +761,26 @@ specified in this section is provided below:
     <span class="highlight">"protectedComponentIndex": "uP_BA"</span>
   }
 }
-        </pre>
+          </pre>
+        </section>
+
+        <section id="machinereadablezone">
+          <h4>MachineReadableZone</h4>
+
+          <p>
+A `credentialSubject` of type `MachineReadableZone` signifies that the
+<a>verifiable credential</a> secures the machine-readable zone (MRZ)
+[[ICAO9303-3]] on the physical document. All of the lines of the
+machine-readable zone are secured, so the `protectedComponentIndex` property
+is not needed with this type.
+          </p>
+
+          <p>
+It is REQUIRED that implementers re-encode CBOR-LD encoded
+`MachineReadableZone` credentials as base45-multibase with the string 'VC1-'
+prepended before encoding them in a QR code.
+          </p>
+        </section>
       </section>
 
       <section>
@@ -764,16 +823,15 @@ implementations MUST use |listLength| = 2^26 and |listCount| = 2^6.
         <h3>Encoding to and from barcodes</h3>
 While the credentials in this specification use CBOR-LD to efficiently encode [=verifiable credentials=]
 in a binary format, binary data is often inefficient or incompatible to turn into standard barcode
-image formats directly. To that end, we provide requirements here for implementations.
+image formats directly. To that end, character encoding requirements for implementations
+are provided on a per-type basis, and will typically vary based on the target barcode format.
         <p>
-It is RECOMMENDED that implementers character-encode CBOR-LD encoded `AamvaDriversLicenseScannableInformation`
-credentials as base64url before encoding them in a PDF417. A multibase header MAY be prepended to the
-base-encoded VCB data. PDF417 field header specifications are expected to indicate whether a multibase
-header is present or absent.
-        </p>
-        <p>
-It is REQUIRED that implementers re-encode CBOR-LD encoded `MachineReadableZone` credentials
-as base45-multibase with the string 'VC1-' prepended before encoding them in a QR code.
+Each `credentialSubject` type is expected to specify how CBOR-LD encoded
+credentials of that type are character-encoded before being placed in a
+barcode. The character encoding requirements for the types defined by this
+specification are provided in Section
+[[[#aamva]]] and Section
+[[[#machinereadablezone]]].
         </p>
       </section>
 
@@ -795,24 +853,6 @@ zones, on physical media, such as driver's licenses and travel documents.
 This section contains algorithms that are general to encoding and decoding
 [=verifiable credentials=].
         </p>
-
-        <section>
-          <h3>CBOR-LD Compression Tables</h3>
-
-          <p>
-This specification requires that an application-specific compression table is
-provided to a CBOR-LD processor when encoding and decoding
-<a>verifiable credentials</a>. A registry for all context URLs for various
-issuers is <a href="cbor-ld-compression-table.csv">
-provided as a comma-separated value file</a> and can be updated and modified via
-<a href="https://github.com/w3c-ccg/vc-barcodes/pulls/">
-change requests</a> to the file on an append-only and first-come-first-served
-basis. Implementations SHOULD retrieve and utilize the latest file on a monthly
-basis to ensure that compression and decompression supports the latest values.
-          </p>
-
-        </section>
-
         <section>
           <h3>Encode VC to QR Code</h3>
 
@@ -905,7 +945,9 @@ Return |jsonldDocument| as the decoded [=verifiable credential=].
 
         <p>
 This section contains algorithms that are specific to encoding and decoding
-[=verifiable credentials=] that have a `type` of `OpticalBarcodeCredential`.
+[=verifiable credentials=] that have a `type` of `OpticalBarcodeCredential`, which
+typically appears in the use case where existing machine-readable information on
+a document is augmented with a [=verifiable credential=].
         </p>
 
         <section>
@@ -915,21 +957,27 @@ This section contains algorithms that are specific to encoding and decoding
             <li>
 Set |opticalData| to the data in the optical barcode to be secured.
             </li>
+  
             <li>
+If credential status is required:
+              <ol>
+                <li>
 Set |statusListEntryVerbose| to the `BitstringStatusListCredential`
 (as defined in the [[[VC-BITSTRING-STATUS-LIST]]] specification) that the issuer
 wishes to add to the `OpticalBarcodeCredential`.
-            </li>
-            <li>
+              </li>
+              <li>
 Let |statusListEntryTerse| be an empty [=map=]. Set |statusListEntryTerse|.|type| to `TerseBitstringStatusListEntry` and |statusListEntryTerse|.|index| to the integer representation of |statusListEntryVerbose|.|statusListIndex|.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |issuerUrl| to the URL the issuer wishes to use for credential verification.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |unsignedStatus| to an `OpticalBarcodeCredential` with
 |unsignedStatus|.|issuer| set to |issuerUrl| and |unsignedStatus|.|credentialStatus|
 set to |statusListEntryTerse|.
+                </li>
+              </ol>
             </li>
             <li>
 Set |signedStatusVc| to the result of using the algorithm in
@@ -1136,21 +1184,69 @@ first hash), <var>transformedDocumentHash</var> (the second hash), and
 
           </section>
 
-          <section>
-            <h4> Create opticalDataBytes</h4>
+          <section id="create-opticaldatabytes">
+            <h4>Create opticalDataBytes</h4>
 
-            <section>
-              <h5>`AamvaDriversLicenseScannableInformation` Credentials</h5>
+            <p>
+The algorithm in this section produces the optical data
+(|opticalDataBytes|) over which a digital signature is generated or
+verified. The algorithm is generic to any sort of machine-readable optical
+data: the type of the `credentialSubject` defines how the protected
+components of the optical data are extracted (see the type-specific
+component extraction sections below), and this algorithm sorts those
+components into a deterministic list before canonicalizing and hashing them.
+            </p>
+
+            <p>
+The required inputs to this algorithm are the machine-readable optical data
+(|opticalData|) and the credential subject (|credentialSubject|). A single
+value representing the hashed canonical form of the protected optical data
+is produced as output.
+            </p>
+
+            <ol class="algorithm">
+              <li>
+Set |dataToCanonicalize| to the result of extracting the protected
+components of |opticalData| as an array of strings, according to the
+component extraction rules associated with the type of |credentialSubject|,
+using |credentialSubject|.`protectedComponentIndex` if it is defined for
+that type. The component extraction rules for the types defined by this
+specification are given in Section [[[#aamva-component-extraction]]] and
+Section [[[#mrz-component-extraction]]].
+              </li>
+              <li>
+Set |canonicalizedData| to the result of sorting |dataToCanonicalize| into a
+deterministic list, using the ordering rules associated with the type of
+|credentialSubject|, and then applying a join operation to create a single
+string from the array. If the type of |credentialSubject| does not define
+ordering rules, sort |dataToCanonicalize| in Unicode code point order.
+              </li>
+              <li>
+Hash |canonicalizedData| and return the result.
+              </li>
+            </ol>
+
+            <section id="aamva-component-extraction">
+              <h5>Component extraction: `AamvaDriversLicenseScannableInformation`</h5>
+
+              <p>
+For a |credentialSubject| of type
+`AamvaDriversLicenseScannableInformation`, |opticalData| is the data in the
+PDF417 barcode, and the protected components are extracted as follows. The
+ordering rules for this type are the default Unicode code point order.
+              </p>
+
               <ol class="algorithm">
                 <li>
 Set |dataToCanonicalize| to an empty array.
                 </li>
                 <li>
 Set |bitfieldDecoded| to be first 22 bits of the length 24 bitstring resulting from decoding
-  `credentialSubject.protectedComponentIndex` from multibase-base64url to binary.
+  |credentialSubject|.`protectedComponentIndex` from multibase-base64url to binary.
                 </li>
                 <li>
-Set |fieldsAlphabetized| to be an array containing the 22 AAMVA mandatory PDF417 Element IDs
+Set |fieldsAlphabetized| to be the deterministic list of components for this type, i.e., an array
+  containing the 22 AAMVA mandatory PDF417 Element IDs
   [[aamva-dl-id-card-design-standard]] sorted in Unicode code point order (i.e., ['DAC', 'DAD' ... 'DDG']).
                 </li>
                 <li>
@@ -1169,17 +1265,21 @@ and append the result to |dataToCanonicalize|.
                   </ol>
                 </li>
                 <li>
-Set |canonicalizedData| to the result of sorting |dataToCanonicalize| in Unicode code point order and then applying a join operation
-to create a single string from the array.
-                </li>
-                <li>
-Hash |canonicalizedData| and return the result.
+Return |dataToCanonicalize|.
                 </li>
               </ol>
             </section>
 
-            <section>
-              <h5>`MachineReadableZone` Credentials</h5>
+            <section id="mrz-component-extraction">
+              <h5>Component extraction: `MachineReadableZone`</h5>
+
+              <p>
+For a |credentialSubject| of type `MachineReadableZone`, |opticalData| is
+the data in the machine-readable zone, and the protected components are
+extracted as follows. The ordering rules for this type are the order in
+which the lines appear on the credential.
+              </p>
+
               <ol class="algorithm">
                 <li>
 Set |dataToCanonicalize| to an empty array.
@@ -1196,11 +1296,7 @@ Append a newline character to the end of |mrzLine| and append |mrzLine| to |data
                   </ol>
                 </li>
                 <li>
-Set |canonicalizedData| to the result of ordering the elements of |dataToCanonicalize| to match the order they appear
-on the credential and then applying a join operation to create a single string from the array.
-                </li>
-                <li>
-Hash |canonicalizedData| and return the result.
+Return |dataToCanonicalize|.
                 </li>
               </ol>
             </section>
