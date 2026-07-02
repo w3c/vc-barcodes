@@ -698,10 +698,6 @@ provided in Section [[[#aamva]]]. For more
 information on how `protectedComponentIndex` is used when generating and
 verifying digital signatures, see Section [[[#create-opticaldatabytes]]].
         </p>
-        <p>
-An example of an optical barcode credential that utilizes the properties
-specified in this section is provided below:
-        </p>
         <section id="aamva">
           <h4>AAMVA Driver License and Identification Documents</h4>
 
@@ -807,7 +803,7 @@ representable as a 32 bit unsigned integer.
         </ul>
         <p>
 To process a `TerseBitstringStatusListEntry`, apply the algorithm in Section
-[[[#convert-status-list-entries]]] to convert it to a `BitstringStatusListEntry`,
+[[[#terse-to-bitstring]]] to convert it to a `BitstringStatusListEntry`,
 then process it as in [[[VC-BITSTRING-STATUS-LIST]]].
         <p>
 Implementers need to set a value |listLength| for the length of an individual status list. This then yields
@@ -957,38 +953,36 @@ a document is augmented with a [=verifiable credential=].
             <li>
 Set |opticalData| to the data in the optical barcode to be secured.
             </li>
-  
+            <li>
+Set |issuerUrl| to the URL the issuer wishes to use for credential verification.
+            </li>
+            <li>
+Set |unsignedCredential| to an `OpticalBarcodeCredential` with
+|unsignedCredential|.|issuer| set to |issuerUrl|.
+            </li>
             <li>
 If credential status is required:
               <ol>
                 <li>
-Set |statusListEntryVerbose| to the `BitstringStatusListCredential`
+Set |statusListEntry| to the `BitstringStatusListEntry`
 (as defined in the [[[VC-BITSTRING-STATUS-LIST]]] specification) that the issuer
 wishes to add to the `OpticalBarcodeCredential`.
-              </li>
-              <li>
-Let |statusListEntryTerse| be an empty [=map=]. Set |statusListEntryTerse|.|type| to `TerseBitstringStatusListEntry` and |statusListEntryTerse|.|index| to the integer representation of |statusListEntryVerbose|.|statusListIndex|.
-              </li>
-              <li>
-Set |issuerUrl| to the URL the issuer wishes to use for credential verification.
-              </li>
-              <li>
-Set |unsignedStatus| to an `OpticalBarcodeCredential` with
-|unsignedStatus|.|issuer| set to |issuerUrl| and |unsignedStatus|.|credentialStatus|
-set to |statusListEntryTerse|.
+                </li>
+                <li>
+Set |unsignedCredential|.|credentialStatus| to the result of applying the
+algorithm in Section [[[#bitstring-to-terse]]] to |statusListEntry|.
                 </li>
               </ol>
             </li>
             <li>
-Set |signedStatusVc| to the result of using the algorithm in
+Set |signedCredential| to the result of using the algorithm in
 <a href="#add-proof-ecdsa-xi-2023"></a> to sign |opticalData|
-and |unsignedStatus|.
+and |unsignedCredential|.
             </li>
             <li>
-Encode |signedStatusVc| using CBOR-LD [[CBOR-LD]] and add it to the designated area of the |opticalData|.
-            </li>
-            <li>
-Generate the machine-readable credential (MRZ or PDF417).
+Encode |signedCredential| using CBOR-LD [[CBOR-LD]] and add it to the designated area of the |opticalData|
+in accordance with the processing rules for the desired value of |credentialSubject|.|type| and
+the use case.
             </li>
           </ol>
         </section>
@@ -998,83 +992,159 @@ Generate the machine-readable credential (MRZ or PDF417).
 
           <ol class="algorithm">
             <li>
-Set |securedDocument| to the data in the PDF417 or MRZ.
+Set |opticalData| to the machine-readable data (e.g., the PDF417 or MRZ data)
+scanned from the physical document.
+            </li>
+            <li>
+Set |vcbPayload| to the <a>verifiable credential</a> payload extracted from
+the designated area of |opticalData|.
+            </li>
+            <li>
+Set |cborldBytes| to the result of decoding |vcbPayload| from the character
+encoding associated with the credential type and barcode format
+(see Section [[[#encoding-to-and-from-barcodes]]]), removing any multibase
+header if one is present.
+            </li>
+            <li>
+Set |credential| to the `OpticalBarcodeCredential` that results from applying
+CBOR-LD decompression [[CBOR-LD]] to |cborldBytes|, if the payload is
+CBOR-LD compressed; otherwise, set |credential| to the
+`OpticalBarcodeCredential` expressed by |cborldBytes|.
             </li>
             <li>
 Set |verificationResult| to the result of applying the algorithm in Section
-[[[#verify-proof-ecdsa-xi-2023]]]to |securedDocument|.
+[[[#verify-proof-ecdsa-xi-2023]]] to |credential| and |opticalData|.
             </li>
             <li>
-Set |credential| to the `OpticalBarcodeCredential` in |securedDocument|.
-            </li>
-            <li>
+Set |statusResult| to null. If |credential|.|credentialStatus| is present:
+              <ol>
+                <li>
 Set |statusListEntry| to the result of applying the algorithm in Section
-[[[#convert-status-list-entries]]] to |credential|.
-            </li>
-            <li>
+[[[#terse-to-bitstring]]] to |credential|.
+                </li>
+                <li>
 Set |statusResult| to the result of applying the algorithm in
 <a data-cite="VC-BITSTRING-STATUS-LIST#validate-algorithm">
 Bitstring Status List v1.0: Validate Algorithm</a> to |statusListEntry|.
+                </li>
+              </ol>
             </li>
             <li>
-Return (|validationResult|, |statusResult|).
+Return (|verificationResult|, |statusResult|).
             </li>
           </ol>
         </section>
 
-        <section>
+        <section id="convert-status-list-entries">
           <h3>Convert Status List Entries</h3>
 
           <p>
-The algorithm in this section is used to convert the
-`TerseBitstringStatusListEntry` to a `BitstringStatusListEntry`, which is used
-after verification has been performed on the <a>verifiable credential</a>,
-during the validation process.
+The algorithms in this section are used to convert between a
+`TerseBitstringStatusListEntry` and a `BitstringStatusListEntry`. The
+algorithm in Section [[[#bitstring-to-terse]]] is used when encoding an
+`OpticalBarcodeCredential`, to compress a `BitstringStatusListEntry` into a
+`TerseBitstringStatusListEntry` before the credential is signed. The
+algorithm in Section [[[#terse-to-bitstring]]] performs the inverse
+conversion and is used after verification has been performed on the
+<a>verifiable credential</a>, during the validation process.
           </p>
 
-          <p>
+          <section id="terse-to-bitstring">
+            <h4>`TerseBitstringStatusListEntry` to `BitstringStatusListEntry`</h4>
+
+            <p>
 After <a>verifiable credential</a> verification has been performed, the
 algorithm takes an `OpticalBarcodeCredential` <a>verifiable credential</a>
 ([=struct=] |vc|), an integer |listLength| containing the number of entries
 in the `BitstringStatusListCredential` associated with |vc|, and a string
 |statusPurpose| (e.g., 'revocation', 'suspension'...) as input and returns
 a 'BitstringStatusListEntry' object.
-          </p>
+            </p>
 
-          <ol class="algorithm">
-            <li>
+            <ol class="algorithm">
+              <li>
 Set |result| to be an empty [=map=].
-            </li>
-            <li>
+              </li>
+              <li>
 Set |listIndex| to |vc|.|credentialStatus|.|terseStatusListIndex|/|listLength| rounded down
 to the next lowest integer (i.e., apply the `floor()` operation).
-            </li>
-            <li>
+              </li>
+              <li>
 Set |statusListIndex| to |vc|.|credentialStatus|.|terseStatusListIndex| % |listLength|.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |result|.|statusListCredential| to the concatenation of the following values:
 |vc|.|credentialStatus|.|terseStatusListBaseUrl|, '/', |statusPurpose|, '/', |listIndex|.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |result|.|type| to 'BitstringStatusListEntry'.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |result|.|statusListIndex| to |statusListIndex|.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |result|.|statusPurpose| to |statusPurpose|.
-            </li>
-            <li>
+              </li>
+              <li>
 Return |result|.
-            </li>
-          </ol>
+              </li>
+            </ol>
 
-          <p>
+            <p>
 |result| can be used as input to the
 <a data-cite="VC-BITSTRING-STATUS-LIST#validate-algorithm">
 validation algorithm</a> in the [[[VC-BITSTRING-STATUS-LIST]]] specification.
-          </p>
+            </p>
+          </section>
+
+          <section id="bitstring-to-terse">
+            <h4>`BitstringStatusListEntry` to `TerseBitstringStatusListEntry`</h4>
+
+            <p>
+The algorithm takes a `BitstringStatusListEntry` ([=struct=]
+|statusListEntry|), whose |statusListCredential| value is expected to be a
+URL of the form |terseStatusListBaseUrl|, '/', |statusPurpose|, '/',
+|listIndex|, and an integer |listLength| containing the number of entries in
+each `BitstringStatusListCredential` published by the <a>issuer</a> as
+input, and returns a 'TerseBitstringStatusListEntry' object.
+            </p>
+
+            <ol class="algorithm">
+              <li>
+Set |result| to be an empty [=map=].
+              </li>
+              <li>
+Set |listIndex| to the integer representation of the final path segment of
+|statusListEntry|.|statusListCredential|.
+              </li>
+              <li>
+Set |terseStatusListBaseUrl| to |statusListEntry|.|statusListCredential|
+with the final two path segments (i.e., '/', |statusPurpose|, '/',
+|listIndex|) removed.
+              </li>
+              <li>
+Set |result|.|type| to 'TerseBitstringStatusListEntry'.
+              </li>
+              <li>
+Set |result|.|terseStatusListBaseUrl| to |terseStatusListBaseUrl|.
+              </li>
+              <li>
+Set |result|.|terseStatusListIndex| to |listIndex| * |listLength| + the
+integer representation of |statusListEntry|.|statusListIndex|.
+              </li>
+              <li>
+Return |result|.
+              </li>
+            </ol>
+
+            <p class="note" title="The status purpose is not carried in the terse entry">
+A `TerseBitstringStatusListEntry` does not express the |statusPurpose| of
+the original `BitstringStatusListEntry`. The |statusPurpose| is instead
+supplied by the <a>verifier</a> as an input to the algorithm in Section
+[[[#terse-to-bitstring]]], which reconstructs the
+`BitstringStatusListEntry` during validation.
+            </p>
+          </section>
 
           <p class="note" title="Status lists are optional">
 Implementers are advised that not all <a>issuers</a> will publish status
@@ -2219,7 +2289,7 @@ the credential.
             <h4>Status Checking</h4>
             <p>
 The last step is to check the status information on the Driver's License
-credential. We apply <a href="#convert-status-list-entries"></a>
+credential. We apply <a href="#terse-to-bitstring"></a>
 to convert the `TerseBitstringStatusListEntry` into a `BitstringStatusListEntry`.
 Here we check two status types, 'revocation' and 'suspension', passing those
 strings as values of |statusPurpose|.
