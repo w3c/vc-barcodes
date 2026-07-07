@@ -677,7 +677,7 @@ expressed in the <a>verifiable credential</a> itself. The main portion of this
 specification defines two such types: `MachineReadableZone` (see Section
 [[[#machinereadablezone]]]), which signifies that the
 <a>verifiable credential</a> secures the machine-readable zone on the
-physical document, and `ISODrivingLicenceMachineReadableInformation` (see
+physical document, and `IsoDrivingLicenceMachineReadableInformation` (see
 Section [[[#isodrivinglicencemachinereadableinformation]]]), which signifies
 that the <a>verifiable credential</a> secures the machine-readable data on an
 ISO-compliant driving licence [[ISO18013-2]]. Other specifications MAY define
@@ -762,11 +762,11 @@ prepended before encoding them in a QR code.
         </section>
 
         <section id="isodrivinglicencemachinereadableinformation">
-          <h4>ISODrivingLicenceMachineReadableInformation</h4>
+          <h4>IsoDrivingLicenceMachineReadableInformation</h4>
 
           <p>
 A `credentialSubject` of type
-`ISODrivingLicenceMachineReadableInformation` signifies that the
+`IsoDrivingLicenceMachineReadableInformation` signifies that the
 <a>verifiable credential</a> secures the compact-encoded machine-readable
 data, as defined in [[ISO18013-2]], on an ISO-compliant driving licence
 (IDL), such as the contents of a PDF417 barcode [[ISO15438-2015]] on the
@@ -777,7 +777,7 @@ for the purposes of this specification.
           </p>
 
           <p>
-An `ISODrivingLicenceMachineReadableInformation` object has a REQUIRED
+An `IsoDrivingLicenceMachineReadableInformation` object has a REQUIRED
 `protectedComponentIndex` property that contains information about which
 data groups are digitally signed. `protectedComponentIndex` MUST be a
 two byte/16 bit value that is multibase-base64url encoded for a total of
@@ -794,7 +794,7 @@ padding bits and MUST be `0`. For more information, see Section
           </p>
           <p>
 It is RECOMMENDED that implementers character-encode CBOR-LD encoded
-`ISODrivingLicenceMachineReadableInformation` credentials as base64url
+`IsoDrivingLicenceMachineReadableInformation` credentials as base64url
 before encoding them in a PDF417. A multibase header MAY be prepended to
 the base-encoded VCB data. It is RECOMMENDED that the encoded VCB is placed
 in Data Group 11, for optional and jurisdiction-specific data. If the VCB
@@ -850,7 +850,7 @@ are provided on a per-type basis, and will typically vary based on the target ba
 Each `credentialSubject` type is expected to specify how CBOR-LD encoded
 credentials of that type are character-encoded before being placed in a
 barcode. The character encoding requirements for `MachineReadableZone` and
-`ISODrivingLicenceMachineReadableInformation` are provided in Section
+`IsoDrivingLicenceMachineReadableInformation` are provided in Section
 [[[#machinereadablezone]]] and Section
 [[[#isodrivinglicencemachinereadableinformation]]], respectively;
 requirements for other types are provided in the specifications that define
@@ -1308,7 +1308,7 @@ components of |opticalData| as an array of strings, according to the
 component extraction rules associated with the type of |credentialSubject|,
 using |credentialSubject|.`protectedComponentIndex` if it is defined for
 that type. The component extraction rules for `MachineReadableZone` and
-`ISODrivingLicenceMachineReadableInformation` are given in Section
+`IsoDrivingLicenceMachineReadableInformation` are given in Section
 [[[#mrz-component-extraction]]] and Section
 [[[#iso-idl-component-extraction]]], respectively; the rules for other types
 are given in the specifications that define them (e.g., Appendix
@@ -1360,11 +1360,11 @@ Return |dataToCanonicalize|.
             </section>
 
             <section id="iso-idl-component-extraction">
-              <h5>Component extraction: `ISODrivingLicenceMachineReadableInformation`</h5>
+              <h5>Component extraction: `IsoDrivingLicenceMachineReadableInformation`</h5>
 
               <p>
 For a |credentialSubject| of type
-`ISODrivingLicenceMachineReadableInformation`, |opticalData| is the
+`IsoDrivingLicenceMachineReadableInformation`, |opticalData| is the
 compact-encoded machine-readable data [[ISO18013-2]] on the licence, and
 the protected components are extracted as follows. The ordering rules for
 this type are ascending order of data group number.
