@@ -124,15 +124,6 @@
             ],
             publisher: "International Civil Aviation Organization"
           },
-          "ISO15438-2015": {
-            title: "ISO/IEC 15438:2015: PDF417 Bar Code Symbology Specification",
-            date: "2015",
-            href: "https://www.iso.org/standard/65502.html",
-            authors: [
-              "ISO/IEC JTC 1/SC 31"
-            ],
-            publisher: "International Standards Organization"
-          },
           "ISO18013-2": {
             title: "ISO/IEC 18013-2:2020: Personal identification — ISO-compliant driving licence — Part 2: Machine-readable technologies",
             date: "2020",
@@ -226,7 +217,7 @@ printed on physical cards using standard printing processes.
 Physical credentials, such as driver's licenses, passports, and travel
 credentials often include machine-readable data that can be used to quickly read
 the information from the document. This information is encoded in formats such
-as PDF417 [[ISO15438-2015]], machine-readable zone (MRZ) [[ICAO9303-3]], and
+as PDF417, machine-readable zone (MRZ) [[ICAO9303-3]], and
 other optically scannable codes that are formatted in one-dimensional or
 two-dimensional "bars"; thus the term "barcode". This information is often
 not protected from tampering and the readily available barcode generation and
@@ -673,17 +664,31 @@ anti-fraud protections for physical documents.
 The type of the `credentialSubject` of an `OpticalBarcodeCredential`
 identifies the kind of machine-readable data on the physical document that is
 secured by the <a>verifiable credential</a>, in addition to the information
-expressed in the <a>verifiable credential</a> itself. The main portion of this
-specification defines two such types: `MachineReadableZone` (see Section
+expressed in the <a>verifiable credential</a> itself. This specification
+defines the general type `MachineReadableInformation`, which serves as the
+superclass for every `credentialSubject` type used with an
+`OpticalBarcodeCredential`. The main portion of this specification defines
+one concrete subclass: `MachineReadableZone` (see Section
 [[[#machinereadablezone]]]), which signifies that the
 <a>verifiable credential</a> secures the machine-readable zone on the
-physical document, and `IsoDrivingLicenceMachineReadableInformation` (see
-Section [[[#isodrivinglicencemachinereadableinformation]]]), which signifies
-that the <a>verifiable credential</a> secures the machine-readable data on an
-ISO-compliant driving licence [[ISO18013-2]]. Other specifications MAY define
-additional `credentialSubject` types
+physical document. Two further subclasses are defined in the appendices:
+`AamvaDriversLicenseScannableInformation` (see Appendix [[[#aamva]]],
+which is normative) and `IsoDrivingLicenceMachineReadableInformation` (see
+Appendix [[[#iso-idl]]], which is informative). Other specifications MAY
+define additional `credentialSubject` types
 that indicate the credential protects other sorts of machine-readable data, such as
 PDF417 barcodes on birth certificates or education certificates.
+        </p>
+
+        <p>
+Every `credentialSubject` type used with an `OpticalBarcodeCredential`,
+whether defined by this specification or by another, MUST be defined as a
+subclass of `MachineReadableInformation`. The value
+`MachineReadableInformation` MAY be included in the `credentialSubject`
+`type` array alongside the more specific subclass value; processors that do
+not recognize a specific subclass can use the superclass value to determine
+that the `credentialSubject` describes machine-readable data secured by the
+<a>verifiable credential</a>.
         </p>
 
         <p>
@@ -721,7 +726,7 @@ in a barcode, as described in Section [[[#encoding-to-and-from-barcodes]]].
 An example of how such
 an additional type can be defined to secure a region-specific barcode data model
 is available in Appendix [[[#aamva]]], which normatively defines how to augment the
-PDF417 barcode [[ISO15438-2015]] on AAMVA-compliant driver's licenses and identification
+PDF417 barcode on AAMVA-compliant driver's licenses and identification
 cards with a Verifiable Credential Barcode.
         </p>
 
@@ -749,7 +754,8 @@ verifying digital signatures, see Section [[[#create-opticaldatabytes]]].
           <p>
 A `credentialSubject` of type `MachineReadableZone` signifies that the
 <a>verifiable credential</a> secures the machine-readable zone (MRZ)
-[[ICAO9303-3]] on the physical document. All of the lines of the
+[[ICAO9303-3]] on the physical document. `MachineReadableZone` is a subclass
+of `MachineReadableInformation`. All of the lines of the
 machine-readable zone are secured, so the `protectedComponentIndex` property
 is not needed with this type.
           </p>
@@ -761,47 +767,7 @@ prepended before encoding them in a QR code.
           </p>
         </section>
 
-        <section id="isodrivinglicencemachinereadableinformation">
-          <h4>IsoDrivingLicenceMachineReadableInformation</h4>
 
-          <p>
-A `credentialSubject` of type
-`IsoDrivingLicenceMachineReadableInformation` signifies that the
-<a>verifiable credential</a> secures the compact-encoded machine-readable
-data, as defined in [[ISO18013-2]], on an ISO-compliant driving licence
-(IDL), such as the contents of a PDF417 barcode [[ISO15438-2015]] on the
-licence. The machine-readable IDL data is organized into data groups
-(`DG1` through `DG11`) as defined by the logical data structure in
-[[ISO18013-2]]; these data groups are the components of the optical data
-for the purposes of this specification.
-          </p>
-
-          <p>
-An `IsoDrivingLicenceMachineReadableInformation` object has a REQUIRED
-`protectedComponentIndex` property that contains information about which
-data groups are digitally signed. `protectedComponentIndex` MUST be a
-two byte/16 bit value that is multibase-base64url encoded for a total of
-4 characters in the JSON-LD credential. The deterministic list of components
-associated with this type is the list of data groups defined in [[ISO18013-2]],
-sorted in ascending order of data group number (i.e.,
-`['DG1', 'DG2' ... 'DG11']`), and the first 11 bits of the
-`protectedComponentIndex` value correspond to these data groups. If a bit
-in position `i` of `protectedComponentIndex` is `1`, the data group in
-position `i` of the deterministic list of components is protected by the
-digital signature. The remaining bits in `protectedComponentIndex` are
-padding bits and MUST be `0`. For more information, see Section
-[[[#create-opticaldatabytes]]].
-          </p>
-          <p>
-It is RECOMMENDED that implementers character-encode CBOR-LD encoded
-`IsoDrivingLicenceMachineReadableInformation` credentials as base64url
-before encoding them in a PDF417. A multibase header MAY be prepended to
-the base-encoded VCB data. It is RECOMMENDED that the encoded VCB is placed
-in Data Group 11, for optional and jurisdiction-specific data. If the VCB
-is placed into one of the 11 Data Groups, the corresponding element of
-`protectedComponentIndex` MUST be set to 0.
-          </p>
-        </section>
       </section>
 
       <section>
@@ -849,12 +815,10 @@ are provided on a per-type basis, and will typically vary based on the target ba
         <p>
 Each `credentialSubject` type is expected to specify how CBOR-LD encoded
 credentials of that type are character-encoded before being placed in a
-barcode. The character encoding requirements for `MachineReadableZone` and
-`IsoDrivingLicenceMachineReadableInformation` are provided in Section
-[[[#machinereadablezone]]] and Section
-[[[#isodrivinglicencemachinereadableinformation]]], respectively;
-requirements for other types are provided in the specifications that define
-them (e.g., Appendix [[[#aamva]]]).
+barcode. The character encoding requirements for `MachineReadableZone` are
+provided in Section [[[#machinereadablezone]]]; requirements for other types
+are provided in the specifications or appendices that define them (e.g.,
+Appendix [[[#aamva]]] and Appendix [[[#iso-idl]]]).
         </p>
       </section>
 
@@ -1307,13 +1271,12 @@ Set |dataToCanonicalize| to the result of extracting the protected
 components of |opticalData| as an array of strings, according to the
 component extraction rules associated with the type of |credentialSubject|,
 using |credentialSubject|.`protectedComponentIndex` if it is defined for
-that type. The component extraction rules for `MachineReadableZone` and
-`IsoDrivingLicenceMachineReadableInformation` are given in Section
-[[[#mrz-component-extraction]]] and Section
-[[[#iso-idl-component-extraction]]], respectively; the rules for other types
-are given in the specifications that define them (e.g., Appendix
-[[[#aamva-component-extraction]]] for the type defined in Appendix
-[[[#aamva]]]).
+that type. The component extraction rules for `MachineReadableZone` are
+given in Section [[[#mrz-component-extraction]]]; the rules for other types
+are given in the specifications or appendices that define them (e.g.,
+Appendix [[[#aamva-component-extraction]]] for the type defined in Appendix
+[[[#aamva]]], and Appendix [[[#iso-idl-component-extraction]]] for the type
+described in Appendix [[[#iso-idl]]]).
               </li>
               <li>
 Set |canonicalizedData| to the result of sorting |dataToCanonicalize| into a
@@ -1359,57 +1322,7 @@ Return |dataToCanonicalize|.
               </ol>
             </section>
 
-            <section id="iso-idl-component-extraction">
-              <h5>Component extraction: `IsoDrivingLicenceMachineReadableInformation`</h5>
 
-              <p>
-For a |credentialSubject| of type
-`IsoDrivingLicenceMachineReadableInformation`, |opticalData| is the
-compact-encoded machine-readable data [[ISO18013-2]] on the licence, and
-the protected components are extracted as follows. The ordering rules for
-this type are ascending order of data group number.
-              </p>
-
-              <ol class="algorithm">
-                <li>
-Set |dataToCanonicalize| to an empty array.
-                </li>
-                <li>
-Set |bitfieldDecoded| to be the first 11 bits of the
-length 16 bitstring resulting from decoding
-|credentialSubject|.`protectedComponentIndex` from multibase-base64url to
-binary.
-                </li>
-                <li>
-Set |dataGroupsOrdered| to be the deterministic list of components for this
-type, i.e., an array containing the data group identifiers defined in
-[[ISO18013-2]] sorted in ascending order of data group number (i.e.,
-`['DG1', 'DG2' ... 'DG11']`).
-                </li>
-                <li>
-For each bit with value `1` in |bitfieldDecoded|:
-                  <ol class="algorithm">
-                    <li>
-Set the string |dataGroupName| to |dataGroupsOrdered|[|i|], where |i| is
-the index of the bit in |bitfieldDecoded|.
-                    </li>
-                    <li>
-Set the string |dataGroupData| to a base64url encoding of the contents
-of the data group identified by |dataGroupName| in |opticalData|, as delimited by
-the data group delimiter character.
-                    </li>
-                    <li>
-Concatenate |dataGroupData| to the end of |dataGroupName|, concatenate a
-newline character (`\n`, `U+000A`) to the end, and append the result to
-|dataToCanonicalize|.
-                    </li>
-                  </ol>
-                </li>
-                <li>
-Return |dataToCanonicalize|.
-                </li>
-              </ol>
-            </section>
           </section>
           <section>
             <h4>Proof Configuration (ecdsa-xi-2023)</h4>
@@ -1543,8 +1456,9 @@ via NFC or an encrypted online communication channel.
 
       <p>
 This appendix defines `AamvaDriversLicenseScannableInformation`, a
-`credentialSubject` type that is used to secure the contents of the PDF417
-barcode [[ISO15438-2015]] on driver's licenses and identification cards issued
+`credentialSubject` type, defined as a subclass of
+`MachineReadableInformation`, that is used to secure the contents of the PDF417
+barcode on driver's licenses and identification cards issued
 in accordance with the AAMVA DL/ID Card Design Standard
 [[aamva-dl-id-card-design-standard]]. This type satisfies the requirements for
 new `credentialSubject` types set out in Section [[[#opticalbarcodecredential]]],
@@ -1559,7 +1473,7 @@ encouraged to define similar types for other classes of documents.
         <p>
 A `credentialSubject` of type `AamvaDriversLicenseScannableInformation`
 signifies that the <a>verifiable credential</a> secures the contents of the
-PDF417 barcode [[ISO15438-2015]] on an AAMVA-compliant driver's license or
+PDF417 barcode on an AAMVA-compliant driver's license or
 identification card [[aamva-dl-id-card-design-standard]].
         </p>
 
@@ -1658,6 +1572,117 @@ Return |dataToCanonicalize|.
             </li>
           </ol>
         </section>
+    </section>
+
+    <section class="appendix informative" id="iso-idl">
+      <h2>ISO-Compliant Driving Licences</h2>
+
+      <p>
+This appendix describes `IsoDrivingLicenceMachineReadableInformation`, a
+`credentialSubject` type, defined as a subclass of
+`MachineReadableInformation`, that can be used to secure the machine-readable
+data on an ISO-compliant driving licence (IDL) [[?ISO18013-2]]. It
+illustrates how a `credentialSubject` type satisfying the requirements in
+Section [[[#opticalbarcodecredential]]] could be defined for IDLs, and is
+expected to be refined by a future revision of this specification, or by
+another specification, before use.
+      </p>
+
+        <section id="isodrivinglicencemachinereadableinformation">
+          <h3>IsoDrivingLicenceMachineReadableInformation</h3>
+
+          <p>
+A `credentialSubject` of type
+`IsoDrivingLicenceMachineReadableInformation` signifies that the
+<a>verifiable credential</a> secures the compact-encoded machine-readable
+data, as defined in [[?ISO18013-2]], on an ISO-compliant driving licence
+(IDL), such as the contents of a PDF417 barcode on the
+licence. The machine-readable IDL data is organized into data groups
+(`DG1` through `DG11`) as defined by the logical data structure in
+[[?ISO18013-2]]; these data groups are the components of the optical data
+for the purposes of this specification.
+`IsoDrivingLicenceMachineReadableInformation` is a subclass of
+`MachineReadableInformation`.
+          </p>
+
+          <p>
+An `IsoDrivingLicenceMachineReadableInformation` object has a required
+`protectedComponentIndex` property that contains information about which
+data groups are digitally signed. `protectedComponentIndex` is a
+two byte/16 bit value that is multibase-base64url encoded for a total of
+4 characters in the JSON-LD credential. The deterministic list of components
+associated with this type is the list of data groups defined in [[?ISO18013-2]],
+sorted in ascending order of data group number (i.e.,
+`['DG1', 'DG2' ... 'DG11']`), and the first 11 bits of the
+`protectedComponentIndex` value correspond to these data groups. If a bit
+in position `i` of `protectedComponentIndex` is `1`, the data group in
+position `i` of the deterministic list of components is protected by the
+digital signature. The remaining bits in `protectedComponentIndex` are
+padding bits and are set to `0`. For more information, see Section
+[[[#create-opticaldatabytes]]].
+          </p>
+          <p>
+Implementers are expected to character-encode CBOR-LD encoded
+`IsoDrivingLicenceMachineReadableInformation` credentials as base64url
+before encoding them in a PDF417. A multibase header can be prepended to
+the base-encoded VCB data. The encoded VCB is expected to be placed
+in Data Group 11, for optional and jurisdiction-specific data. If the VCB
+is placed into one of the 11 Data Groups, the corresponding element of
+`protectedComponentIndex` is set to 0.
+          </p>
+        </section>
+
+            <section id="iso-idl-component-extraction">
+              <h3>Component Extraction</h3>
+
+              <p>
+For a |credentialSubject| of type
+`IsoDrivingLicenceMachineReadableInformation`, |opticalData| is the
+compact-encoded machine-readable data [[?ISO18013-2]] on the licence, and
+the protected components are extracted as follows. The ordering rules for
+this type are ascending order of data group number.
+              </p>
+
+              <ol class="algorithm">
+                <li>
+Set |dataToCanonicalize| to an empty array.
+                </li>
+                <li>
+Set |bitfieldDecoded| to be the first 11 bits of the
+length 16 bitstring resulting from decoding
+|credentialSubject|.`protectedComponentIndex` from multibase-base64url to
+binary.
+                </li>
+                <li>
+Set |dataGroupsOrdered| to be the deterministic list of components for this
+type, i.e., an array containing the data group identifiers defined in
+[[?ISO18013-2]] sorted in ascending order of data group number (i.e.,
+`['DG1', 'DG2' ... 'DG11']`).
+                </li>
+                <li>
+For each bit with value `1` in |bitfieldDecoded|:
+                  <ol class="algorithm">
+                    <li>
+Set the string |dataGroupName| to |dataGroupsOrdered|[|i|], where |i| is
+the index of the bit in |bitfieldDecoded|.
+                    </li>
+                    <li>
+Set the string |dataGroupData| to a base64url encoding of the contents
+of the data group identified by |dataGroupName| in |opticalData|, as delimited by
+the data group delimiter character.
+                    </li>
+                    <li>
+Concatenate |dataGroupData| to the end of |dataGroupName|, concatenate a
+newline character (`\n`, `U+000A`) to the end, and append the result to
+|dataToCanonicalize|.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Return |dataToCanonicalize|.
+                </li>
+              </ol>
+            </section>
     </section>
 
     <section class="informative">
