@@ -124,6 +124,15 @@
             ],
             publisher: "International Civil Aviation Organization"
           },
+          "ISO15438-2015": {
+            title: "ISO/IEC 15438:2015: PDF417 Bar Code Symbology Specification",
+            date: "2015",
+            href: "https://www.iso.org/standard/65502.html",
+            authors: [
+              "ISO/IEC JTC 1/SC 31"
+            ],
+            publisher: "International Standards Organization"
+          },
           "ISO18013-2": {
             title: "ISO/IEC 18013-2:2020: Personal identification — ISO-compliant driving licence — Part 2: Machine-readable technologies",
             date: "2020",
@@ -217,7 +226,7 @@ printed on physical cards using standard printing processes.
 Physical credentials, such as driver's licenses, passports, and travel
 credentials often include machine-readable data that can be used to quickly read
 the information from the document. This information is encoded in formats such
-as PDF417, machine-readable zone (MRZ) [[ICAO9303-3]], and
+as PDF417 [[?ISO15438-2015]], machine-readable zone (MRZ) [[ICAO9303-3]], and
 other optically scannable codes that are formatted in one-dimensional or
 two-dimensional "bars"; thus the term "barcode". This information is often
 not protected from tampering and the readily available barcode generation and
@@ -746,7 +755,6 @@ that do not correspond to a component MUST be set to `0`. For more
 information on how `protectedComponentIndex` is used when generating and
 verifying digital signatures, see Section [[[#create-opticaldatabytes]]].
         </p>
-        </section>
 
         <section id="machinereadablezone">
           <h4>MachineReadableZone</h4>
