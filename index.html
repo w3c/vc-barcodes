@@ -287,209 +287,13 @@ The following sections provide a few introductory examples of the ways this
 specification can be used to enhance existing physical credentials with
 digital signatures via [=verifiable credentials=].
         </p>
-
-        <section>
-          <h3>Driver's License</h3>
-
-          <p>
-This section provides an example on how the technology in this specification
-can be utilized to secure the optical barcode on a driver's license that
-uses a PDF417 barcode. We start off with an example driver's license:
-          </p>
-
-          <figure id="dl-front">
-            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
-                src="diagrams/dl-front.png"
-                alt="Picture of the front of a driver's license issued by the state of Utopia which contains a picture of the individual that is the subject of the driver's license along with their attributes, such as name, address, height, weight, eye color, and driving privileges.">
-            <figcaption style="text-align: center;">
-  The front of a driver's license issued by the state of Utopia.
-            </figcaption>
-          </figure>
-
-          <p>
-The back of the driver's license contains a PDF417 barcode:
-          </p>
-
-          <figure id="dl-back">
-            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
-                src="diagrams/dl-back.png"
-                alt="Picture of the back of a driver's license issued by the state of Utopia, containing usage rules as well as a PDF417 barcode that encodes much of the information displayed on the front of the card.">
-            <figcaption style="text-align: center;">
-A back of a driver's license issued by the state of Utopia.
-            </figcaption>
-          </figure>
-
-          <p>
-The PDF417 data contains information that is secured using the algorithms
-described in this specification. Namely, the PDF417 barcode contains a
-<a>verifiable credential</a> of the following form.
-          </p>
-
-          <pre class="example nohighlight"
-              title="Verifiable Credential embedded in the PDF417 barcode">
-{
-  "@context": [
-    "https://www.w3.org/ns/credentials/v2",
-    "https://w3id.org/vdl/v2",
-    "https://w3id.org/vdl/utopia/v1"
-  ],
-  "type": [
-    "VerifiableCredential",
-    "OpticalBarcodeCredential"
-  ],
-  <span class="comment">// the issuer value below is defined as a URL in the 'utopia/v1' context above</span>
-  "issuer": "did:web:dmv.utopia.example",
-  "credentialStatus": {
-    "type": "TerseBitstringStatusListEntry",
-    "terseStatusListBaseUrl": "https://dmv.utopia.gov/statuses/12345/status-lists"
-    "terseStatusListIndex": 123567890
-  },
-  "credentialSubject": {
-    "type": "AamvaDriversLicenseScannableInformation",
-    "protectedComponentIndex": "uP_BA"
-  },
-  "proof": {
-    "type": "DataIntegrity",
-    "cryptosuite": "ecdsa-xi-2023",
-    <span class="comment">// the public key below is defined as a URL in the 'utopia/v1' context above</span>
-    "verificationMethod": "did:web:dmv.utopia.example#key-1",
-    "proofPurpose": "assertionMethod",
-    "proofValue": "z4peo48uwK2EF4Fta8P...HzQMDYJ34r9gL"
-  }
-}
-          </pre>
-
-          <p>
-The <a>verifiable credential</a> above is then compressed using [[CBOR-LD]]
-to the following output (in CBOR Diagnostic Notation):
-          </p>
-
-          <pre class="example nohighlight"
-              title="CBOR-LD compressed Verifiable Credential (145 bytes)">
-1281{
-  1 => [ 32768, 32769, 32770],                           <span class="comment">// @context</span>
-  155 => [ 116, 164 ],                                   <span class="comment">// type</span>
-  192 => 174,                                            <span class="comment">// issuer</span>
-  186 => { 154 => 166, 206 => 178, 208 => 1234567890 },  <span class="comment">// credentialStatus</span>
-  188 => { 154 => 172, 180 => h'753FF040 },              <span class="comment">// credentialSubject</span>
-  194 => {                                               <span class="comment">// proof</span>
-    154 => 108,                                          <span class="comment">// type</span>
-    214 => 4,                                            <span class="comment">// cryptosuite</span>
-    224 => 230                                           <span class="comment">// verificationMethod</span>
-    228 => 176,                                          <span class="comment">// proofPurpose</span>
-    210 => Uint8Array(65) [ ... ],                       <span class="comment">// proofValue</span>
-  }
-}
-          </pre>
-
-        </section>
-
-        <section>
-          <h3>Employment Authorization</h3>
-
-          <p>
-This section provides an example on how the technology in this specification
-can be utilized to secure the machine-readable zone on an employment
-authorization document that uses a machine-readable zone (MRZ) on the back of
-the card. We start off with an example employment authorization document:
-          </p>
-
-          <figure id="ead-front">
-            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
-                src="diagrams/ead-front.png"
-                alt="Picture of the front of an employment authorization document issued by the state of Utopia which contains a picture of the individual that is the subject of the document along with their attributes, such as name, address, height, weight, eye color, and employment privileges.">
-            <figcaption style="text-align: center;">
-The front of an employment authorization document issued by the state of Utopia.
-            </figcaption>
-          </figure>
-
-          <p>
-The back of the employment authorization document contains a machine-readable
-zone (MRZ) containing information designed to be read through optical character
-recognition:
-          </p>
-
-          <figure id="ead-back">
-            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
-                src="diagrams/ead-back.png"
-                alt="Picture of the back of a employment authorization document issued by the state of Utopia, containing usage rules as well as machine-readable zone data that encodes much of the information displayed on the front of the card.">
-            <figcaption style="text-align: center;">
-A back of an employment authorization document issued by the state of Utopia.
-            </figcaption>
-          </figure>
-
-          <p>
-The MRZ data contains information that is secured using the algorithms
-described in this specification. Namely, the QR Code on the front of the
-card contains a <a>verifiable credential</a> of the following form, which secures
-the information on the back of the card.
-          </p>
-
-          <pre class="example nohighlight"
-              title="Verifiable Credential expressed as a QR Code on the front of the card">
-{
-  "@context": [
-    "https://www.w3.org/ns/credentials/v2",
-    "https://w3id.org/citizenship/v2",
-    "https://w3id.org/citizenship/utopia/v1"
-  ],
-  "type": [
-    "VerifiableCredential",
-    "OpticalBarcodeCredential"
-  ],
-  <span class="comment">// the value below is defined as a URL in the 'utopia/v1' context above</span>
-  "issuer": "did:web:immigration.utopia.example",
-  "credentialSubject": {
-    "type": "MachineReadableZone",
-  },
-  "proof": {
-    "type": "DataIntegrity",
-    "cryptosuite": "ecdsa-xi-2023",
-    <span class="comment">// the value below is defined as a URL in the 'utopia/v1' context above</span>
-    "verificationMethod": "did:web:immigration.utopia.example#key-4"
-    "proofPurpose": "assertionMethod",
-    "proofValue": "z4peo48uwK2EF4Fta8P...HzQMDYJ34r9gL"
-  }
-}
-          </pre>
-
-          <p class="note" title="credentialStatus is optional">
-Readers might note that the credential above does not contain the optional
-`credentialStatus` property. Not every optical barcode credential issuer will
-have the requirement to have revocable optical barcode credentials.
-          </p>
-
-          <p>
-The <a>verifiable credential</a> above is then compressed using [[CBOR-LD]]
-to the following output (in CBOR Diagnostic Notation):
-          </p>
-
-          <pre class="example nohighlight"
-              title="CBOR-LD compressed Verifiable Credential (120 bytes)">
-{
-  1 => [ 32768, 32769, 32770],           <span class="comment">// @context</span>
-  155 => [ 116, 176 ],                   <span class="comment">// type</span>
-  208 => 194,                          <span class="comment">// issuer</span>
-  204 => { 154 => 192 },                 <span class="comment">// credentialSubject</span>
-  210 => {                               <span class="comment">// proof</span>
-    154 => 108,                          <span class="comment">// type</span>
-    226 => 4,                        <span class="comment">// cryptosuite</span>
-    236 => 242                         <span class="comment">// verificationMethod</span>
-    240 => 196,                          <span class="comment">// proofPurpose</span>
-    210 => Uint8Array(65) [ ... ],       <span class="comment">// proofValue</span>
-  }
-}
-          </pre>
-
-        </section>
-
         <section>
           <h3>Birth Certificate</h3>
 
           <p>
-This section provides an example on how the technology in this specification can
-be utilized to secure a birth certificate as a [=verifiable credential=], which
-is then expressed as a QR Code on the printed paper document:
+This section provides an example of how the technology in this specification can
+be used to secure a birth certificate as a [=verifiable credential=], which
+is then expressed as a QR Code on the printed paper document.
           </p>
 
           <figure id="birth-certificate">
@@ -549,7 +353,230 @@ the encoding are available as separate tabs below:
   }
 }
           </pre>
+          <p>
+This is an example of a straightforward use case where a barcode
+containing a [=verifiable credential=] is added to a document
+that does not currently contain machine-readable data. Once
+the [=verifiable credential=] is issued and compressed with CBOR-LD,
+the CBOR-LD payload can be added to a QR code and the QR code added
+to the physical document.
+          </p>
+        </section>
+        <section>
+          <h3>Driver's License</h3>
 
+          <p>
+This section provides an example of how the technology in this specification
+can be used to secure a PDF417 optical barcode on a driver's license. We start
+with an example driver's license:
+          </p>
+
+          <figure id="dl-front">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/dl-front.png"
+                alt="Picture of the front of a driver's license issued by the state of Utopia, containing a picture of the individual that is the subject of the driver's license along with their attributes, such as name, address, height, weight, eye color, and driving privileges.">
+            <figcaption style="text-align: center;">
+  The front of a driver's license issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The back of the driver's license contains a PDF417 barcode:
+          </p>
+
+          <figure id="dl-back">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/dl-back.png"
+                alt="Picture of the back of a driver's license issued by the state of Utopia, containing usage rules as well as a PDF417 barcode that encodes much of the information displayed on the front of the card.">
+            <figcaption style="text-align: center;">
+A back of a driver's license issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The PDF417 data contains information that is secured using the algorithms
+described in this specification. More specifically, the PDF417 barcode
+contains a [=verifiable credential=] of the following form.
+          </p>
+
+          <pre class="example nohighlight"
+              title="Verifiable Credential embedded in the PDF417 barcode">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vc-barcodes/v1",
+    "https://w3id.org/utopia/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  "credentialSubject": {
+    "type": "AamvaDriversLicenseScannableInformation",
+    "protectedComponentIndex": "uggAg"
+  },
+  "issuer": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
+  "credentialStatus": {
+    "type": "TerseBitstringStatusListEntry",
+    "terseStatusListBaseUrl": "https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists",
+    "terseStatusListIndex": 3851559041
+  },
+  "proof": {
+    "type": "DataIntegrityProof",
+    "verificationMethod": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj#zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
+    "cryptosuite": "ecdsa-xi-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4g6G3dAZhhtPxPWgFvkiRv7krtCaeJxjokvL46fchAFCXEY3FeX2vn46MDgBaw779g1E1jswZJxxreZDCrtHg2qH"
+  }
+}
+          </pre>
+          <p>
+This example shows a barcode being augmented with
+a [=verifiable credential=]. The subject of the credential is the
+other data in the barcode, which is protected by the Verifiable Credential's
+digital signature. The `protectedComponentIndex` field in
+`credentialSubject` indicates exactly what data in the rest of the barcode
+is protected.
+          </p>
+          <p>
+The <a>verifiable credential</a> above is compressed using [[CBOR-LD]]
+to the following output (in CBOR Diagnostic Notation):
+          </p>
+
+          <pre class="example nohighlight"
+              title="CBOR-LD compressed Verifiable Credential">
+51997([
+100,
+{
+  1: [32768, 32769, 32770],                     <span class="comment">// @context</span>
+  157: [118, 164],                              <span class="comment">// type</span>
+  184: {156: 166, 206: 178, 208: 3851559041},   <span class="comment">// credentialStatus</span>
+  186: {156: 160, 168: h'75820020'},            <span class="comment">// credentialSubject</span>
+  190: 170,                                     <span class="comment">// issuer</span>
+  192: {                                        <span class="comment">// proof</span>
+    156: 108,
+    214: 4,
+    224: 230,
+    226: h'7AB...',                             
+    228: 172
+  }
+}
+])
+          </pre>
+          <p>
+Once encoded as CBOR-LD, the [=verifiable credential=] is inserted into the
+PDF417. For more details regarding this example, see Section
+<a href="#test-vectors"></a>.
+          </p>
+
+        </section>
+
+        <section>
+          <h3>Employment Authorization</h3>
+
+          <p>
+This section provides an example of how the technology in this specification
+can be used to secure the machine-readable zone (MRZ) of an employment
+authorization document that uses a machine-readable zone (MRZ) on the back of
+the card. We start off with an example employment authorization document:
+          </p>
+
+          <figure id="ead-front">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/ead-front.png"
+                alt="Picture of the front of an employment authorization document issued by the state of Utopia which contains a picture of the individual that is the subject of the document along with their attributes, such as name, address, height, weight, eye color, and employment privileges.">
+            <figcaption style="text-align: center;">
+The front of an employment authorization document issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The back of the employment authorization document contains a machine-readable
+zone (MRZ) containing information designed to be read through optical character
+recognition:
+          </p>
+
+          <figure id="ead-back">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/ead-back.png"
+                alt="Picture of the back of a employment authorization document issued by the state of Utopia, containing usage rules as well as machine-readable zone data that encodes much of the information displayed on the front of the card.">
+            <figcaption style="text-align: center;">
+A back of an employment authorization document issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The MRZ data contains information that is secured using the algorithms
+described in this specification. Specifically, the QR Code on the front of the
+card contains a [=verifiable credential=] of the following form, which secures
+the information on the back of the card.
+          </p>
+
+          <pre class="example nohighlight"
+              title="Verifiable Credential expressed as a QR Code on the front of the card">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vc-barcodes/v1",
+    "https://w3id.org/utopia/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  "credentialSubject": {
+    "type": "MachineReadableZone"
+  },
+  "issuer": "did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj",
+  "proof": {
+    "type": "DataIntegrityProof",
+    "verificationMethod": "did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj#zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj",
+    "cryptosuite": "ecdsa-xi-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4B8..."
+  }
+}
+          </pre>
+
+          <p class="note" title="credentialStatus is optional">
+Readers might note that the credential above does not contain the optional
+`credentialStatus` property. Not every optical barcode credential issuer will
+require that the optical barcode credentials they issue be revocable.
+          </p>
+          <p>
+Similarly to the previous example, here we are augmenting existing
+machine-readable data (an MRZ) on a document with a [=verifiable credential=].
+As such, the subject of the credential is the MRZ.
+          </p>
+          <p>
+The [=verifiable credential=] above is compressed using [[CBOR-LD]]
+to the following output (in CBOR Diagnostic Notation):
+          </p>
+
+          <pre class="example nohighlight"
+              title="CBOR-LD compressed Verifiable Credential (120 bytes)">
+51997([
+100,
+{
+  1: [32768, 32769, 32770],                     <span class="comment">// @context</span>
+  157: [118, 164],                              <span class="comment">// type</span>
+  186: {156: 162},                              <span class="comment">// credentialSubject</span>
+  190: 174,                                     <span class="comment">// issuer</span>
+  192: {                                        <span class="comment">// proof</span>
+    156: 108,
+    210: 4,
+    220: 226,
+    222: h'7A9EC7F688F60CAA8C757592250B3F6D6E18419941F186E1ED4245770E687502D51D01CD2C2295E4338178A51A35C2F044A85598E15DB9AEF00261BC5C95A744E7',
+    224: 176
+  }
+}
+])
+          </pre>
+          <p>
+Once encoded as CBOR-LD, the [=verifiable credential=] is inserted into the
+PDF417. For more details regarding this example, see Section
+<a href="#test-vectors"></a>.
+          </p>
         </section>
 
       </section>
