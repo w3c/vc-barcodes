@@ -1,0 +1,112 @@
+<svg viewBox="0 0 1320 1150" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+<rect x="0" y="0" width="1320" height="1150" fill="#ffffff"/>
+<rect x="60" y="25" width="1080" height="455" rx="12" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="74" y="51" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700" fill="#475569">C1: Issuer System</text>
+<rect x="340" y="745" width="840" height="355" rx="12" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="354" y="771" font-family="Helvetica,Arial,sans-serif" font-size="16" font-weight="700" fill="#475569">C3: Verifier System</text>
+<rect x="430" y="60" width="260" height="56" rx="24" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+<text x="560.0" y="93.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">E1: Issuing Authority</text>
+<rect x="810" y="60" width="260" height="56" rx="6" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+<text x="940.0" y="84.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">P7: Status List</text>
+<text x="940.0" y="104.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">Publication</text>
+<rect x="90" y="170" width="220" height="56" rx="6" fill="#fef9c3" stroke="#a16207" stroke-width="2"/>
+<text x="200.0" y="203.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">S1: Issuer Key Store</text>
+<rect x="430" y="170" width="260" height="56" rx="6" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+<text x="560.0" y="194.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">P1: Credential</text>
+<text x="560.0" y="214.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">Creation &amp; Signing</text>
+<rect x="810" y="170" width="260" height="56" rx="6" fill="#ffedd5" stroke="#c2410c" stroke-width="2"/>
+<text x="940.0" y="194.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">O2: Optical</text>
+<text x="940.0" y="214.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">Data Bytes (xi)</text>
+<rect x="90" y="280" width="260" height="56" rx="6" fill="#ffedd5" stroke="#c2410c" stroke-width="2"/>
+<text x="220.0" y="304.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">O4: Generic</text>
+<text x="220.0" y="324.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">Verifiable Credential</text>
+<rect x="430" y="280" width="260" height="56" rx="6" fill="#ffedd5" stroke="#c2410c" stroke-width="2"/>
+<text x="560.0" y="304.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">O1:</text>
+<text x="560.0" y="324.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">OpticalBarcodeCredential</text>
+<rect x="810" y="280" width="260" height="56" rx="6" fill="#ffedd5" stroke="#c2410c" stroke-width="2"/>
+<text x="940.0" y="304.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">O3:</text>
+<text x="940.0" y="324.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">BitstringStatusListCredential</text>
+<rect x="430" y="390" width="260" height="56" rx="6" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+<text x="560.0" y="414.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">P2: CBOR-LD</text>
+<text x="560.0" y="434.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">Compression &amp; Encoding</text>
+<rect x="810" y="390" width="260" height="56" rx="6" fill="#fef9c3" stroke="#a16207" stroke-width="2"/>
+<text x="940.0" y="423.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">S2: Status List Store</text>
+<rect x="430" y="540" width="260" height="56" rx="24" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+<text x="560.0" y="573.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">E4: Document Manufacturer</text>
+<rect x="760" y="540" width="260" height="56" rx="6" fill="#fef9c3" stroke="#a16207" stroke-width="2"/>
+<text x="890.0" y="564.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">S4: Physical</text>
+<text x="890.0" y="584.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">Document / Barcode</text>
+<rect x="760" y="650" width="260" height="56" rx="24" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+<text x="890.0" y="683.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">E2: Holder</text>
+<rect x="400" y="780" width="200" height="56" rx="24" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+<text x="500.0" y="813.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">E3: Verifier</text>
+<rect x="760" y="780" width="260" height="56" rx="6" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+<text x="890.0" y="813.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">P3: Barcode Scan &amp; Decode</text>
+<rect x="360" y="890" width="250" height="56" rx="6" fill="#fef9c3" stroke="#a16207" stroke-width="2"/>
+<text x="485.0" y="923.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">S3: Verifier Trust Store</text>
+<rect x="760" y="890" width="260" height="56" rx="6" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+<text x="890.0" y="923.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">P4: Proof Verification</text>
+<rect x="560" y="1000" width="320" height="56" rx="6" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+<text x="720.0" y="1024.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">P5: Identity &amp;</text>
+<text x="720.0" y="1044.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">Attribute Cross-Check</text>
+<rect x="950" y="1000" width="200" height="56" rx="6" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+<text x="1050.0" y="1033.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111">P6: Status Check</text>
+<path d="M 560 116 L 560 170" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="525.3" y="134" width="69.4" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="560" y="147" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Initiates</text>
+<path d="M 690 88 L 810 88" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="715.3" y="79" width="69.4" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="750" y="92" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Initiates</text>
+<path d="M 310 198 L 430 198" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="325.4" y="189" width="89.19999999999999" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="370" y="202" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Provides Key</text>
+<path d="M 560 226 L 560 280" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="528.6" y="244" width="62.8" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="560" y="257" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Produces</text>
+<path d="M 690 198 L 810 198" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="708.7" y="172" width="82.6" height="34" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="750" y="185" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Binds Extra</text>
+<text x="750" y="200" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Information</text>
+<path d="M 1070 88 L 1110 88 L 1110 308 L 1070 308" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="1078.6" y="186" width="62.8" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="1110" y="199" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Produces</text>
+<path d="M 940 336 L 940 390" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="875.6" y="354" width="128.8" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="940" y="367" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">F5: Publish Status</text>
+<path d="M 560 336 L 560 390" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="498.9" y="354" width="122.19999999999999" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="560" y="367" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Compress &amp; Encode</text>
+<path d="M 460 226 L 460 252 L 220 252 L 220 280" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="308.6" y="243" width="62.8" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="340" y="256" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Produces</text>
+<path d="M 220 336 L 220 418 L 430 418" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="263.9" y="409" width="122.19999999999999" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="325" y="422" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Compress &amp; Encode</text>
+<path d="M 560 446 L 560 540" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="469.2" y="486" width="181.6" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="560" y="499" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">F1: Render &amp; Print Barcode</text>
+<path d="M 690 568 L 760 568" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="698.0" y="547" width="54" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="725" y="560" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Issues</text>
+<path d="M 890 596 L 890 650" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="852.0" y="614" width="76.0" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="890" y="627" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Carried by</text>
+<path d="M 890 706 L 890 780" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="819.0" y="732" width="142.0" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="890" y="745" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">F2: Present Document</text>
+<path d="M 600 808 L 760 808" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="648.6" y="799" width="62.8" height="18" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="680" y="812" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Operates</text>
+<path d="M 890 836 L 890 890" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M 610 918 L 760 918" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="617.3" y="892" width="135.39999999999998" height="34" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="685" y="905" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">F3: Resolve</text>
+<text x="685" y="920" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">Verification Method</text>
+<path d="M 810 946 L 810 1000" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M 990 946 L 990 1000" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M 1150 1028 L 1240 1028 L 1240 418 L 1070 418" fill="none" stroke="#334155" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<rect x="1182.2" y="690" width="115.6" height="34" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" opacity="0.96"/>
+<text x="1240" y="703" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">F4: Fetch Status</text>
+<text x="1240" y="718" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11.5" fill="#334155">List (optional)</text>
+</svg>
