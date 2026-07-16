@@ -1,0 +1,29 @@
+(function () {
+  var threat = {
+  "id": "T17",
+  "name": "Cross-Verifier Linkage of the Holder",
+  "desc": "The signed barcode value on a given document is static and identical every time it is presented. Distinct [=E3|verifiers=] who scan the same document can use the unchanging credential bytes (and unique identifiers such as embedded status information) as a persistent correlator to link a [=E2|holder=]'s separate interactions into a single profile.",
+  "response": [
+    {
+      "id": "R17",
+      "name": "Acknowledge Static-Token Linkability",
+      "type": "Accept",
+      "desc": "A printed barcode is a fixed value and is therefore inherently linkable when presented repeatedly; this specification cannot make a static optical artifact unlinkable across verifiers. Deployments limit retention and sharing of scanned credential data through policy and governance, and ecosystems needing presentation-time unlinkability adopt complementary mechanisms. The linkability of a static barcode is acknowledged and accepted as a property of the optical medium."
+    }
+  ],
+  "elements": [
+    "E2",
+    "E3",
+    "O1",
+    "O4",
+    "S4"
+  ],
+  "tags": [
+    "privacy"
+  ],
+  "taxonomyName": "STRIDE",
+  "taxonomyClass": "Information Disclosure"
+};
+
+  window.ThreatModel.register(threat);
+})();
