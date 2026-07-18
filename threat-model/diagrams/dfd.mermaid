@@ -5,13 +5,7 @@ flowchart TD
   classDef object  fill:#ffedd5,stroke:#c2410c,color:#000
 
   E2["E2: Holder"]:::entity
-  E3["E3: Verifier"]:::entity
   E4["E4: Document Manufacturer"]:::entity
-
-  O1["O1: OpticalBarcodeCredential"]:::object
-  O2["O2: Optical Data Bytes (xi)"]:::object
-  O3["O3: BitstringStatusListCredential"]:::object
-  O4["O4: Generic Verifiable Credential"]:::object
 
   subgraph C1["C1: Issuer System"]
     E1["E1: Issuing Authority"]:::entity
@@ -20,27 +14,32 @@ flowchart TD
     P7["P7: Status List Publication"]:::process
     S1[("S1: Issuer Key Store")]:::store
     S2[("S2: Status List Store")]:::store
+    O1["O1: OpticalBarcodeCredential"]:::object
+    O2["O2: Optical Data Bytes (xi)"]:::object
+    O3["O3: BitstringStatusListCredential"]:::object
+    O4["O4: Generic Verifiable Credential"]:::object
   end
 
   subgraph C3["C3: Verifier System"]
     P3["P3: Barcode Scan and Decode"]:::process
-    P4["P4: Proof Verification (ecdsa-xi-2023)"]:::process
+    P4["P4: Proof Verification"]:::process
     P5["P5: Identity and Attribute Cross-Check"]:::process
     P6["P6: Status Check"]:::process
     S3[("S3: Verifier Trust Store")]:::store
+    E3["E3: Verifier"]:::entity
   end
 
   S4[("S4: Physical Document / Barcode")]:::store
 
   E1 -->|"Initiates"| P1
-  S1 -->|"Provides Signing Key"| P1
+  S1 -->|"Provides Key"| P1
   P1 -->|"Binds Extra Information"| O2
   P1 -->|"Produces"| O1
   P1 -->|"Produces"| O4
-  O4 -->|"Compressed and Encoded"| P2
-  O1 -->|"Compressed and Encoded"| P2
-  P2 -->|"F1: Render and Print Barcode"| E4
-  E4 -->|"Issues Physical Document"| S4
+  O4 -->|"Compress & Encode"| P2
+  O1 -->|"Compress & Encode"| P2
+  P2 -->|"F1: Render & Print Barcode"| E4
+  E4 -->|"Issues"| S4
   S4 -->|"Carried by"| E2
 
   E1 -->|"Initiates"| P7
@@ -48,11 +47,9 @@ flowchart TD
   O3 -->|"F5: Publish Status"| S2
 
   E2 -->|"F2: Present Document"| P3
-  P3 -->|"Reconstructs"| O2
-  P3 -->|"Recovers"| O1
   E3 -->|"Operates"| P3
   P3 --> P4
   S3 -->|"F3: Resolve Verification Method"| P4
   P4 --> P5
   P4 --> P6
-  P6 -.->|"F4: Fetch Status List — optional"| S2
+  P6 -.->|"F4: Fetch Status List (optional)"| S2
