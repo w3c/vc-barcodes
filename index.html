@@ -208,8 +208,8 @@ ol.algorithm li:before {
   <body>
     <section id="abstract">
       <p>
-This specification describes a mechanism to protect optical barcodes,
-such as those found on driver's licenses (PDF417) and travel documents (MRZ),
+This specification describes a mechanism to encode data,
+such as that found on driver's licenses (PDF417) and travel documents (MRZ),
 using Verifiable Credentials [[VC-DATA-MODEL-2.0]]. The Verifiable Credential
 representations are compact enough such that they fit in under 150 bytes and
 can thus be integrated with traditional two-dimensional barcodes that are
@@ -228,10 +228,9 @@ credentials often include machine-readable data that can be used to quickly read
 the information from the document. This information is encoded in formats such
 as PDF417 [[?ISO15438-2015]], machine-readable zone (MRZ) [[ICAO9303-3]], and
 other optically scannable codes that are formatted in one-dimensional or
-two-dimensional "bars"; thus the term "barcode". This information is often
-not protected from tampering and the readily available barcode generation and
-scanning libraries mean that it is fairly trivial for anyone to generate these
-barcodes.
+two-dimensional "bars"; thus the term "barcode". Encoding the information as a 
+Verifiable Credential means that the data is tamper-evident. Readily available barcode generation and
+scanning libraries make it fairly trivial for anyone to generate these barcodes.
       </p>
       <p>
 It is, therefore, useful for an <a>issuer</a> of these barcodes to protect
@@ -255,7 +254,7 @@ express the information as an optical barcode, or embedded within an optical
 barcode.
       </p>
       <p>
-This specification describes a mechanism to protect optical barcodes,
+This specification describes a mechanism to protect the content of optical barcodes,
 such as those found on driver's licenses (PDF417) and travel documents (MRZ),
 by using a <a>verifiable credential</a> [[VC-DATA-MODEL-2.0]] to express
 information about either the barcode itself or the subject of the barcode.
@@ -264,7 +263,7 @@ Next, this Verifiable Credential is secured using Data Integrity
       </p>
       <p>
 There are two main mechanisms by which a Verifiable Credential can
-be used to protect a barcode:
+be used to protect the content of a barcode:
         <ul>
           <li>
 A barcode containing a Verifiable Credential can be added to a physical document —
@@ -302,7 +301,7 @@ digital signatures via [=verifiable credentials=].
 
           <p>
 This section provides an example on how the technology in this specification
-can be utilized to secure the optical barcode on a driver's license that
+can be utilized to secure the content of an optical barcode on a driver's license that
 uses a PDF417 barcode. We start off with an example driver's license:
           </p>
 
@@ -398,7 +397,7 @@ to the following output (in CBOR Diagnostic Notation):
 
           <p>
 This section provides an example on how the technology in this specification
-can be utilized to secure the machine-readable zone on an employment
+can be utilized to secure the content of an employment
 authorization document that uses a machine-readable zone (MRZ) on the back of
 the card. We start off with an example employment authorization document:
           </p>
