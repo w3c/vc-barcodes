@@ -180,6 +180,8 @@ and publishes status information, the
 document, the <strong>[=E3|Verifier=] (E3)</strong> who scans, verifies, and
 cross-checks the document, and the <strong>[=E4|Document Manufacturer=]
 (E4)</strong> who renders the encoded credential onto a physical card.
+In this instantiation we assume that the holder and presenter of a physical
+document containing a Verifiable Credential Barcode are the same individual.
       </p>
       <p>
 Both use cases appear in the data flow diagram below. The specification's general
@@ -439,9 +441,9 @@ boundary between the holder's possession and the
                 data-lt="F3|Resolve Verification Method">F3 Resolve Verification Method</dfn>
             </td>
             <td>
-The data flow by which a verifier obtains the issuer's public key material —
-for example by resolving a <code>did:web</code> identifier - in order to verify
-the proof on the credential.
+The data flow by which a verifier obtains the issuer's public key material in order to verify the
+credential. This might be via [=S3|local trust store] access, or it might involve external
+verification method resolution such as resolving a <code>did:web</code> identifier.
             </td>
           </tr>
           <tr>
@@ -450,8 +452,8 @@ the proof on the credential.
                 data-lt="F4|Fetch Status List">F4 Fetch Status List</dfn>
             </td>
             <td>
-The data flow by which a verifier retrieves the
-<code>BitstringStatusListCredential</code> from the host identified by
+The data flow by which a verifier retrieves, typically with a standard HTTP GET request, the
+<code>BitstringStatusListCredential</code> Verifiable Credential from the host identified by
 <code>terseStatusListBaseUrl</code> in order to perform a status check.
             </td>
           </tr>
@@ -507,11 +509,11 @@ issuer is trusted.
             </td>
             <td>
 The physical document that carries the printed optical barcode. As a
-data store, it persistently holds the encoded credential - a
-[=O4|generic verifiable credential=] or an
-<code>OpticalBarcodeCredential</code> - and is the medium presented by the
-holder and scanned by the verifier. It is outside any compute boundary and is
-readable by anything with optical access to it.
+data store, it persistently holds one or more encoded Verifiable Credentials
+and is the medium presented by the holder and scanned by the verifier. It is
+outside any compute boundary and is readable by anything with optical access to it.
+This store moves from the custody of the [=E4|Document Manufacturer=], inside the
+[=C2|manufacturer system boundary=], to the custody of the [=E2|holder=].
             </td>
           </tr>
           <tr>
@@ -585,9 +587,9 @@ operated by the issuing authority - that runs the
                 data-lt="C2|Manufacturer System">C2 Manufacturer System</dfn>
             </td>
             <td>
-The system boundary operated by the [=E4|document manufacturer=] that renders
-the encoded credential into a printed optical barcode and personalizes the
-physical document.
+The system boundary operated and controlled by the [=E4|document manufacturer=] that receives
+as input the encoded credential and renders it into a printed optical barcode via [=F1|Render and Print=]
+and manufactures the physical document.
             </td>
           </tr>
           <tr>
