@@ -21,7 +21,8 @@
     "S3"
   ],
   "tags": [
-    "security"
+    "security",
+    "safety"
   ],
   "taxonomyName": "STRIDE",
   "taxonomyClass": "Spoofing"
