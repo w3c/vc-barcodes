@@ -204,6 +204,7 @@ ol.algorithm li:before {
   content: counters(numsection, ".") ") ";
 }
     </style>
+    <link rel="stylesheet" href="threat-model/threats/threat-model.css" />
   </head>
   <body>
     <section id="abstract">
@@ -1355,108 +1356,180 @@ If <var>options</var>.<var>type</var> is not set to `DataIntegrityProof` and
       </section>
     </section>
 
-    <section class="informative">
-      <h2>Security Considerations</h2>
-
-      <p class="advisement">
-Before reading this section, readers are urged to familiarize themselves
-with general security advice provided in the
-<a href="https://www.w3.org/TR/vc-data-integrity/#security-considerations">
-Security Considerations section of the Data Integrity specification</a> as
-well as the specific security advice provided in the
-<a href="https://www.w3.org/TR/vc-di-ecdsa/#security-considerations">
-Security Considerations section of the ECDSA Cryptosuites specification</a>.
-      </p>
+    <section class="informative" id="threat-model">
+      <h2>Threat Model</h2>
 
       <p>
-In the following sections, we review these important points and direct
-the reader to additional information.
+This section details the general threat model for this specification, including
+security, privacy, safety, and interoperability considerations. Each threat
+below links to its full analysis — description, responses, affected system
+elements, and STRIDE classification — in the accompanying
+<a href="threat-model/">Verifiable Credential Barcodes Threat Model</a>
+document, which also describes the modeled ecosystem, its data flow diagram,
+and its stakeholders. The model covers both <code>OpticalBarcodeCredential</code>
+flows, in which the digital signature covers other machine-readable data on
+the physical document, and generic [=verifiable credentials=] encoded as barcodes
+via the general algorithms, whose digital signatures cover only their own claims.
       </p>
 
       <section>
-        <h3>Optical Data Duplication</h3>
-        <p>
-One attack vector against `OpticalBarcodeCredentials` involves duplicating
-an optical barcode containing a digital signature for use on a fraudulent document.
-While a duplicated barcode will pass signature validation like the original, this attack
-is mitigated by the document verifier checking the following three things: the signed data
-matches the data visible on the document, the signed data matches the physical attributes of
-the user, and the visible data matches the physical attributes of the user. When these
-three are all equivalent, the only way the `OpticalBarcodeCredential` could be a
-duplicate is if the fraudulent document creator had access to a real
-`OpticalBarcodeCredential` where the signed physical attributes fully overlapped
-with those of the user of the fraudulent document. The low likelihood of an undetected
-stolen `OpticalBarcodeCredential` existing that completely matches the appearance
-of an arbitrary person makes this attack unlikely to succeed.
-        </p>
-      </section>
-      <section>
-        <h3>Partially Signed Optical Data</h3>
-        <p>
-It is possible that in some cases the digital signature cannot be created
-over the entirety of the existing optical data. For example, consider a case
-where a serial number is injected by a physical credential manufacturer such
-that it is not known to the issuer at signature time. In this case, the verifier
-will assume that any data not digitally signed could have been changed in
-the optical barcode without impacting the `OpticalBarcodeCredential's`
-ability to successfully validate.
-       </p>
-       <p>
-When checking that data from the optical barcode matches the data visible on the
-document as well as the characteristics of the document holder, implementers
-are advised to only use the fields that are digitally signed. [=Verifiers=] are
-advised to only use fields protected by the digital signature, no matter how
-commonly the other fields are used for fraud detection on unsigned documents. For
-example, if eye color and hair color are protected by the signature, but the
-[=holder=]'s portrait is not, [=verifiers=] are advised to emphasize the eye
-color and hair color when attempting to detect fraud over the portrait.
-       </p>
-       <p>
-Implementers of software used by [=verifiers=] are advised to only display card data
-that has been secured via digital signature during the verification process. Displaying
-unsigned data, which could have been tampered with, could interfere with fraud detection.
-       </p>
-      </section>
-      <section>
-        <h3>Safe Verification</h3>
-        <p>
-[=Verifiers=] are advised to always use trusted programs and interfaces to check the validity
-of the `OpticalBarcodeCredential`. Use of untrusted software to verify a document
-could result in a fraudulent credential being accepted, or a genuine credential being stolen.
-        </p>
-      </section>
-    </section>
-
-    <section>
-      <h2>Privacy Considerations</h2>
-
-      <p class="advisement">
-Before reading this section, readers are urged to familiarize themselves
-with general security advice provided in the
-<a href="https://www.w3.org/TR/vc-data-integrity/#privacy-considerations">
-Security Considerations section of the Data Integrity specification</a> as
-well as the specific security advice provided in the
-<a href="https://www.w3.org/TR/vc-di-ecdsa/#privacy-considerations">
-Security Considerations section of the ECDSA Cryptosuites specification</a>.
-      </p>
-
-      <p>
-The following section describes privacy considerations that developers
-implementing this specification should be aware of in order to avoid violating
-privacy assumptions.
-      </p>
-
-      <div class="issue">
-Add more privacy considerations including at least the following:
-        <ul>
-          <li>
-Barcodes can be read at a distance; therefore information that is very
-sensitive should not be encoded into a barcode and might be better transmitted
-via NFC or an encrypted online communication channel.
+        <h3>Target Threats</h3>
+        <ol class="threat-toc">
+          <li value="1">
+            <a href="threat-model#t1-barcode-data-tampering">
+Barcode Data Tampering</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker alters the machine-readable data on a physical document after issuance to change signed attributes such as date of birth, expiration date, or document number.
           </li>
-        </ul>
-      </div>
-
+          <li value="2">
+            <a href="threat-model#t2-forgery-of-documents-without-machine-readable-information">
+Forgery of Documents Without Machine-Readable Information</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+A document issued with no machine-readable information can be checked only by human inspection, leaving forgery and alteration cryptographically undetectable; a generic [=verifiable credential=] encoded as a barcode makes the issuer's claims machine-verifiable.
+          </li>
+          <li value="3">
+            <a href="threat-model#t3-issuer-spoofing-via-forged-barcode">
+Issuer Spoofing via Forged Barcode</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker fabricates an <code>OpticalBarcodeCredential</code> and prints it onto a counterfeit document so that it appears to have been issued by a legitimate issuing authority.
+          </li>
+          <li value="4">
+            <a href="threat-model#t4-acceptance-of-a-revoked-or-suspended-document">
+Acceptance of a Revoked or Suspended Document</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker continues to use a document after a status change that should render it unusable, and a [=verifier=] with no ability to check status in real time cannot detect the change.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>Implementation Threats</h3>
+        <ol class="threat-toc">
+          <li value="5">
+            <a href="threat-model#t5-optical-data-duplication">
+Optical Data Duplication</a>
+            <span class="threat-tag threat-tag-safety">safety</span> <span class="threat-tag threat-tag-security">security</span> —
+A signed barcode copied from a genuine document passes proof verification on a fraudulent one, especially where the signed attributes are coarse and not biometrically bound.
+          </li>
+          <li value="6">
+            <a href="threat-model#t6-unsigned-field-substitution">
+Unsigned-Field Substitution</a>
+            <span class="threat-tag threat-tag-safety">safety</span> <span class="threat-tag threat-tag-security">security</span> —
+An attacker modifies barcode fields that are not covered by the digital signature, deceiving [=verifiers=] that rely on unsigned data for fraud detection.
+          </li>
+          <li value="7">
+            <a href="threat-model#t7-untrusted-verification-software">
+Untrusted Verification Software</a>
+            <span class="threat-tag threat-tag-security">security</span> <span class="threat-tag threat-tag-privacy">privacy</span> —
+Malicious or unvetted verification software falsely reports fraudulent credentials as valid, suppresses failed checks, or exfiltrates the personal data read from documents.
+          </li>
+          <li value="8">
+            <a href="threat-model#t8-failure-to-surface-signed-vs-unsigned-coverage">
+Failure to Surface Signed-vs-Unsigned Coverage</a>
+            <span class="threat-tag threat-tag-safety">safety</span> —
+Verification software fails to surface what each credential's digital signature does and does not cover — a generic [=verifiable credential=]'s signature covers only its own claims, and an <code>OpticalBarcodeCredential</code>'s covers only its selected optical data — letting unsigned or mismatched document data carry the same trust as signed data.
+          </li>
+          <li value="9">
+            <a href="threat-model#t9-verifier-trust-anchor-misconfiguration">
+Verifier Trust Anchor Misconfiguration</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An overly broad, stale, or attacker-supplied trust store causes a [=verifier=] to accept credentials from entities that are not authoritative for the presented document type.
+          </li>
+          <li value="10">
+            <a href="threat-model#t10-denial-of-service-of-status-services">
+Denial of Service of Status Services</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker renders the status services unreachable, preventing [=verifiers=] from learning whether documents have been revoked or suspended.
+          </li>
+          <li value="11">
+            <a href="threat-model#t11-stale-status-via-aggressive-caching">
+Stale Status via Aggressive Caching</a>
+            <span class="threat-tag threat-tag-security">security</span> <span class="threat-tag threat-tag-privacy">privacy</span> —
+Aggressively cached status lists allow a document revoked after the cache was populated to continue to be accepted.
+          </li>
+          <li value="12">
+            <a href="threat-model#t12-under-inclusive-protected-component-index">
+Under-Inclusive Protected Component Index</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An issuer that signs too few barcode fields produces credentials that verify successfully while leaving most of the document's data freely modifiable.
+          </li>
+          <li value="23">
+            <a href="threat-model#t23-credential-subject-type-confusion">
+Credential Subject Type Confusion</a>
+            <span class="threat-tag threat-tag-security">security</span> <span class="threat-tag threat-tag-interoperability">interoperability</span> —
+A credential processed under the wrong <code>credentialSubject</code> subclass — an unrecognized third-party type, a weaker asserted type, or generic superclass handling — bypasses the type-specific extraction, encoding, and verification rules.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>External Threats</h3>
+        <ol class="threat-toc">
+          <li value="14">
+            <a href="threat-model#t14-physical-medium-information-leakage">
+Physical Medium Information Leakage</a>
+            <span class="threat-tag threat-tag-privacy">privacy</span> —
+The barcode can be captured off the document's surface — for example by a high-resolution video camera at a convenience store — without the [=holder=]'s awareness, leaking everything it encodes in a way digital presentations do not.
+          </li>
+          <li value="15">
+            <a href="threat-model#t15-correlation-via-status-list-retrieval">
+Correlation via Status List Retrieval</a>
+            <span class="threat-tag threat-tag-privacy">privacy</span> —
+The host of a status list observes [=verifiers=]' retrieval requests and can build a picture of where and when documents are being checked.
+          </li>
+          <li value="16">
+            <a href="threat-model#t16-compelled-presentation-and-over-disclosure">
+Compelled Presentation and Over-Disclosure</a>
+            <span class="threat-tag threat-tag-privacy">privacy</span> —
+Presenting a barcode discloses every signed attribute it carries, with no mechanism for selective disclosure.
+          </li>
+          <li value="17">
+            <a href="threat-model#t17-cross-verifier-linkage-of-the-holder">
+Cross-Verifier Linkage of the Holder</a>
+            <span class="threat-tag threat-tag-privacy">privacy</span> —
+The static barcode value acts as a persistent correlator that lets [=verifiers=] link a [=holder=]'s separate presentations into a single profile.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>Dependency Threats</h3>
+        <ol class="threat-toc">
+          <li value="18">
+            <a href="threat-model#t18-cryptographically-relevant-quantum-computer-breaks-ecdsa">
+Cryptographically Relevant Quantum Computer Breaks ECDSA</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+A cryptographically relevant quantum computer forges the ECDSA signatures protecting long-lived physical documents, including retroactively against already-issued barcodes.
+          </li>
+          <li value="13">
+            <a href="threat-model#t13-quishing-via-malicious-barcode-injection">
+Quishing via Malicious Barcode Injection</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+A barcode presented where a VCB is expected — but crafted to hijack the interaction — attacks the barcode scanner, JSON-LD/CBOR-LD processors, HTTP client, or cryptographic hardware and software in the [=verifier=]'s pipeline.
+          </li>
+          <li value="22">
+            <a href="threat-model#t22-biometric-falsification">
+Biometric Falsification</a>
+            <span class="threat-tag threat-tag-security">security</span> <span class="threat-tag threat-tag-safety">safety</span> —
+Easily cloned biometric data, such as images of individuals, produces false positives on biometric checks.
+          </li>
+          <li value="19">
+            <a href="threat-model#t19-compromise-of-the-issuer-signing-key">
+Compromise of the Issuer Signing Key</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker who obtains the issuer's private signing key can mint unlimited valid credentials indistinguishable from genuine ones.
+          </li>
+          <li value="20">
+            <a href="threat-model#t20-key-resolution-and-key-management-spoofing">
+Key Resolution and Key-Management Spoofing</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker who controls or redirects where issuer keys are made available causes [=verifiers=] to validate attacker-signed credentials as genuine.
+          </li>
+          <li value="21">
+            <a href="threat-model#t21-base-encoding-and-multibase-header-confusion">
+Base-Encoding and Multibase Header Confusion</a>
+            <span class="threat-tag threat-tag-interoperability">interoperability</span> <span class="threat-tag threat-tag-security">security</span> —
+Mismatched per-type character-encoding assumptions between the document manufacturer and the [=verifier=] cause the bytes verified to differ from the bytes signed.
+          </li>
+        </ol>
+      </section>
     </section>
 
     <section class="appendix" id="aamva">
