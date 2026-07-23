@@ -1,8 +1,8 @@
 (function () {
   var threat = {
   "id": "T14",
-  "name": "Physical Medium Information Leakage or Theft",
-  "desc": "Presenting a Verifiable Credential Barcode exposes information through the physical, optical medium in ways a digital credential presentation does not. The barcode can be captured without the [=E2|holder=]'s awareness or consent. For example, a high-resolution camera at a convenience store, or a scanner reading at a distance, can record the encoded bytes off the surface of the [=S4|document=]. Any data placed in the barcode can therefore be harvested by parties the [=E2|holder=] never intended to present to and combined across locations to track the holder. Physical documents can also be stolen.",
+  "name": "Theft Of or Information Leakage Through Physical Media",
+  "desc": "Presenting a Verifiable Credential Barcode exposes information through the physical, optical medium in ways a digital credential presentation does not. The barcode can be captured without the [=E2|holder=]'s awareness or consent. For example, a high-resolution camera at a convenience store, or a scanner reading at a distance, can record the encoded bytes from the surface of the [=S4|document=]. Any data placed in the barcode can therefore be harvested by parties the [=E2|holder=] never intended to read it and combined across locations to track the holder. Physical documents can also be stolen.",
   "response": [
     {
       "id": "R14.1",

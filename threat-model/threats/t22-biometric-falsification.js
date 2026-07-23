@@ -8,7 +8,7 @@
       "id": "R22.1",
       "name": "Replay-Resistant, Multi-Factor Biometric Verification",
       "type": "Reduce",
-      "desc": "Where biometric binding is used, [=E3|verifiers=] employ checks resistant to replay and presentation attacks (for example liveness detection and trained human review), avoid relying on a single easily-cloned modality, and combine biometric evidence with other signed identifying attributes carried by the [=O1|credential=]."
+      "desc": "Where biometric checks is used, [=E3|verifiers=] employ checks resistant to replay and presentation attacks (for example, liveness detection and/or trained human review); avoid relying on a single easily-cloned modality; and combine biometric evidence with other signed identifying attributes carried by the [=O1|credential=]."
     },
     {
       "id": "R22.2",

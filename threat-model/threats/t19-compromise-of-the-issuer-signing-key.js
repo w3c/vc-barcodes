@@ -8,7 +8,7 @@
       "id": "R19",
       "name": "Protect Keys and Enable Rapid Revocation and Rotation",
       "type": "Reduce",
-      "desc": "[=E1|Issuers=] generate and use signing keys within hardware security modules, enforce strict access control around the [=S1|key store=], and monitor for misuse. On suspected compromise, the affected verification method is rotated and removed from [=E3|verifier=] [=S3|trust stores=], and documents signed by the compromised key are revoked or suspended through the [=O3|status list=]. Verifiable Credential key compromise and forgery defense techniques such as the publication of indexed hash witness lists can also be applied."
+      "desc": "[=E1|Issuers=] generate and use signing keys within hardware security modules, enforce strict access control around the [=S1|key store=], and monitor for misuse. On suspicion of compromise, the affected verification method is rotated and removed from [=E3|verifier=] [=S3|trust stores=], and documents signed by the compromised key are revoked or suspended through the [=O3|status list=]. Defensive techniques for Verifiable Credential key compromise and forgery - such as the publication of indexed hash witness lists - can also be applied."
     }
   ],
   "elements": [
