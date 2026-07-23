@@ -8,7 +8,7 @@
       "id": "R1",
       "name": "Digital Signature over Optical Data",
       "type": "Eliminate",
-      "desc": "The <code>ecdsa-xi-2023</code> cryptosuite extends <code>ecdsa-rdfc-2019</code> by hashing canonicalized machine-readable information ([=O2|optical data bytes=]) as \"extra information\" and including that hash in the data protected by the [=E1|issuer=]'s signature. During [=P4|proof verification=], the [=E3|verifier=] reconstructs the [=O2|optical data bytes=] from the freshly scanned document and recomputes the hash; any modification to a protected field causes signature verification to fail. This makes tampering with signed optical data detectable."
+      "desc": "The <code>ecdsa-xi-2023</code> cryptosuite extends <code>ecdsa-rdfc-2019</code> by hashing canonicalized machine-readable information ([=O2|optical data bytes=]) as \"extra information\" and including that hash in the data protected by the [=E1|issuer=]'s signature. During [=P4|proof verification=], the [=E3|verifier=] reconstructs the [=O2|optical data bytes=] from the freshly scanned document and recomputes the hash; any modification of a protected field causes signature verification to fail. This makes tampering with signed optical data detectable."
     }
   ],
   "elements": [

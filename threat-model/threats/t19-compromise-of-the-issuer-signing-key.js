@@ -1,8 +1,8 @@
 (function () {
   var threat = {
   "id": "T19",
-  "name": "Compromise of the Issuer Signing Key",
-  "desc": "The Verifiable Credential Barcode trust model depends on the secrecy of the [=E1|issuing authority=]'s private signing key held in the [=S1|issuer key store=]. An attacker who obtains that key can mint valid credentials over any claims they choose, producing fraudulent documents that pass [=P4|verification=] indistinguishably from genuine ones.",
+  "name": "Compromise of the Issuer's Signing Key",
+  "desc": "The Verifiable Credential Barcode trust model depends on the secrecy of the [=E1|issuing authority=]'s private signing key held in the [=S1|issuer key store=]. An attacker who obtains that key can mint valid credentials over any claims they choose, producing fraudulent documents that pass [=P4|verification=] indistinguishably from genuine documents.",
   "response": [
     {
       "id": "R19",

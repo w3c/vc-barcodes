@@ -1,7 +1,7 @@
 (function () {
   var threat = {
   "id": "T23",
-  "name": "Credential Subject Type Confusion",
+  "name": "Confusion among Types of Credential Subject",
   "desc": "Every <code>credentialSubject</code> used with an [=O1|OpticalBarcodeCredential=] is typed as a subclass of the general <code>MachineReadableInformation</code> superclass, and other specifications may define additional subclasses. Each subclass carries its own definition of the optical data it secures, its component extraction rules, and its character encoding. A [=E3|verifier=] that processes a credential under the wrong subclass's rules can reconstruct different [=O2|optical data bytes=] than the [=E1|issuer=] signed, mis-scope which fields are protected, or accept a credential whose type-specific checks were never performed.",
   "response": [
     {

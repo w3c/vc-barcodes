@@ -8,7 +8,7 @@
       "id": "R14.1",
       "name": "Minimize Sensitive Data and Handle Documents Appropriately",
       "type": "Reduce",
-      "desc": "[=E1|Issuers=] should minimize the amount of highly sensitive information that is placed in the barcode to the amount necessary for the document's purpose. Holders should be made aware that careless display of a document containing a barcode with sensitive information in it can result in information leakage. The residual risk that data in a barcode can be captured off the physical medium without the holder's awareness is acknowledged as out of scope for this specification."
+      "desc": "[=E1|Issuers=] minimize the amount of highly sensitive data that is placed in the barcode to only that necessary for the document's purpose. Holders are made aware that careless display of a document containing a barcode with sensitive data in it can result in data leakage. The residual risk that data in a barcode can be captured from the physical medium without the holder's awareness is acknowledged as out of scope for this specification."
     },
     {
       "id": "R14.2",

@@ -1,7 +1,7 @@
 (function () {
   var threat = {
   "id": "T16",
-  "name": "Compelled Presentation and Over-Disclosure",
+  "name": "Over-Disclosure due to Compelled Presentation",
   "desc": "A Verifiable Credential embedded in an optical barcode is a static, all-or-nothing artifact: presenting the barcode discloses every signed attribute it carries, with no mechanism for selective disclosure. A [=E2|holder=] compelled to present the document for one purpose necessarily reveals all of its signed contents, potentially exposing more personal information than the interaction requires.",
   "response": [
     {

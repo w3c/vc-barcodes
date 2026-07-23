@@ -2,7 +2,7 @@
   var threat = {
   "id": "T2",
   "name": "Forgery of Documents Without Machine-Readable Information",
-  "desc": "Many physical documents are issued with no machine-readable information at all. Often, their authenticity can only be checked only by human inspection of physical anti-counterfeiting technologies, which advances in printing technology have outmoded. An attacker fabricates such a document, or alters a genuine one, and a [=E3|verifier=] has no cryptographic means to determine whether the document was issued by the claimed [=E1|authority=] or whether its contents match what was issued.",
+  "desc": "Many physical documents are issued with no machine-readable information at all. Often, their authenticity can only be checked by human inspection of physical anti-counterfeiting technologies, which have been outmoded by advances in printing technology. An attacker fabricates such a document, or alters a genuine one, and a [=E3|verifier=] has no cryptographic means by which to test whether the document was issued by the claimed [=E1|authority=] or whether its contents match what was issued.",
   "response": [
     {
       "id": "R2",

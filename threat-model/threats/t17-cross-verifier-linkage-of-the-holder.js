@@ -2,7 +2,7 @@
   var threat = {
   "id": "T17",
   "name": "Cross-Verifier Linkage of the Holder",
-  "desc": "The signed barcode value on a given document is static and identical every time it is presented. Distinct [=E3|verifiers=] who scan the same document can use the unchanging credential bytes (and unique identifiers such as embedded status information) as a persistent correlator to link a [=E2|holder=]'s separate interactions into a single profile.",
+  "desc": "The signed barcode value on a given document is static and identical every time it is presented. Distinct collaborating [=E3|verifiers=] who scan the same document can use the unchanging credential bytes (and unique identifiers such as embedded status information) to persistently correlate and thereby link a [=E2|holder=]'s separate interactions into a single profile.",
   "response": [
     {
       "id": "R17.1",
