@@ -34,8 +34,7 @@ flowchart TD
     E3["E3: Verifier"]:::entity
   end
 
-  DID[("External Verification Method
-  (e.g. did:web)")]:::store
+  S5[("S5: External Verification Method")]:::store
 
   E1 -->|"Initiates"| P1
   S1 -->|"F6: Provide Signing Key"| P1
@@ -57,7 +56,7 @@ flowchart TD
   E3 -->|"Operates"| P3
   P3 -->|"F13: Decoded Credential"| P4
   S3 -->|"F3a: Local Trust-Store Lookup"| P4
-  DID -->|"F3b: Resolve Verification Method"| P4
+  S5 -->|"F3b: Resolve Verification Method"| P4
   P4 -->|"F14: Verified Claims and Coverage"| P5
   P4 -->|"F15: Validated Status Entry and Issuer Context"| P6
   P6 -->|"F4: Fetch Status List"| S2

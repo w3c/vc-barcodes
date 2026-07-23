@@ -46,14 +46,14 @@
       "S2": "S2: Status List Store",
       "S3": "S3: Verifier Trust Store",
       "S4": "S4: Physical Document",
+      "S5": "S5: External Verification Method",
       "O1": "O1: OpticalBarcodeCredential",
       "O2": "O2: Optical Data Bytes (xi)",
       "O3": "O3: BitstringStatusListCredential",
       "O4": "O4: Generic Verifiable Credential Expressed as Barcode",
       "C1": "C1: Issuer System",
       "C2": "C2: Manufacturer System",
-      "C3": "C3: Verifier System",
-      "DID": "DID: External Verification-Method Resolution"
+      "C3": "C3: Verifier System"
     });
 
   })();

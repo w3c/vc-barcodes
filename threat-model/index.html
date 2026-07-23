@@ -213,7 +213,7 @@ manufacturer renders and personalizes the [=S4|physical document=] (S4) at
 [=E2|holder=] (E2). The holder [=F2|presents the document=] to a
 [=E3|verifier=] (E3), who scans and decodes it (P3) and verifies the proof (P4),
 obtaining key material either from the [=S3|verifier trust store=] ([=F3|F3a=])
-or through [=DID|external verification-method resolution=] ([=F3|F3b=]).
+or through [=S5|external verification-method resolution=] ([=F3|F3b=]).
 Proof verification passes its verified claims and protected-field coverage to
 the [=P5|identity and attribute cross-check=] (P5) and the validated status
 entry and issuer context to the [=P6|status check=] (P6), which may optionally
@@ -257,7 +257,7 @@ as an orange box.
 single controlling authority), drawn as a dashed rectangle enclosing its
 elements. A data flow that crosses a boundary line represents data, custody, or
 control passing between authorities. Elements drawn outside every boundary
-(such as [=DID|external verification-method resolution=]) are dependencies not
+(such as the [=S5|external verification method=] store) are dependencies not
 controlled by any modelled party.
         </li>
       </ul>
@@ -500,7 +500,7 @@ order to verify the credential. The model distinguishes two sub-flows:
 <strong>F3a</strong>, a lookup in the verifier's [=S3|local trust store=] of
 already-trusted key material and policy; and <strong>F3b</strong>, external
 verification-method resolution, such as resolving a <code>did:web</code>
-identifier via [=DID|external verification-method resolution=]. This threat model
+identifier from the [=S5|external verification method=] store. This threat model
 treats threats in resolving an external verification method as largely out of scope,
 as they are not specific to barcodes or other optical media in any way.
             </td>
@@ -577,6 +577,19 @@ and is the medium presented by the holder and scanned by the verifier. It is
 outside any compute boundary and is readable by anything with optical access to it.
 This store moves from the custody of the [=E4|Document Manufacturer=], inside the
 [=C2|manufacturer system boundary=], to the custody of the [=E2|holder=].
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="S5|External Verification Method">S5 External Verification Method</dfn>
+            </td>
+            <td>
+The external storage from which a verifier obtains issuer key material via
+[=F3|F3b=] when the verification method is not already present in the
+[=S3|verifier trust store=]. This document treats this store outside the existing boundaries
+for generality, although in many deployments this store will be controlled by
+a modelled entity such as the issuer.
             </td>
           </tr>
           <tr>
@@ -669,21 +682,6 @@ organization from the issuer, so the boundary between [=C1|C1=] and
 The system boundary that runs the [=P3|Barcode Scan and Decode=], [=P4|Proof Verification=],
 [=P5|Identity and Attribute Cross-Check=], and [=P6|Status Check=] processes
 and holds the [=S3|Verifier Trust Store=].
-            </td>
-          </tr>
-          <tr>
-            <td class="left">
-              <dfn class="lint-ignore"
-                data-lt="DID|External Verification-Method Resolution">
-DID External Verification-Method Resolution</dfn>
-            </td>
-            <td>
-A dependency outside every modelled system boundary: the external
-infrastructure — for example DNS, a web server, and the resolution machinery of
-a DID method such as <code>did:web</code> — from which a verifier obtains issuer
-key material via [=F3|F3b=] when the verification method is not already present
-in the [=S3|verifier trust store=]. Because no modelled party controls it, its
-compromise is treated as an inherited dependency risk.
             </td>
           </tr>
         </tbody>
