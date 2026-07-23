@@ -5,7 +5,6 @@ flowchart TD
   classDef object  fill:#ffedd5,stroke:#c2410c,color:#000
 
   E2["E2: Holder"]:::entity
-  E4["E4: Document Manufacturer"]:::entity
 
   subgraph C1["C1: Issuer System"]
     E1["E1: Issuing Authority"]:::entity
@@ -20,6 +19,12 @@ flowchart TD
     O4["O4: Generic Verifiable Credential"]:::object
   end
 
+  subgraph C2["C2: Manufacturer System"]
+    E4["E4: Document Manufacturer"]:::entity
+    P8["P8: Barcode Rendering and Personalization"]:::process
+    S4[("S4: Physical Document / Barcode")]:::store
+  end
+
   subgraph C3["C3: Verifier System"]
     P3["P3: Barcode Scan and Decode"]:::process
     P4["P4: Proof Verification"]:::process
@@ -29,27 +34,30 @@ flowchart TD
     E3["E3: Verifier"]:::entity
   end
 
-  S4[("S4: Physical Document / Barcode")]:::store
+  DID[("External Verification Method
+  (e.g. did:web)")]:::store
 
   E1 -->|"Initiates"| P1
-  S1 -->|"Provides Key"| P1
-  P1 -->|"Binds Extra Information"| O2
-  P1 -->|"Produces"| O1
-  P1 -->|"Produces"| O4
-  O4 -->|"Compress & Encode"| P2
-  O1 -->|"Compress & Encode"| P2
-  P2 -->|"F1: Render & Print Barcode"| E4
-  E4 -->|"Issues"| S4
-  S4 -->|"Carried by"| E2
+  S1 -->|"F6: Provide Signing Key"| P1
+  O2 -->|"F7: Provide Optical Data"| P1
+  P1 -->|"F8: Produce Credential"| O1
+  P1 -->|"F8: Produce Credential"| O4
+  O1 -->|"F9: Submit for Encoding"| P2
+  O4 -->|"F9: Submit for Encoding"| P2
+  P2 -->|"F1: Render and Print Barcode"| P8
+  E4 -->|"Operates"| P8
+  P8 -->|"F10: Personalize Document"| S4
+  S4 -->|"F11: Transfer Custody"| E2
 
   E1 -->|"Initiates"| P7
-  P7 -->|"Produces"| O3
+  P7 -->|"F12: Produce Status List"| O3
   O3 -->|"F5: Publish Status"| S2
 
   E2 -->|"F2: Present Document"| P3
   E3 -->|"Operates"| P3
-  P3 --> P4
-  S3 -->|"F3: Resolve Verification Method"| P4
-  P4 --> P5
-  P4 --> P6
-  P6 -.->|"F4: Fetch Status List (optional)"| S2
+  P3 -->|"F13: Decoded Credential"| P4
+  S3 -->|"F3a: Local Trust-Store Lookup"| P4
+  DID -->|"F3b: Resolve Verification Method"| P4
+  P4 -->|"F14: Verified Claims and Coverage"| P5
+  P4 -->|"F15: Validated Status Entry and Issuer Context"| P6
+  P6 -->|"F4: Fetch Status List"| S2
