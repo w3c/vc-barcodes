@@ -36,6 +36,7 @@
       "P5": "P5: Identity and Attribute Cross-Check",
       "P6": "P6: Status Check",
       "P7": "P7: Status List Publication",
+      "P8": "P8: Barcode Rendering and Personalization",
       "F1": "F1: Render and Print Barcode",
       "F2": "F2: Present Document",
       "F3": "F3: Resolve Verification Method",
@@ -51,7 +52,8 @@
       "O4": "O4: Generic Verifiable Credential Expressed as Barcode",
       "C1": "C1: Issuer System",
       "C2": "C2: Manufacturer System",
-      "C3": "C3: Verifier System"
+      "C3": "C3: Verifier System",
+      "DID": "DID: External Verification-Method Resolution"
     });
 
   })();

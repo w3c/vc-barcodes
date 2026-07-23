@@ -199,46 +199,88 @@ others) apply to both flows.
       <h3>Data Flow Diagram for the Verifiable Credential Barcodes Ecosystem</h3>
       <p>
 The data flow diagram below illustrates the key elements and data flows in a
-minimal Verifiable Credential Barcodes ecosystem. The diagram shows how an
+minimal Verifiable Credential Barcodes ecosystem, organized into three
+system boundaries: the [=C1|issuer system=] (C1), the
+[=C2|manufacturer system=] (C2), and the [=C3|verifier system=] (C3). An
 [=E1|issuing authority=] (E1) creates and signs either a
 [=O4|generic verifiable credential=] (O4) or an
-[=O1|OpticalBarcodeCredential=] (O1) - in the latter case binding the
-[=O2|optical data bytes=] (O2) into the signature - compresses and encodes the
-credential (P2), and has it
-[=F1|printed=] onto a [=S4|physical document=] (S4) by a
-[=E4|document manufacturer=] (E4). The [=E2|holder=] (E2)
-[=F2|presents the document=] to a [=E3|verifier=] (E3), who scans and decodes
-it (P3), [=F3|resolves the issuer's verification method=], verifies the proof
-(P4), optionally cross-checks the VC data against identity (P5), and optionally
-[=F4|fetches the status list=] (O3) to confirm the document has not been
-revoked.
+[=O1|OpticalBarcodeCredential=] (O1) - in the latter case taking the
+[=O2|optical data bytes=] (O2) as an input to signing - then compresses and
+encodes the credential (P2) and delivers it via [=F1|F1=] to the
+[=E4|document manufacturer=] (E4). Within the [=C2|manufacturer system=], the
+manufacturer renders and personalizes the [=S4|physical document=] (S4) at
+[=P8|P8=]; custody of that document then transfers across the boundary to the
+[=E2|holder=] (E2). The holder [=F2|presents the document=] to a
+[=E3|verifier=] (E3), who scans and decodes it (P3) and verifies the proof (P4),
+obtaining key material either from the [=S3|verifier trust store=] ([=F3|F3a=])
+or through [=DID|external verification-method resolution=] ([=F3|F3b=]).
+Proof verification passes its verified claims and protected-field coverage to
+the [=P5|identity and attribute cross-check=] (P5) and the validated status
+entry and issuer context to the [=P6|status check=] (P6), which may optionally
+[=F4|fetch the status list=] (O3) to confirm the document has not been revoked
+or suspended.
       </p>
 
       <img src="diagrams/dfd.svg" alt="Data flow diagram of the Verifiable Credential Barcodes ecosystem">
 
       <p>
-The following notation is used in the diagram description and dictionary:
+The following notation is used in the diagram description and dictionary. Every
+element is labelled with a type letter and an index (for example, <code>P4</code>
+or <code>F3a</code>), and every data flow carries an identifier so it can be
+referenced from threats and responses.
       </p>
       <ul>
         <li>
 <strong>E</strong> - External Entity (human or legal person outside the
-system boundary)
+system boundary), drawn as a rounded blue box.
         </li>
         <li>
-<strong>P</strong> - Process (running algorithm that transforms data)
+<strong>P</strong> - Process (running algorithm that transforms data), drawn as
+a green box.
         </li>
         <li>
-<strong>F</strong> - Data Flow (movement of data between elements)
+<strong>F</strong> - Data Flow (movement of data between elements), drawn as a
+labelled arrow. All data flows are drawn with solid lines; a flow that is not
+always performed (such as [=F4|F4=]) is noted as optional in its dictionary
+entry rather than by a distinct line style.
         </li>
         <li>
-<strong>S</strong> - Data Store (persistent or ephemeral storage)
+<strong>S</strong> - Data Store (persistent or ephemeral storage), drawn as a
+yellow box.
         </li>
         <li>
-<strong>O</strong> - Data Object (self-contained, transferable artifact)
+<strong>O</strong> - Data Object (self-contained, transferable artifact), drawn
+as an orange box.
         </li>
         <li>
 <strong>C</strong> - Contained System Boundary (collection of elements under a
-single authority)
+single controlling authority), drawn as a dashed rectangle enclosing its
+elements. A data flow that crosses a boundary line represents data, custody, or
+control passing between authorities. Elements drawn outside every boundary
+(such as [=DID|external verification-method resolution=]) are dependencies not
+controlled by any modelled party.
+        </li>
+      </ul>
+
+      <p>
+The diagram records the following <dfn data-lt="threat-model-assumptions">
+assumptions</dfn>, which constrain its scope and are called out here rather than
+left implicit:
+      </p>
+      <ul>
+        <li>
+<strong>A1: Status services co-located with the issuer.</strong> The
+[=S2|status list store=] is drawn inside the [=C1|issuer system=]. In
+deployment, a status authority, hosting provider, or content distribution
+network may be operationally distinct from the credential issuer; placing
+[=S2|S2=] inside [=C1|C1=] is an intentional scope choice for this baseline
+model.
+        </li>
+        <li>
+<strong>A2: The holder and presenter of a credential are the same person.</strong>
+This holds for typical identity documents but not necessarily for
+generic verifiable credentials about goods, organizations, licenses, or
+certifications.
         </li>
       </ul>
     </section>
@@ -415,6 +457,18 @@ it has issued, and makes it available for retrieval.
           <tr>
             <td class="left">
               <dfn class="lint-ignore"
+                data-lt="P8|Barcode Rendering and Personalization">P8 Barcode Rendering and Personalization</dfn>
+            </td>
+            <td>
+The process, operated by the [=E4|document manufacturer=] within the
+[=C2|manufacturer system=], that receives the encoded credential via
+[=F1|Render and Print Barcode=], renders it as an optical barcode, and
+creates the [=S4|physical document=] that carries it.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
                 data-lt="F1|Render and Print Barcode">F1 Render and Print Barcode</dfn>
             </td>
             <td>
@@ -438,12 +492,17 @@ boundary between the holder's possession and the
           <tr>
             <td class="left">
               <dfn class="lint-ignore"
-                data-lt="F3|Resolve Verification Method">F3 Resolve Verification Method</dfn>
+                data-lt="F3|Resolve Verification Method|F3a|F3b">F3 Resolve Verification Method</dfn>
             </td>
             <td>
-The data flow by which a verifier obtains the issuer's public key material in order to verify the
-credential. This might be via [=S3|local trust store] access, or it might involve external
-verification method resolution such as resolving a <code>did:web</code> identifier.
+The data flow by which a verifier obtains the issuer's public key material in
+order to verify the credential. The model distinguishes two sub-flows:
+<strong>F3a</strong>, a lookup in the verifier's [=S3|local trust store=] of
+already-trusted key material and policy; and <strong>F3b</strong>, external
+verification-method resolution, such as resolving a <code>did:web</code>
+identifier via [=DID|external verification-method resolution=]. This threat model
+treats threats in resolving an external verification method as largely out of scope,
+as they are not specific to barcodes or other optical media in any way.
             </td>
           </tr>
           <tr>
@@ -452,9 +511,13 @@ verification method resolution such as resolving a <code>did:web</code> identifi
                 data-lt="F4|Fetch Status List">F4 Fetch Status List</dfn>
             </td>
             <td>
-The data flow by which a verifier retrieves, typically with a standard HTTP GET request, the
-<code>BitstringStatusListCredential</code> Verifiable Credential from the host identified by
-<code>terseStatusListBaseUrl</code> in order to perform a status check.
+The data flow by which a verifier retrieves, typically with a standard HTTP GET
+request, the <code>BitstringStatusListCredential</code> Verifiable Credential
+from the host identified by <code>terseStatusListBaseUrl</code>, receiving the
+status list in response, in order to perform a status check. This flow is
+<strong>optional</strong>: it occurs only when a verifier performs an online
+[=P6|status check=], and is omitted when status is not checked or a cached
+result is reused.
             </td>
           </tr>
           <tr>
@@ -587,9 +650,14 @@ operated by the issuing authority - that runs the
                 data-lt="C2|Manufacturer System">C2 Manufacturer System</dfn>
             </td>
             <td>
-The system boundary operated and controlled by the [=E4|document manufacturer=] that receives
-as input the encoded credential and renders it into a printed optical barcode via [=F1|Render and Print=]
-and manufactures the physical document.
+The supply-chain system boundary controlled by the [=E4|document manufacturer=].
+Its controlling authority is the manufacturer; its input is the encoded
+credential delivered by [=F1|Render and Print Barcode=]; its process is
+[=P8|Barcode Rendering and Personalization=]; and it holds the
+[=S4|physical document=] while that document is in production, before custody
+transfers to the [=E2|holder=]. The manufacturer is frequently a distinct
+organization from the issuer, so the boundary between [=C1|C1=] and
+<code>C2</code> is a genuine supply-chain trust boundary.
             </td>
           </tr>
           <tr>
@@ -601,6 +669,21 @@ and manufactures the physical document.
 The system boundary that runs the [=P3|Barcode Scan and Decode=], [=P4|Proof Verification=],
 [=P5|Identity and Attribute Cross-Check=], and [=P6|Status Check=] processes
 and holds the [=S3|Verifier Trust Store=].
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="DID|External Verification-Method Resolution">
+DID External Verification-Method Resolution</dfn>
+            </td>
+            <td>
+A dependency outside every modelled system boundary: the external
+infrastructure — for example DNS, a web server, and the resolution machinery of
+a DID method such as <code>did:web</code> — from which a verifier obtains issuer
+key material via [=F3|F3b=] when the verification method is not already present
+in the [=S3|verifier trust store=]. Because no modelled party controls it, its
+compromise is treated as an inherited dependency risk.
             </td>
           </tr>
         </tbody>
