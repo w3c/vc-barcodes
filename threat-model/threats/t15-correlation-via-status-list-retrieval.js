@@ -8,7 +8,7 @@
       "id": "R15",
       "name": "Group Privacy in Status Lists and Cacheable Retrieval",
       "type": "Reduce",
-      "desc": "The bitstring status list design groups many documents into a single shared list so that fetching it reveals only interest in the list, not in a specific [=E2|holder=]; status lists are sized to preserve adequate herd privacy. Static, cacheable hosting behind a content distribution network lets a [=E3|verifier=] retrieve a whole list and reuse it, reducing how often and how granularly the list host observes verification activity."
+      "desc": "The design of the bitstring status list groups many documents into a single shared list so that fetching it only reveals interest in the list, not in a specific [=E2|holder=]. Status lists are sized to preserve adequate herd privacy. Static, cacheable hosting behind a content distribution network (CDN) lets a [=E3|verifier=] retrieve a whole list and reuse it, reducing the frequency and granularity observable by the verification list host."
     }
   ],
   "elements": [

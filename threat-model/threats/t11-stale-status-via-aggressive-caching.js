@@ -6,9 +6,9 @@
   "response": [
     {
       "id": "R11",
-      "name": "Cache Lifetimes Matched to Risk",
+      "name": "Match Cache Lifetimes to Risk",
       "type": "Reduce",
-      "desc": "[=E3|Verifiers=] bound [=O3|status list=] cache lifetimes according to the risk of the decision, refreshing more frequently for higher-stakes verifications. [=E1|Issuers=] publish status updates promptly and communicate expected refresh cadence so verifiers can size cache lifetimes appropriately, balancing timeliness against the load and correlation costs of frequent fetches."
+      "desc": "[=E3|Verifiers=] set [=O3|status list=] cache lifetimes according to the risk of the decision, refreshing more frequently for higher-stakes verifications. [=E1|Issuers=] publish status updates promptly and communicate expected refresh cadence so that verifiers can size cache lifetimes appropriately, balancing timeliness of updates against the load and correlation costs of frequent fetches."
     }
   ],
   "elements": [

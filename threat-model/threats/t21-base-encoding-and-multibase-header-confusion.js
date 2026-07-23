@@ -1,8 +1,8 @@
 (function () {
   var threat = {
   "id": "T21",
-  "name": "Base-Encoding and Multibase Header Confusion",
-  "desc": "Before reaching a barcode, a credential of either kind is compressed with CBOR-LD and then character-encoded according to rules that are defined per <code>credentialSubject</code> type. A mismatch between what the [=E4|document manufacturer=] encoded and what the [=E3|verifier=] assumes for that type, such as a missing prefix, an unexpected header, a wrong base alphabet, or the rules for a different subclass applied incorrectly, causes the verifier to decode different bytes than were signed, producing failures or, in adversarial cases, decode ambiguity that can be exploited.",
+  "name": "Confusion between Base-Encoding and Multibase Header",
+  "desc": "Before reaching a barcode, a credential of either kind is compressed with CBOR-LD and then character-encoded according to rules that are defined per <code>credentialSubject</code> type. A mismatch between what the [=E4|document manufacturer=] encoded and what the [=E3|verifier=] assumes for that type — such as a missing prefix, an unexpected header, a wrong base alphabet, or the rules for a different subclass applied incorrectly — causes the verifier to decode different bytes than were signed, producing failures or, in adversarial cases, decoding ambiguities that can be exploited.",
   "response": [
     {
       "id": "R21",
