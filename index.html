@@ -16,7 +16,7 @@
         subtitle: "Embedding Verifiable Credentials in optical barcodes",
         // specification status (e.g., WD, LCWD, NOTE, etc.). If in doubt use ED.
         group: "vc",
-        specStatus: "FPWD",
+        specStatus: "ED",
 
         // the specification's short name, as in http://www.w3.org/TR/short-name/
         shortName: "vc-barcodes-1.0",
@@ -133,6 +133,15 @@
             ],
             publisher: "International Standards Organization"
           },
+          "ISO18013-2": {
+            title: "ISO/IEC 18013-2:2020: Personal identification — ISO-compliant driving licence — Part 2: Machine-readable technologies",
+            date: "2020",
+            href: "https://www.iso.org/standard/70486.html",
+            authors: [
+              "ISO/IEC JTC 1/SC 17"
+            ],
+            publisher: "International Standards Organization"
+          },
           "aamva-dl-id-card-design-standard": {
             title: "AAMVA DL/ID Card Design Standard (2020)",
             date: "2020",
@@ -195,6 +204,7 @@ ol.algorithm li:before {
   content: counters(numsection, ".") ") ";
 }
     </style>
+    <link rel="stylesheet" href="threat-model/threats/threat-model.css" />
   </head>
   <body>
     <section id="abstract">
@@ -217,7 +227,7 @@ printed on physical cards using standard printing processes.
 Physical credentials, such as driver's licenses, passports, and travel
 credentials often include machine-readable data that can be used to quickly read
 the information from the document. This information is encoded in formats such
-as PDF417 [[ISO15438-2015]], machine-readable zone (MRZ) [[ICAO9303-3]], and
+as PDF417 [[?ISO15438-2015]], machine-readable zone (MRZ) [[ICAO9303-3]], and
 other optically scannable codes that are formatted in one-dimensional or
 two-dimensional "bars"; thus the term "barcode". Encoding the information as a 
 Verifiable Credential means that the data is tamper-evident. Readily available barcode generation and
@@ -286,209 +296,13 @@ The following sections provide a few introductory examples of the ways this
 specification can be used to enhance existing physical credentials with
 digital signatures via [=verifiable credentials=].
         </p>
-
-        <section>
-          <h3>Driver's License</h3>
-
-          <p>
-This section provides an example on how the technology in this specification
-can be utilized to secure the content of an optical barcode on a driver's license that
-uses a PDF417 barcode. We start off with an example driver's license:
-          </p>
-
-          <figure id="dl-front">
-            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
-                src="diagrams/dl-front.png"
-                alt="Picture of the front of a driver's license issued by the state of Utopia which contains a picture of the individual that is the subject of the driver's license along with their attributes, such as name, address, height, weight, eye color, and driving privileges.">
-            <figcaption style="text-align: center;">
-  The front of a driver's license issued by the state of Utopia.
-            </figcaption>
-          </figure>
-
-          <p>
-The back of the driver's license contains a PDF417 barcode:
-          </p>
-
-          <figure id="dl-back">
-            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
-                src="diagrams/dl-back.png"
-                alt="Picture of the back of a driver's license issued by the state of Utopia, containing usage rules as well as a PDF417 barcode that encodes much of the information displayed on the front of the card.">
-            <figcaption style="text-align: center;">
-A back of a driver's license issued by the state of Utopia.
-            </figcaption>
-          </figure>
-
-          <p>
-The PDF417 data contains information that is secured using the algorithms
-described in this specification. Namely, the PDF417 barcode contains a
-<a>verifiable credential</a> of the following form.
-          </p>
-
-          <pre class="example nohighlight"
-              title="Verifiable Credential embedded in the PDF417 barcode">
-{
-  "@context": [
-    "https://www.w3.org/ns/credentials/v2",
-    "https://w3id.org/vdl/v2",
-    "https://w3id.org/vdl/utopia/v1"
-  ],
-  "type": [
-    "VerifiableCredential",
-    "OpticalBarcodeCredential"
-  ],
-  <span class="comment">// the issuer value below is defined as a URL in the 'utopia/v1' context above</span>
-  "issuer": "did:web:dmv.utopia.example",
-  "credentialStatus": {
-    "type": "TerseBitstringStatusListEntry",
-    "terseStatusListBaseUrl": "https://dmv.utopia.gov/statuses/12345/status-lists"
-    "terseStatusListIndex": 123567890
-  },
-  "credentialSubject": {
-    "type": "AamvaDriversLicenseScannableInformation",
-    "protectedComponentIndex": "uP_BA"
-  },
-  "proof": {
-    "type": "DataIntegrity",
-    "cryptosuite": "ecdsa-xi-2023",
-    <span class="comment">// the public key below is defined as a URL in the 'utopia/v1' context above</span>
-    "verificationMethod": "did:web:dmv.utopia.example#key-1",
-    "proofPurpose": "assertionMethod",
-    "proofValue": "z4peo48uwK2EF4Fta8P...HzQMDYJ34r9gL"
-  }
-}
-          </pre>
-
-          <p>
-The <a>verifiable credential</a> above is then compressed using [[CBOR-LD]]
-to the following output (in CBOR Diagnostic Notation):
-          </p>
-
-          <pre class="example nohighlight"
-              title="CBOR-LD compressed Verifiable Credential (145 bytes)">
-1281{
-  1 => [ 32768, 32769, 32770],                           <span class="comment">// @context</span>
-  155 => [ 116, 164 ],                                   <span class="comment">// type</span>
-  192 => 174,                                            <span class="comment">// issuer</span>
-  186 => { 154 => 166, 206 => 178, 208 => 1234567890 },  <span class="comment">// credentialStatus</span>
-  188 => { 154 => 172, 180 => h'753FF040 },              <span class="comment">// credentialSubject</span>
-  194 => {                                               <span class="comment">// proof</span>
-    154 => 108,                                          <span class="comment">// type</span>
-    214 => 4,                                            <span class="comment">// cryptosuite</span>
-    224 => 230                                           <span class="comment">// verificationMethod</span>
-    228 => 176,                                          <span class="comment">// proofPurpose</span>
-    210 => Uint8Array(65) [ ... ],                       <span class="comment">// proofValue</span>
-  }
-}
-          </pre>
-
-        </section>
-
-        <section>
-          <h3>Employment Authorization</h3>
-
-          <p>
-This section provides an example on how the technology in this specification
-can be utilized to secure the content of an employment
-authorization document that uses a machine-readable zone (MRZ) on the back of
-the card. We start off with an example employment authorization document:
-          </p>
-
-          <figure id="ead-front">
-            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
-                src="diagrams/ead-front.png"
-                alt="Picture of the front of an employment authorization document issued by the state of Utopia which contains a picture of the individual that is the subject of the document along with their attributes, such as name, address, height, weight, eye color, and employment privileges.">
-            <figcaption style="text-align: center;">
-The front of an employment authorization document issued by the state of Utopia.
-            </figcaption>
-          </figure>
-
-          <p>
-The back of the employment authorization document contains a machine-readable
-zone (MRZ) containing information designed to be read through optical character
-recognition:
-          </p>
-
-          <figure id="ead-back">
-            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
-                src="diagrams/ead-back.png"
-                alt="Picture of the back of a employment authorization document issued by the state of Utopia, containing usage rules as well as machine-readable zone data that encodes much of the information displayed on the front of the card.">
-            <figcaption style="text-align: center;">
-A back of an employment authorization document issued by the state of Utopia.
-            </figcaption>
-          </figure>
-
-          <p>
-The MRZ data contains information that is secured using the algorithms
-described in this specification. Namely, the QR Code on the front of the
-card contains a <a>verifiable credential</a> of the following form, which secures
-the information on the back of the card.
-          </p>
-
-          <pre class="example nohighlight"
-              title="Verifiable Credential expressed as a QR Code on the front of the card">
-{
-  "@context": [
-    "https://www.w3.org/ns/credentials/v2",
-    "https://w3id.org/citizenship/v2",
-    "https://w3id.org/citizenship/utopia/v1"
-  ],
-  "type": [
-    "VerifiableCredential",
-    "OpticalBarcodeCredential"
-  ],
-  <span class="comment">// the value below is defined as a URL in the 'utopia/v1' context above</span>
-  "issuer": "did:web:immigration.utopia.example",
-  "credentialSubject": {
-    "type": "MachineReadableZone",
-  },
-  "proof": {
-    "type": "DataIntegrity",
-    "cryptosuite": "ecdsa-xi-2023",
-    <span class="comment">// the value below is defined as a URL in the 'utopia/v1' context above</span>
-    "verificationMethod": "did:web:immigration.utopia.example#key-4"
-    "proofPurpose": "assertionMethod",
-    "proofValue": "z4peo48uwK2EF4Fta8P...HzQMDYJ34r9gL"
-  }
-}
-          </pre>
-
-          <p class="note" title="credentialStatus is optional">
-Readers might note that the credential above does not contain the optional
-`credentialStatus` property. Not every optical barcode credential issuer will
-have the requirement to have revocable optical barcode credentials.
-          </p>
-
-          <p>
-The <a>verifiable credential</a> above is then compressed using [[CBOR-LD]]
-to the following output (in CBOR Diagnostic Notation):
-          </p>
-
-          <pre class="example nohighlight"
-              title="CBOR-LD compressed Verifiable Credential (120 bytes)">
-{
-  1 => [ 32768, 32769, 32770],           <span class="comment">// @context</span>
-  155 => [ 116, 176 ],                   <span class="comment">// type</span>
-  208 => 194,                          <span class="comment">// issuer</span>
-  204 => { 154 => 192 },                 <span class="comment">// credentialSubject</span>
-  210 => {                               <span class="comment">// proof</span>
-    154 => 108,                          <span class="comment">// type</span>
-    226 => 4,                        <span class="comment">// cryptosuite</span>
-    236 => 242                         <span class="comment">// verificationMethod</span>
-    240 => 196,                          <span class="comment">// proofPurpose</span>
-    210 => Uint8Array(65) [ ... ],       <span class="comment">// proofValue</span>
-  }
-}
-          </pre>
-
-        </section>
-
         <section>
           <h3>Birth Certificate</h3>
 
           <p>
-This section provides an example on how the technology in this specification can
-be utilized to secure a birth certificate as a [=verifiable credential=], which
-is then expressed as a QR Code on the printed paper document:
+This section provides an example of how the technology in this specification can
+be used to secure a birth certificate as a [=verifiable credential=], which
+is then expressed as a QR Code on the printed paper document.
           </p>
 
           <figure id="birth-certificate">
@@ -548,7 +362,230 @@ the encoding are available as separate tabs below:
   }
 }
           </pre>
+          <p>
+This is an example of a straightforward use case where a barcode
+containing a [=verifiable credential=] is added to a document
+that does not currently contain machine-readable data. Once
+the [=verifiable credential=] is issued and compressed with CBOR-LD,
+the CBOR-LD payload can be added to a QR code and the QR code added
+to the physical document.
+          </p>
+        </section>
+        <section>
+          <h3>Driver's License</h3>
 
+          <p>
+This section provides an example of how the technology in this specification
+can be utilized to secure the content of an optical barcode on a driver's license that
+uses a PDF417 barcode. We start off with an example driver's license:
+          </p>
+
+          <figure id="dl-front">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/dl-front.png"
+                alt="Picture of the front of a driver's license issued by the state of Utopia, containing a picture of the individual that is the subject of the driver's license along with their attributes, such as name, address, height, weight, eye color, and driving privileges.">
+            <figcaption style="text-align: center;">
+  The front of a driver's license issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The back of the driver's license contains a PDF417 barcode:
+          </p>
+
+          <figure id="dl-back">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/dl-back.png"
+                alt="Picture of the back of a driver's license issued by the state of Utopia, containing usage rules as well as a PDF417 barcode that encodes much of the information displayed on the front of the card.">
+            <figcaption style="text-align: center;">
+A back of a driver's license issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The PDF417 data contains information that is secured using the algorithms
+described in this specification. More specifically, the PDF417 barcode
+contains a [=verifiable credential=] of the following form.
+          </p>
+
+          <pre class="example nohighlight"
+              title="Verifiable Credential embedded in the PDF417 barcode">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vc-barcodes/v1",
+    "https://w3id.org/utopia/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  "credentialSubject": {
+    "type": "AamvaDriversLicenseScannableInformation",
+    "protectedComponentIndex": "uggAg"
+  },
+  "issuer": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
+  "credentialStatus": {
+    "type": "TerseBitstringStatusListEntry",
+    "terseStatusListBaseUrl": "https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists",
+    "terseStatusListIndex": 3851559041
+  },
+  "proof": {
+    "type": "DataIntegrityProof",
+    "verificationMethod": "did:key:zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj#zDnaeWjKfs1ob9QcgasjYSPEMkwq31hmvSAWPVAgnrt1e9GKj",
+    "cryptosuite": "ecdsa-xi-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4g6G3dAZhhtPxPWgFvkiRv7krtCaeJxjokvL46fchAFCXEY3FeX2vn46MDgBaw779g1E1jswZJxxreZDCrtHg2qH"
+  }
+}
+          </pre>
+          <p>
+This example shows a barcode being augmented with
+a [=verifiable credential=]. The subject of the credential is the
+other data in the barcode, which is protected by the Verifiable Credential's
+digital signature. The `protectedComponentIndex` field in
+`credentialSubject` indicates exactly what data in the rest of the barcode
+is protected.
+          </p>
+          <p>
+The <a>verifiable credential</a> above is compressed using [[CBOR-LD]]
+to the following output (in CBOR Diagnostic Notation):
+          </p>
+
+          <pre class="example nohighlight"
+              title="CBOR-LD compressed Verifiable Credential">
+51997([
+100,
+{
+  1: [32768, 32769, 32770],                     <span class="comment">// @context</span>
+  157: [118, 164],                              <span class="comment">// type</span>
+  184: {156: 166, 206: 178, 208: 3851559041},   <span class="comment">// credentialStatus</span>
+  186: {156: 160, 168: h'75820020'},            <span class="comment">// credentialSubject</span>
+  190: 170,                                     <span class="comment">// issuer</span>
+  192: {                                        <span class="comment">// proof</span>
+    156: 108,
+    214: 4,
+    224: 230,
+    226: h'7AB...',                             
+    228: 172
+  }
+}
+])
+          </pre>
+          <p>
+Once encoded as CBOR-LD, the [=verifiable credential=] is inserted into the
+PDF417. For more details regarding this example, see Section
+<a href="#test-vectors"></a>.
+          </p>
+
+        </section>
+
+        <section>
+          <h3>Employment Authorization</h3>
+
+          <p>
+This section provides an example of how the technology in this specification
+can be used to secure the content of the machine-readable zone (MRZ) of an employment
+authorization document that uses a machine-readable zone (MRZ) on the back of
+the card. We start off with an example employment authorization document:
+          </p>
+
+          <figure id="ead-front">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/ead-front.png"
+                alt="Picture of the front of an employment authorization document issued by the state of Utopia which contains a picture of the individual that is the subject of the document along with their attributes, such as name, address, height, weight, eye color, and employment privileges.">
+            <figcaption style="text-align: center;">
+The front of an employment authorization document issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The back of the employment authorization document contains a machine-readable
+zone (MRZ) containing information designed to be read through optical character
+recognition:
+          </p>
+
+          <figure id="ead-back">
+            <img style="margin: auto; display: block; border-radius:15px; width: 50%;"
+                src="diagrams/ead-back.png"
+                alt="Picture of the back of a employment authorization document issued by the state of Utopia, containing usage rules as well as machine-readable zone data that encodes much of the information displayed on the front of the card.">
+            <figcaption style="text-align: center;">
+A back of an employment authorization document issued by the state of Utopia.
+            </figcaption>
+          </figure>
+
+          <p>
+The MRZ data contains information that is secured using the algorithms
+described in this specification. Specifically, the QR Code on the front of the
+card contains a [=verifiable credential=] of the following form, which secures
+the information on the back of the card.
+          </p>
+
+          <pre class="example nohighlight"
+              title="Verifiable Credential expressed as a QR Code on the front of the card">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vc-barcodes/v1",
+    "https://w3id.org/utopia/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "OpticalBarcodeCredential"
+  ],
+  "credentialSubject": {
+    "type": "MachineReadableZone"
+  },
+  "issuer": "did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj",
+  "proof": {
+    "type": "DataIntegrityProof",
+    "verificationMethod": "did:key:zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj#zDnaeZSD9XcuULaS8qmgDUa6TMg2QjF9xABnZK42awDH3BEzj",
+    "cryptosuite": "ecdsa-xi-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z4B8..."
+  }
+}
+          </pre>
+
+          <p class="note" title="credentialStatus is optional">
+Readers might note that the credential above does not contain the optional
+`credentialStatus` property. Not every optical barcode credential issuer will
+require that the optical barcode credentials they issue be revocable.
+          </p>
+          <p>
+Similarly to the previous example, here we are augmenting existing
+machine-readable data (an MRZ) on a document with a [=verifiable credential=].
+As such, the subject of the credential is the MRZ.
+          </p>
+          <p>
+The [=verifiable credential=] above is compressed using [[CBOR-LD]]
+to the following output (in CBOR Diagnostic Notation):
+          </p>
+
+          <pre class="example nohighlight"
+              title="CBOR-LD compressed Verifiable Credential (120 bytes)">
+51997([
+100,
+{
+  1: [32768, 32769, 32770],                     <span class="comment">// @context</span>
+  157: [118, 164],                              <span class="comment">// type</span>
+  186: {156: 162},                              <span class="comment">// credentialSubject</span>
+  190: 174,                                     <span class="comment">// issuer</span>
+  192: {                                        <span class="comment">// proof</span>
+    156: 108,
+    210: 4,
+    220: 226,
+    222: h'7A9EC7F688F60CAA8C757592250B3F6D6E18419941F186E1ED4245770E687502D51D01CD2C2295E4338178A51A35C2F044A85598E15DB9AEF00261BC5C95A744E7',
+    224: 176
+  }
+}
+])
+          </pre>
+          <p>
+Once encoded as CBOR-LD, the [=verifiable credential=] is inserted into the
+PDF417. For more details regarding this example, see Section
+<a href="#test-vectors"></a>.
+          </p>
         </section>
 
       </section>
@@ -575,7 +612,7 @@ privacy-invasive "phone home" to a source-of-truth database.
           </li>
           <li>
 <b>Simplicity</b>: Verifiable Credential Barcodes reuse existing optical barcodes on
-documents (e.g., PDF417s on the back of AAMVA compliant Driver's Licenses) or add a
+documents (e.g., PDF417s on the back of driver's licenses) or add a
 new barcode in an easily consumable form (e.g., a QR code).
           </li>
           <li>
@@ -645,13 +682,13 @@ to express [=verifiable credentials=] that secure optically printed information
 such as barcodes and machine-readable zones on travel documents.
       </p>
 
-      <section>
+      <section id="opticalbarcodecredential">
         <h3>OpticalBarcodeCredential</h3>
 
         <p>
 An `OpticalBarcodeCredential` is used to secure the contents of an optical
-barcode in a way that provides 1) authorship information , 2) tamper
-resistance, and 3) optionally, revocation and suspension status. In other words,
+barcode in a way that provides 1. authorship information, 2. tamper
+resistance, and 3. optionally, revocation and suspension status. In other words,
 the credential can tell you who issued the optical barcode, if the
 optical barcode has been tampered with since it was first issued, and
 whether or not the <a>issuer</a> of the optical barcode still warrants that
@@ -660,67 +697,112 @@ anti-fraud protections for physical documents.
         </p>
 
         <p>
-The `credentialSubject` of an `OpticalBarcodeCredential` is either of type
-`AamvaDriversLicenseScannableInformation` or a `MachineReadableZone`. A
-`AamvaDriversLicenseScannableInformation` signifies that
-the <a>verifiable credential</a> secures the PDF417 barcode on the physical
-document as well as the information expressed in the
-<a>verifiable credential</a>. A `MachineReadableZone` signifies that
-the <a>verifiable credential</a> secures the machine-readable zone on the
-physical document as well as the information expressed in the
+The type of the `credentialSubject` of an `OpticalBarcodeCredential`
+identifies the kind of machine-readable data on the physical document that is
+secured by the <a>verifiable credential</a>, in addition to the information
+expressed in the <a>verifiable credential</a> itself. This specification
+defines the general type `MachineReadableInformation`, which serves as the
+superclass for every `credentialSubject` type used with an
+`OpticalBarcodeCredential`. The main portion of this specification defines
+one concrete subclass: `MachineReadableZone` (see Section
+[[[#machinereadablezone]]]), which signifies that the
+<a>verifiable credential</a> secures the machine-readable zone on the
+physical document. Two further subclasses are defined in the appendices:
+`AamvaDriversLicenseScannableInformation` (see Appendix [[[#aamva]]],
+which is normative) and `IsoDrivingLicenceMachineReadableInformation` (see
+Appendix [[[#iso-idl]]], which is informative). Other specifications MAY
+define additional `credentialSubject` types
+that indicate the credential protects other sorts of machine-readable data, such as
+PDF417 barcodes on birth certificates or education certificates.
+        </p>
+
+        <p>
+Every `credentialSubject` type used with an `OpticalBarcodeCredential`,
+whether defined by this specification or by another, MUST be defined as a
+subclass of `MachineReadableInformation`. The value
+`MachineReadableInformation` MAY be included in the `credentialSubject`
+`type` array alongside the more specific subclass value; processors that do
+not recognize a specific subclass can use the superclass value to determine
+that the `credentialSubject` describes machine-readable data secured by the
 <a>verifiable credential</a>.
         </p>
 
         <p>
-If an `OpticalBarcodeCredential` is of type `AamvaDriversLicenseScannableInformation`,
-there is a REQUIRED additional field `protectedComponentIndex` that contains information about which fields
-in the PDF417 are digitally signed. `protectedComponentIndex` MUST be a three byte/24 bit value that is
-multibase-base64url encoded for a total of 5 characters in the JSON-LD credential. There are 22
-mandatory fields in an AAMVA compliant driver's license PDF417 [[aamva-dl-id-card-design-standard]],
-and the first 22 bits of the `protectedComponentIndex` value correspond to these fields. Each AAMVA mandatory
-field begins with a three character element ID (e.g., `DBA` for document expiration date). To construct
-a mapping between bits in the `protectedComponentIndex` value and these fields, sort these element IDs
-according to Unicode code point order. Then, if a bit in position `i` of `protectedComponentIndex` is `1`, the
-AAMVA mandatory field in position `i` of the sorted element IDs is protected by the digital signature. The last two
-bits in `protectedComponentIndex` MUST be `0`. For more information, see Section [[[#create-opticaldatabytes]]].
+A new `credentialSubject` type, whether defined by this specification or by
+another, MUST define all of the following in order to be usable with the
+algorithms in Section [[[#algorithms]]]:
+        </p>
+        <ul>
+          <li>
+the machine-readable optical data on the physical document that credentials
+of the type secure (e.g., a PDF417 barcode, a machine-readable zone);
+          </li>
+          <li>
+the component extraction rules, i.e., how the protected components of the
+optical data are extracted as a list of strings, for use by the algorithm in
+Section [[[#create-opticaldatabytes]]];
+          </li>
+          <li>
+the ordering rules used to sort the extracted components into a
+deterministic list (if the type does not define ordering rules, Unicode code
+point order is used, as described in Section [[[#create-opticaldatabytes]]]);
+          </li>
+          <li>
+if only a subset of the components of the optical data is digitally signed,
+the use of the `protectedComponentIndex` property, including the length of
+its bitstring, the value of any padding bits, and the deterministic list of
+components to which its bits refer; and
+          </li>
+          <li>
+the character encoding used to embed CBOR-LD encoded credentials of the type
+in a barcode, as described in Section [[[#encoding-to-and-from-barcodes]]].
+          </li>
+        </ul>
+        <p>
+An example of how such
+an additional type can be defined to secure a region-specific barcode data model
+is available in Appendix [[[#aamva]]], which normatively defines how to augment the
+PDF417 barcode on AAMVA-compliant driver's licenses and identification
+cards with a Verifiable Credential Barcode.
         </p>
 
         <p>
-In order to achieve as much compression as possible, it is RECOMMENDED that the
-`issuer` and `verificationMethod` fields utilize terms from a JSON-LD Context,
-which can then be compressed down to a few bytes due to CBOR-LD's semantic
-compression mechanism.
+When the machine-readable data secured by an `OpticalBarcodeCredential` is
+composed of discrete components (such as the individual fields in a PDF417
+barcode), and only a subset of those components is digitally signed, the
+`credentialSubject` expresses which components are protected using the
+`protectedComponentIndex` property. The value of `protectedComponentIndex` is
+a multibase-base64url encoded bitstring. Each bit in position `i` of the
+bitstring corresponds to the component at index `i` of the deterministic list
+of components defined for the associated `credentialSubject` type. If the bit
+in position `i` is `1`, the component in position `i` of the deterministic
+list of components is protected by the digital signature; if the bit is `0`,
+the component is not protected. Any trailing padding bits in the bitstring
+that do not correspond to a component MUST be set to `0`. For more
+information on how `protectedComponentIndex` is used when generating and
+verifying digital signatures, see Section [[[#create-opticaldatabytes]]].
         </p>
 
-        <p>
-An example of an optical barcode credential that utilizes the properties
-specified in this section is provided below:
-        </p>
+        <section id="machinereadablezone">
+          <h4>MachineReadableZone</h4>
 
-        <pre class="example nohighlight"
-             title="An OpticalBarcodeCredential utilizing a TerseBitstringStatusListEntry">
-{
-  "@context": [
-    "https://www.w3.org/ns/credentials/v2",
-    "https://w3id.org/vdl/v2",
-    "https://w3id.org/vdl/utopia/v1"
-  ],
-  "type": [
-    "VerifiableCredential",
-    <span class="highlight">"OpticalBarcodeCredential"</span>
-  ],
-  "issuer": "did:web:dmv.utopia.example",
-  "credentialStatus": <span class="highlight">{
-    "type": "TerseBitstringStatusListEntry",
-    "terseStatusListBaseUrl": "dmv.utopia.gov/statuses/12345/status-lists"
-    "terseStatusListIndex": 123567890
-  }</span>,
-  "credentialSubject": {
-    <span class="highlight">"type": "AamvaDriversLicenseScannableInformation"</span>,
-    <span class="highlight">"protectedComponentIndex": "uP_BA"</span>
-  }
-}
-        </pre>
+          <p>
+A `credentialSubject` of type `MachineReadableZone` signifies that the
+<a>verifiable credential</a> secures the machine-readable zone (MRZ)
+[[ICAO9303-3]] on the physical document. `MachineReadableZone` is a subclass
+of `MachineReadableInformation`. All of the lines of the
+machine-readable zone are secured, so the `protectedComponentIndex` property
+is not needed with this type.
+          </p>
+
+          <p>
+It is REQUIRED that implementers re-encode CBOR-LD encoded
+`MachineReadableZone` credentials as base45-multibase with the string 'VC1-'
+prepended before encoding them in a QR code.
+          </p>
+        </section>
+
+
       </section>
 
       <section>
@@ -747,7 +829,7 @@ representable as a 32 bit unsigned integer.
         </ul>
         <p>
 To process a `TerseBitstringStatusListEntry`, apply the algorithm in Section
-[[[#convert-status-list-entries]]] to convert it to a `BitstringStatusListEntry`,
+[[[#terse-to-bitstring]]] to convert it to a `BitstringStatusListEntry`,
 then process it as in [[[VC-BITSTRING-STATUS-LIST]]].
         <p>
 Implementers need to set a value |listLength| for the length of an individual status list. This then yields
@@ -759,20 +841,19 @@ implementations MUST use |listLength| = 2^26 and |listCount| = 2^6.
 
       </section>
 
-      <section>
+      <section id="encoding-to-and-from-barcodes">
         <h3>Encoding to and from barcodes</h3>
 While the credentials in this specification use CBOR-LD to efficiently encode [=verifiable credentials=]
 in a binary format, binary data is often inefficient or incompatible to turn into standard barcode
-image formats directly. To that end, we provide requirements here for implementations.
+image formats directly. To that end, character encoding requirements for implementations
+are provided on a per-type basis, and will typically vary based on the target barcode format.
         <p>
-It is RECOMMENDED that implementers character-encode CBOR-LD encoded `AamvaDriversLicenseScannableInformation`
-credentials as base64url before encoding them in a PDF417. A multibase header MAY be prepended to the
-base-encoded VCB data. PDF417 field header specifications are expected to indicate whether a multibase
-header is present or absent.
-        </p>
-        <p>
-It is REQUIRED that implementers re-encode CBOR-LD encoded `MachineReadableZone` credentials
-as base45-multibase with the string 'VC1-' prepended before encoding them in a QR code.
+Each `credentialSubject` type is expected to specify how CBOR-LD encoded
+credentials of that type are character-encoded before being placed in a
+barcode. The character encoding requirements for `MachineReadableZone` are
+provided in Section [[[#machinereadablezone]]]; requirements for other types
+are provided in the specifications or appendices that define them (e.g.,
+Appendix [[[#aamva]]] and Appendix [[[#iso-idl]]]).
         </p>
       </section>
 
@@ -794,24 +875,6 @@ zones, on physical media, such as driver's licenses and travel documents.
 This section contains algorithms that are general to encoding and decoding
 [=verifiable credentials=].
         </p>
-
-        <section>
-          <h3>CBOR-LD Compression Tables</h3>
-
-          <p>
-This specification requires that an application-specific compression table is
-provided to a CBOR-LD processor when encoding and decoding
-<a>verifiable credentials</a>. A registry for all context URLs for various
-issuers is <a href="cbor-ld-compression-table.csv">
-provided as a comma-separated value file</a> and can be updated and modified via
-<a href="https://github.com/w3c-ccg/vc-barcodes/pulls/">
-change requests</a> to the file on an append-only and first-come-first-served
-basis. Implementations SHOULD retrieve and utilize the latest file on a monthly
-basis to ensure that compression and decompression supports the latest values.
-          </p>
-
-        </section>
-
         <section>
           <h3>Encode VC to QR Code</h3>
 
@@ -904,7 +967,9 @@ Return |jsonldDocument| as the decoded [=verifiable credential=].
 
         <p>
 This section contains algorithms that are specific to encoding and decoding
-[=verifiable credentials=] that have a `type` of `OpticalBarcodeCredential`.
+[=verifiable credentials=] that have a `type` of `OpticalBarcodeCredential`, which
+typically appears in the use case where existing machine-readable information on
+a document is augmented with a [=verifiable credential=].
         </p>
 
         <section>
@@ -915,31 +980,35 @@ This section contains algorithms that are specific to encoding and decoding
 Set |opticalData| to the data in the optical barcode to be secured.
             </li>
             <li>
-Set |statusListEntryVerbose| to the `BitstringStatusListCredential`
-(as defined in the [[[VC-BITSTRING-STATUS-LIST]]] specification) that the issuer
-wishes to add to the `OpticalBarcodeCredential`.
-            </li>
-            <li>
-Let |statusListEntryTerse| be an empty [=map=]. Set |statusListEntryTerse|.|type| to `TerseBitstringStatusListEntry` and |statusListEntryTerse|.|index| to the integer representation of |statusListEntryVerbose|.|statusListIndex|.
-            </li>
-            <li>
 Set |issuerUrl| to the URL the issuer wishes to use for credential verification.
             </li>
             <li>
-Set |unsignedStatus| to an `OpticalBarcodeCredential` with
-|unsignedStatus|.|issuer| set to |issuerUrl| and |unsignedStatus|.|credentialStatus|
-set to |statusListEntryTerse|.
+Set |unsignedCredential| to an `OpticalBarcodeCredential` with
+|unsignedCredential|.|issuer| set to |issuerUrl|.
             </li>
             <li>
-Set |signedStatusVc| to the result of using the algorithm in
+If credential status is required:
+              <ol>
+                <li>
+Set |statusListEntry| to the `BitstringStatusListEntry`
+(as defined in the [[[VC-BITSTRING-STATUS-LIST]]] specification) that the issuer
+wishes to add to the `OpticalBarcodeCredential`.
+                </li>
+                <li>
+Set |unsignedCredential|.|credentialStatus| to the result of applying the
+algorithm in Section [[[#bitstring-to-terse]]] to |statusListEntry|.
+                </li>
+              </ol>
+            </li>
+            <li>
+Set |signedCredential| to the result of using the algorithm in
 <a href="#add-proof-ecdsa-xi-2023"></a> to sign |opticalData|
-and |unsignedStatus|.
+and |unsignedCredential|.
             </li>
             <li>
-Encode |signedStatusVc| using CBOR-LD [[CBOR-LD]] and add it to the designated area of the |opticalData|.
-            </li>
-            <li>
-Generate the machine-readable credential (MRZ or PDF417).
+Encode |signedCredential| using CBOR-LD [[CBOR-LD]] and add it to the designated area of the |opticalData|
+in accordance with the processing rules for the desired value of |credentialSubject|.|type| and
+the use case.
             </li>
           </ol>
         </section>
@@ -949,83 +1018,159 @@ Generate the machine-readable credential (MRZ or PDF417).
 
           <ol class="algorithm">
             <li>
-Set |securedDocument| to the data in the PDF417 or MRZ.
+Set |opticalData| to the machine-readable data (e.g., the PDF417 or MRZ data)
+scanned from the physical document.
+            </li>
+            <li>
+Set |vcbPayload| to the <a>verifiable credential</a> payload extracted from
+the designated area of |opticalData|.
+            </li>
+            <li>
+Set |cborldBytes| to the result of decoding |vcbPayload| from the character
+encoding associated with the credential type and barcode format
+(see Section [[[#encoding-to-and-from-barcodes]]]), removing any multibase
+header if one is present.
+            </li>
+            <li>
+Set |credential| to the `OpticalBarcodeCredential` that results from applying
+CBOR-LD decompression [[CBOR-LD]] to |cborldBytes|, if the payload is
+CBOR-LD compressed; otherwise, set |credential| to the
+`OpticalBarcodeCredential` expressed by |cborldBytes|.
             </li>
             <li>
 Set |verificationResult| to the result of applying the algorithm in Section
-[[[#verify-proof-ecdsa-xi-2023]]]to |securedDocument|.
+[[[#verify-proof-ecdsa-xi-2023]]] to |credential| and |opticalData|.
             </li>
             <li>
-Set |credential| to the `OpticalBarcodeCredential` in |securedDocument|.
-            </li>
-            <li>
+Set |statusResult| to null. If |credential|.|credentialStatus| is present:
+              <ol>
+                <li>
 Set |statusListEntry| to the result of applying the algorithm in Section
-[[[#convert-status-list-entries]]] to |credential|.
-            </li>
-            <li>
+[[[#terse-to-bitstring]]] to |credential|.
+                </li>
+                <li>
 Set |statusResult| to the result of applying the algorithm in
 <a data-cite="VC-BITSTRING-STATUS-LIST#validate-algorithm">
 Bitstring Status List v1.0: Validate Algorithm</a> to |statusListEntry|.
+                </li>
+              </ol>
             </li>
             <li>
-Return (|validationResult|, |statusResult|).
+Return (|verificationResult|, |statusResult|).
             </li>
           </ol>
         </section>
 
-        <section>
+        <section id="convert-status-list-entries">
           <h3>Convert Status List Entries</h3>
 
           <p>
-The algorithm in this section is used to convert the
-`TerseBitstringStatusListEntry` to a `BitstringStatusListEntry`, which is used
-after verification has been performed on the <a>verifiable credential</a>,
-during the validation process.
+The algorithms in this section are used to convert between a
+`TerseBitstringStatusListEntry` and a `BitstringStatusListEntry`. The
+algorithm in Section [[[#bitstring-to-terse]]] is used when encoding an
+`OpticalBarcodeCredential`, to compress a `BitstringStatusListEntry` into a
+`TerseBitstringStatusListEntry` before the credential is signed. The
+algorithm in Section [[[#terse-to-bitstring]]] performs the inverse
+conversion and is used after verification has been performed on the
+<a>verifiable credential</a>, during the validation process.
           </p>
 
-          <p>
+          <section id="terse-to-bitstring">
+            <h4>`TerseBitstringStatusListEntry` to `BitstringStatusListEntry`</h4>
+
+            <p>
 After <a>verifiable credential</a> verification has been performed, the
 algorithm takes an `OpticalBarcodeCredential` <a>verifiable credential</a>
 ([=struct=] |vc|), an integer |listLength| containing the number of entries
 in the `BitstringStatusListCredential` associated with |vc|, and a string
 |statusPurpose| (e.g., 'revocation', 'suspension'...) as input and returns
 a 'BitstringStatusListEntry' object.
-          </p>
+            </p>
 
-          <ol class="algorithm">
-            <li>
+            <ol class="algorithm">
+              <li>
 Set |result| to be an empty [=map=].
-            </li>
-            <li>
+              </li>
+              <li>
 Set |listIndex| to |vc|.|credentialStatus|.|terseStatusListIndex|/|listLength| rounded down
 to the next lowest integer (i.e., apply the `floor()` operation).
-            </li>
-            <li>
+              </li>
+              <li>
 Set |statusListIndex| to |vc|.|credentialStatus|.|terseStatusListIndex| % |listLength|.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |result|.|statusListCredential| to the concatenation of the following values:
 |vc|.|credentialStatus|.|terseStatusListBaseUrl|, '/', |statusPurpose|, '/', |listIndex|.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |result|.|type| to 'BitstringStatusListEntry'.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |result|.|statusListIndex| to |statusListIndex|.
-            </li>
-            <li>
+              </li>
+              <li>
 Set |result|.|statusPurpose| to |statusPurpose|.
-            </li>
-            <li>
+              </li>
+              <li>
 Return |result|.
-            </li>
-          </ol>
+              </li>
+            </ol>
 
-          <p>
+            <p>
 |result| can be used as input to the
 <a data-cite="VC-BITSTRING-STATUS-LIST#validate-algorithm">
 validation algorithm</a> in the [[[VC-BITSTRING-STATUS-LIST]]] specification.
-          </p>
+            </p>
+          </section>
+
+          <section id="bitstring-to-terse">
+            <h4>`BitstringStatusListEntry` to `TerseBitstringStatusListEntry`</h4>
+
+            <p>
+The algorithm takes a `BitstringStatusListEntry` ([=struct=]
+|statusListEntry|), whose |statusListCredential| value is expected to be a
+URL of the form |terseStatusListBaseUrl|, '/', |statusPurpose|, '/',
+|listIndex|, and an integer |listLength| containing the number of entries in
+each `BitstringStatusListCredential` published by the <a>issuer</a> as
+input, and returns a 'TerseBitstringStatusListEntry' object.
+            </p>
+
+            <ol class="algorithm">
+              <li>
+Set |result| to be an empty [=map=].
+              </li>
+              <li>
+Set |listIndex| to the integer representation of the final path segment of
+|statusListEntry|.|statusListCredential|.
+              </li>
+              <li>
+Set |terseStatusListBaseUrl| to |statusListEntry|.|statusListCredential|
+with the final two path segments (i.e., '/', |statusPurpose|, '/',
+|listIndex|) removed.
+              </li>
+              <li>
+Set |result|.|type| to 'TerseBitstringStatusListEntry'.
+              </li>
+              <li>
+Set |result|.|terseStatusListBaseUrl| to |terseStatusListBaseUrl|.
+              </li>
+              <li>
+Set |result|.|terseStatusListIndex| to |listIndex| * |listLength| + the
+integer representation of |statusListEntry|.|statusListIndex|.
+              </li>
+              <li>
+Return |result|.
+              </li>
+            </ol>
+
+            <p class="note" title="The status purpose is not carried in the terse entry">
+A `TerseBitstringStatusListEntry` does not express the |statusPurpose| of
+the original `BitstringStatusListEntry`. The |statusPurpose| is instead
+supplied by the <a>verifier</a> as an input to the algorithm in Section
+[[[#terse-to-bitstring]]], which reconstructs the
+`BitstringStatusListEntry` during validation.
+            </p>
+          </section>
 
           <p class="note" title="Status lists are optional">
 Implementers are advised that not all <a>issuers</a> will publish status
@@ -1135,50 +1280,62 @@ first hash), <var>transformedDocumentHash</var> (the second hash), and
 
           </section>
 
-          <section>
-            <h4> Create opticalDataBytes</h4>
+          <section id="create-opticaldatabytes">
+            <h4>Create opticalDataBytes</h4>
 
-            <section>
-              <h5>`AamvaDriversLicenseScannableInformation` Credentials</h5>
-              <ol class="algorithm">
-                <li>
-Set |dataToCanonicalize| to an empty array.
-                </li>
-                <li>
-Set |bitfieldDecoded| to be first 22 bits of the length 24 bitstring resulting from decoding
-  `credentialSubject.protectedComponentIndex` from multibase-base64url to binary.
-                </li>
-                <li>
-Set |fieldsAlphabetized| to be an array containing the 22 AAMVA mandatory PDF417 Element IDs
-  [[aamva-dl-id-card-design-standard]] sorted in Unicode code point order (i.e., ['DAC', 'DAD' ... 'DDG']).
-                </li>
-                <li>
-For each bit with value `1` in |bitfieldDecoded|:
-                  <ol class="algorithm">
-                    <li>
-Set the string |fieldName| to |fieldsAlphabetized|[|i|], where |i| is the index of the bit in |bitfieldDecoded|.
-                    </li>
-                    <li>
-Set the string |fieldData| to the data that will be in the PDF417 associated with that field name.
-                    </li>
-                    <li>
-Concatenate |fieldData| to the end of |fieldName|, concatenate a newline character (`\n`, `U+000A`) to the end,
-and append the result to |dataToCanonicalize|.
-                    </li>
-                  </ol>
-                </li>
-                <li>
-Set |canonicalizedData| to the result of sorting |dataToCanonicalize| in Unicode code point order and then applying a join operation
-to create a single string from the array.
-                </li>
-                <li>
+            <p>
+The algorithm in this section produces the optical data
+(|opticalDataBytes|) over which a digital signature is generated or
+verified. The algorithm is generic to any sort of machine-readable optical
+data: the type of the `credentialSubject` defines how the protected
+components of the optical data are extracted (see the type-specific
+component extraction sections below), and this algorithm sorts those
+components into a deterministic list before canonicalizing and hashing them.
+            </p>
+
+            <p>
+The required inputs to this algorithm are the machine-readable optical data
+(|opticalData|) and the credential subject (|credentialSubject|). A single
+value representing the hashed canonical form of the protected optical data
+is produced as output.
+            </p>
+
+            <ol class="algorithm">
+              <li>
+Set |dataToCanonicalize| to the result of extracting the protected
+components of |opticalData| as an array of strings, according to the
+component extraction rules associated with the type of |credentialSubject|,
+using |credentialSubject|.`protectedComponentIndex` if it is defined for
+that type. The component extraction rules for `MachineReadableZone` are
+given in Section [[[#mrz-component-extraction]]]; the rules for other types
+are given in the specifications or appendices that define them (e.g.,
+Appendix [[[#aamva-component-extraction]]] for the type defined in Appendix
+[[[#aamva]]], and Appendix [[[#iso-idl-component-extraction]]] for the type
+described in Appendix [[[#iso-idl]]]).
+              </li>
+              <li>
+Set |canonicalizedData| to the result of sorting |dataToCanonicalize| into a
+deterministic list, using the ordering rules associated with the type of
+|credentialSubject|, and then applying a join operation to create a single
+string from the array. If the type of |credentialSubject| does not define
+ordering rules, sort |dataToCanonicalize| in Unicode code point order.
+              </li>
+              <li>
 Hash |canonicalizedData| and return the result.
-                </li>
-              </ol>
-            </section>
+              </li>
+            </ol>
 
-            <section>
-              <h5>`MachineReadableZone` Credentials</h5>
+
+            <section id="mrz-component-extraction">
+              <h5>Component extraction: `MachineReadableZone`</h5>
+
+              <p>
+For a |credentialSubject| of type `MachineReadableZone`, |opticalData| is
+the data in the machine-readable zone, and the protected components are
+extracted as follows. The ordering rules for this type are the order in
+which the lines appear on the credential.
+              </p>
+
               <ol class="algorithm">
                 <li>
 Set |dataToCanonicalize| to an empty array.
@@ -1195,14 +1352,12 @@ Append a newline character to the end of |mrzLine| and append |mrzLine| to |data
                   </ol>
                 </li>
                 <li>
-Set |canonicalizedData| to the result of ordering the elements of |dataToCanonicalize| to match the order they appear
-on the credential and then applying a join operation to create a single string from the array.
-                </li>
-                <li>
-Hash |canonicalizedData| and return the result.
+Return |dataToCanonicalize|.
                 </li>
               </ol>
             </section>
+
+
           </section>
           <section>
             <h4>Proof Configuration (ecdsa-xi-2023)</h4>
@@ -1227,108 +1382,414 @@ If <var>options</var>.<var>type</var> is not set to `DataIntegrityProof` and
       </section>
     </section>
 
-    <section class="informative">
-      <h2>Security Considerations</h2>
-
-      <p class="advisement">
-Before reading this section, readers are urged to familiarize themselves
-with general security advice provided in the
-<a href="https://www.w3.org/TR/vc-data-integrity/#security-considerations">
-Security Considerations section of the Data Integrity specification</a> as
-well as the specific security advice provided in the
-<a href="https://www.w3.org/TR/vc-di-ecdsa/#security-considerations">
-Security Considerations section of the ECDSA Cryptosuites specification</a>.
-      </p>
+    <section class="informative" id="threat-model">
+      <h2>Threat Model</h2>
 
       <p>
-In the following sections, we review these important points and direct
-the reader to additional information.
+This section details the general threat model for this specification, including
+security, privacy, safety, and interoperability considerations. Each threat
+below links to its full analysis — description, responses, affected system
+elements, and STRIDE classification — in the accompanying
+<a href="threat-model/">Verifiable Credential Barcodes Threat Model</a>
+document, which also describes the modeled ecosystem, its data flow diagram,
+and its stakeholders. The model covers both <code>OpticalBarcodeCredential</code>
+flows, in which the digital signature covers other machine-readable data on
+the physical document, and generic [=verifiable credentials=] encoded as barcodes
+via the general algorithms, whose digital signatures cover only their own claims.
       </p>
 
       <section>
-        <h3>Optical Data Duplication</h3>
-        <p>
-One attack vector against `OpticalBarcodeCredentials` involves duplicating
-an optical barcode containing a digital signature for use on a fraudulent document.
-While a duplicated barcode will pass signature validation like the original, this attack
-is mitigated by the document verifier checking the following three things: the signed data
-matches the data visible on the document, the signed data matches the physical attributes of
-the user, and the visible data matches the physical attributes of the user. When these
-three are all equivalent, the only way the `OpticalBarcodeCredential` could be a
-duplicate is if the fraudulent document creator had access to a real
-`OpticalBarcodeCredential` where the signed physical attributes fully overlapped
-with those of the user of the fraudulent document. The low likelihood of an undetected
-stolen `OpticalBarcodeCredential` existing that completely matches the appearance
-of an arbitrary person makes this attack unlikely to succeed.
-        </p>
+        <h3>Target Threats</h3>
+        <ol class="threat-toc">
+          <li value="1">
+            <a href="threat-model#t1-barcode-data-tampering">
+Barcode Data Tampering</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker alters the machine-readable data on a physical document after issuance to change signed attributes such as date of birth, expiration date, or document number.
+          </li>
+          <li value="2">
+            <a href="threat-model#t2-forgery-of-documents-without-machine-readable-information">
+Forgery of Documents Without Machine-Readable Information</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+A document issued with no machine-readable information can be checked only by human inspection, leaving forgery and alteration cryptographically undetectable; a generic [=verifiable credential=] encoded as a barcode makes the issuer's claims machine-verifiable.
+          </li>
+          <li value="3">
+            <a href="threat-model#t3-issuer-spoofing-via-forged-barcode">
+Issuer Spoofing via Forged Barcode</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker fabricates an <code>OpticalBarcodeCredential</code> and prints it onto a counterfeit document so that it appears to have been issued by a legitimate issuing authority.
+          </li>
+          <li value="4">
+            <a href="threat-model#t4-acceptance-of-a-revoked-or-suspended-document">
+Acceptance of a Revoked or Suspended Document</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker continues to use a document after a status change that should render it unusable, and a [=verifier=] with no ability to check status in real time cannot detect the change.
+          </li>
+        </ol>
       </section>
       <section>
-        <h3>Partially Signed Optical Data</h3>
-        <p>
-It is possible that in some cases the digital signature cannot be created
-over the entirety of the existing optical data. For example, consider a case
-where a serial number is injected by a physical credential manufacturer such
-that it is not known to the issuer at signature time. In this case, the verifier
-will assume that any data not digitally signed could have been changed in
-the optical barcode without impacting the `OpticalBarcodeCredential's`
-ability to successfully validate.
-       </p>
-       <p>
-When checking that data from the optical barcode matches the data visible on the
-document as well as the characteristics of the document holder, implementers
-are advised to only use the fields that are digitally signed. [=Verifiers=] are
-advised to only use fields protected by the digital signature, no matter how
-commonly the other fields are used for fraud detection on unsigned documents. For
-example, if eye color and hair color are protected by the signature, but the
-[=holder=]'s portrait is not, [=verifiers=] are advised to emphasize the eye
-color and hair color when attempting to detect fraud over the portrait.
-       </p>
-       <p>
-Implementers of software used by [=verifiers=] are advised to only display card data
-that has been secured via digital signature during the verification process. Displaying
-unsigned data, which could have been tampered with, could interfere with fraud detection.
-       </p>
+        <h3>Implementation Threats</h3>
+        <ol class="threat-toc">
+          <li value="5">
+            <a href="threat-model#t5-optical-data-duplication">
+Optical Data Duplication</a>
+            <span class="threat-tag threat-tag-safety">safety</span> <span class="threat-tag threat-tag-security">security</span> —
+A signed barcode copied from a genuine document passes proof verification on a fraudulent one, especially where the signed attributes are coarse and not biometrically bound.
+          </li>
+          <li value="6">
+            <a href="threat-model#t6-unsigned-field-substitution">
+Unsigned-Field Substitution</a>
+            <span class="threat-tag threat-tag-safety">safety</span> <span class="threat-tag threat-tag-security">security</span> —
+An attacker modifies barcode fields that are not covered by the digital signature, deceiving [=verifiers=] that rely on unsigned data for fraud detection.
+          </li>
+          <li value="7">
+            <a href="threat-model#t7-untrusted-verification-software">
+Untrusted Verification Software</a>
+            <span class="threat-tag threat-tag-security">security</span> <span class="threat-tag threat-tag-privacy">privacy</span> —
+Malicious or unvetted verification software falsely reports fraudulent credentials as valid, suppresses failed checks, or exfiltrates the personal data read from documents.
+          </li>
+          <li value="8">
+            <a href="threat-model#t8-failure-to-surface-signed-vs-unsigned-coverage">
+Failure to Surface Signed-vs-Unsigned Coverage</a>
+            <span class="threat-tag threat-tag-safety">safety</span> —
+Verification software fails to surface what each credential's digital signature does and does not cover — a generic [=verifiable credential=]'s signature covers only its own claims, and an <code>OpticalBarcodeCredential</code>'s covers only its selected optical data — letting unsigned or mismatched document data carry the same trust as signed data.
+          </li>
+          <li value="9">
+            <a href="threat-model#t9-verifier-trust-anchor-misconfiguration">
+Verifier Trust Anchor Misconfiguration</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An overly broad, stale, or attacker-supplied trust store causes a [=verifier=] to accept credentials from entities that are not authoritative for the presented document type.
+          </li>
+          <li value="10">
+            <a href="threat-model#t10-denial-of-service-of-status-services">
+Denial of Service of Status Services</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker renders the status services unreachable, preventing [=verifiers=] from learning whether documents have been revoked or suspended.
+          </li>
+          <li value="11">
+            <a href="threat-model#t11-stale-status-via-aggressive-caching">
+Stale Status via Aggressive Caching</a>
+            <span class="threat-tag threat-tag-security">security</span> <span class="threat-tag threat-tag-privacy">privacy</span> —
+Aggressively cached status lists allow a document revoked after the cache was populated to continue to be accepted.
+          </li>
+          <li value="12">
+            <a href="threat-model#t12-under-inclusive-protected-component-index">
+Under-Inclusive Protected Component Index</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An issuer that signs too few barcode fields produces credentials that verify successfully while leaving most of the document's data freely modifiable.
+          </li>
+          <li value="23">
+            <a href="threat-model#t23-credential-subject-type-confusion">
+Credential Subject Type Confusion</a>
+            <span class="threat-tag threat-tag-security">security</span> <span class="threat-tag threat-tag-interoperability">interoperability</span> —
+A credential processed under the wrong <code>credentialSubject</code> subclass — an unrecognized third-party type, a weaker asserted type, or generic superclass handling — bypasses the type-specific extraction, encoding, and verification rules.
+          </li>
+        </ol>
       </section>
       <section>
-        <h3>Safe Verification</h3>
-        <p>
-[=Verifiers=] are advised to always use trusted programs and interfaces to check the validity
-of the `OpticalBarcodeCredential`. Use of untrusted software to verify a document
-could result in a fraudulent credential being accepted, or a genuine credential being stolen.
-        </p>
+        <h3>External Threats</h3>
+        <ol class="threat-toc">
+          <li value="14">
+            <a href="threat-model#t14-physical-medium-information-leakage">
+Physical Medium Information Leakage</a>
+            <span class="threat-tag threat-tag-privacy">privacy</span> —
+The barcode can be captured off the document's surface — for example by a high-resolution video camera at a convenience store — without the [=holder=]'s awareness, leaking everything it encodes in a way digital presentations do not.
+          </li>
+          <li value="15">
+            <a href="threat-model#t15-correlation-via-status-list-retrieval">
+Correlation via Status List Retrieval</a>
+            <span class="threat-tag threat-tag-privacy">privacy</span> —
+The host of a status list observes [=verifiers=]' retrieval requests and can build a picture of where and when documents are being checked.
+          </li>
+          <li value="16">
+            <a href="threat-model#t16-compelled-presentation-and-over-disclosure">
+Compelled Presentation and Over-Disclosure</a>
+            <span class="threat-tag threat-tag-privacy">privacy</span> —
+Presenting a barcode discloses every signed attribute it carries, with no mechanism for selective disclosure.
+          </li>
+          <li value="17">
+            <a href="threat-model#t17-cross-verifier-linkage-of-the-holder">
+Cross-Verifier Linkage of the Holder</a>
+            <span class="threat-tag threat-tag-privacy">privacy</span> —
+The static barcode value acts as a persistent correlator that lets [=verifiers=] link a [=holder=]'s separate presentations into a single profile.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>Dependency Threats</h3>
+        <ol class="threat-toc">
+          <li value="18">
+            <a href="threat-model#t18-cryptographically-relevant-quantum-computer-breaks-ecdsa">
+Cryptographically Relevant Quantum Computer Breaks ECDSA</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+A cryptographically relevant quantum computer forges the ECDSA signatures protecting long-lived physical documents, including retroactively against already-issued barcodes.
+          </li>
+          <li value="13">
+            <a href="threat-model#t13-quishing-via-malicious-barcode-injection">
+Quishing via Malicious Barcode Injection</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+A barcode presented where a VCB is expected — but crafted to hijack the interaction — attacks the barcode scanner, JSON-LD/CBOR-LD processors, HTTP client, or cryptographic hardware and software in the [=verifier=]'s pipeline.
+          </li>
+          <li value="22">
+            <a href="threat-model#t22-biometric-falsification">
+Biometric Falsification</a>
+            <span class="threat-tag threat-tag-security">security</span> <span class="threat-tag threat-tag-safety">safety</span> —
+Easily cloned biometric data, such as images of individuals, produces false positives on biometric checks.
+          </li>
+          <li value="19">
+            <a href="threat-model#t19-compromise-of-the-issuer-signing-key">
+Compromise of the Issuer Signing Key</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker who obtains the issuer's private signing key can mint unlimited valid credentials indistinguishable from genuine ones.
+          </li>
+          <li value="20">
+            <a href="threat-model#t20-key-resolution-and-key-management-spoofing">
+Key Resolution and Key-Management Spoofing</a>
+            <span class="threat-tag threat-tag-security">security</span> —
+An attacker who controls or redirects where issuer keys are made available causes [=verifiers=] to validate attacker-signed credentials as genuine.
+          </li>
+          <li value="21">
+            <a href="threat-model#t21-base-encoding-and-multibase-header-confusion">
+Base-Encoding and Multibase Header Confusion</a>
+            <span class="threat-tag threat-tag-interoperability">interoperability</span> <span class="threat-tag threat-tag-security">security</span> —
+Mismatched per-type character-encoding assumptions between the document manufacturer and the [=verifier=] cause the bytes verified to differ from the bytes signed.
+          </li>
+        </ol>
       </section>
     </section>
 
-    <section>
-      <h2>Privacy Considerations</h2>
-
-      <p class="advisement">
-Before reading this section, readers are urged to familiarize themselves
-with general security advice provided in the
-<a href="https://www.w3.org/TR/vc-data-integrity/#privacy-considerations">
-Security Considerations section of the Data Integrity specification</a> as
-well as the specific security advice provided in the
-<a href="https://www.w3.org/TR/vc-di-ecdsa/#privacy-considerations">
-Security Considerations section of the ECDSA Cryptosuites specification</a>.
-      </p>
+    <section class="appendix" id="aamva">
+      <h2>AAMVA Driver License and Identification Documents</h2>
 
       <p>
-The following section describes privacy considerations that developers
-implementing this specification should be aware of in order to avoid violating
-privacy assumptions.
+This appendix defines `AamvaDriversLicenseScannableInformation`, a
+`credentialSubject` type, defined as a subclass of
+`MachineReadableInformation`, that is used to secure the contents of the PDF417
+barcode on driver's licenses and identification cards issued
+in accordance with the AAMVA DL/ID Card Design Standard
+[[aamva-dl-id-card-design-standard]]. This type satisfies the requirements for
+new `credentialSubject` types set out in Section [[[#opticalbarcodecredential]]],
+and this appendix also serves as an example of how such a type can be defined for
+the documents issued by a particular country or region; other specifications are
+encouraged to define similar types for other classes of documents.
       </p>
 
-      <div class="issue">
-Add more privacy considerations including at least the following:
-        <ul>
-          <li>
-Barcodes can be read at a distance; therefore information that is very
-sensitive should not be encoded into a barcode and might be better transmitted
-via NFC or an encrypted online communication channel.
-          </li>
-        </ul>
-      </div>
+      <section>
+        <h3>AamvaDriversLicenseScannableInformation</h3>
 
+        <p>
+A `credentialSubject` of type `AamvaDriversLicenseScannableInformation`
+signifies that the <a>verifiable credential</a> secures the contents of the
+PDF417 barcode on an AAMVA-compliant driver's license or
+identification card [[aamva-dl-id-card-design-standard]].
+        </p>
+
+        <p>
+An `AamvaDriversLicenseScannableInformation` object has a REQUIRED
+`protectedComponentIndex` property that contains information about which
+fields in the PDF417 are digitally signed. `protectedComponentIndex` MUST be a
+three byte/24 bit value that is multibase-base64url encoded for a total of 5
+characters in the JSON-LD credential. There are 22 mandatory fields in an
+AAMVA-compliant driver's license PDF417
+[[aamva-dl-id-card-design-standard]], and the first 22 bits of the
+`protectedComponentIndex` value correspond to these fields. Each AAMVA
+mandatory field begins with a three character element ID (e.g., `DBA` for
+document expiration date). The deterministic list of components associated
+with this type is the list of these 22 element IDs sorted according to Unicode
+code point order (i.e., `['DAC', 'DAD' ... 'DDG']`). If a bit in position `i`
+of `protectedComponentIndex` is `1`, the AAMVA mandatory field in position `i`
+of the sorted element IDs is protected by the digital signature. The last two
+bits in `protectedComponentIndex` are padding bits and MUST be `0`. For more
+information, see Section [[[#create-opticaldatabytes]]].
+        </p>
+
+        <p>
+It is RECOMMENDED that implementers character-encode CBOR-LD encoded
+`AamvaDriversLicenseScannableInformation` credentials as base64url before
+encoding them in a PDF417. A multibase header MAY be prepended to the
+base-encoded VCB data. PDF417 field header specifications are expected to
+indicate whether a multibase header is present or absent.
+        </p>
+
+          <pre class="example nohighlight"
+          title="An OpticalBarcodeCredential with credentialSubject of type AamvaDriversLicenseScannableInformation">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/vc-barcodes/v1"
+  ],
+  "type": [
+    "VerifiableCredential",
+    <span class="highlight">"OpticalBarcodeCredential"</span>
+  ],
+  "issuer": "did:web:dmv.utopia.example",
+  "credentialStatus": <span class="highlight">{
+    "type": "TerseBitstringStatusListEntry",
+    "terseStatusListBaseUrl": "dmv.utopia.gov/statuses/12345/status-lists"
+    "terseStatusListIndex": 123567890
+  }</span>,
+  "credentialSubject": {
+    <span class="highlight">"type": "AamvaDriversLicenseScannableInformation"</span>,
+    <span class="highlight">"protectedComponentIndex": "uP_BA"</span>
+  }
+}
+        </pre>
+      </section>
+
+        <section id="aamva-component-extraction">
+          <h3>Component Extraction</h3>
+
+          <p>
+For a |credentialSubject| of type
+`AamvaDriversLicenseScannableInformation`, |opticalData| is the data in the
+PDF417 barcode, and the protected components are extracted as follows. The
+ordering rules for this type are the default Unicode code point order.
+          </p>
+
+          <ol class="algorithm">
+            <li>
+Set |dataToCanonicalize| to an empty array.
+            </li>
+            <li>
+Set |bitfieldDecoded| to be first 22 bits of the length 24 bitstring resulting from decoding
+  |credentialSubject|.`protectedComponentIndex` from multibase-base64url to binary.
+            </li>
+            <li>
+Set |fieldsAlphabetized| to be the deterministic list of components for this type, i.e., an array
+  containing the 22 AAMVA mandatory PDF417 Element IDs
+  [[aamva-dl-id-card-design-standard]] sorted in Unicode code point order (i.e., ['DAC', 'DAD' ... 'DDG']).
+            </li>
+            <li>
+For each bit with value `1` in |bitfieldDecoded|:
+              <ol class="algorithm">
+            <li>
+Set the string |fieldName| to |fieldsAlphabetized|[|i|], where |i| is the index of the bit in |bitfieldDecoded|.
+            </li>
+            <li>
+Set the string |fieldData| to the data that will be in the PDF417 associated with that field name.
+            </li>
+            <li>
+Concatenate |fieldData| to the end of |fieldName|, concatenate a newline character (`\n`, `U+000A`) to the end,
+and append the result to |dataToCanonicalize|.
+            </li>
+              </ol>
+            </li>
+            <li>
+Return |dataToCanonicalize|.
+            </li>
+          </ol>
+        </section>
+    </section>
+
+    <section class="appendix informative" id="iso-idl">
+      <h2>ISO-Compliant Driving Licences</h2>
+
+      <p>
+This appendix describes `IsoDrivingLicenceMachineReadableInformation`, a
+`credentialSubject` type, defined as a subclass of
+`MachineReadableInformation`, that can be used to secure the machine-readable
+data on an ISO-compliant driving licence (IDL) [[?ISO18013-2]]. It
+illustrates how a `credentialSubject` type satisfying the requirements in
+Section [[[#opticalbarcodecredential]]] could be defined for IDLs, and is
+expected to be refined by a future revision of this specification, or by
+another specification, before use.
+      </p>
+
+        <section id="isodrivinglicencemachinereadableinformation">
+          <h3>IsoDrivingLicenceMachineReadableInformation</h3>
+
+          <p>
+A `credentialSubject` of type
+`IsoDrivingLicenceMachineReadableInformation` signifies that the
+<a>verifiable credential</a> secures the compact-encoded machine-readable
+data, as defined in [[?ISO18013-2]], on an ISO-compliant driving licence
+(IDL), such as the contents of a PDF417 barcode on the
+licence. The machine-readable IDL data is organized into data groups
+(`DG1` through `DG11`) as defined by the logical data structure in
+[[?ISO18013-2]]; these data groups are the components of the optical data
+for the purposes of this specification.
+`IsoDrivingLicenceMachineReadableInformation` is a subclass of
+`MachineReadableInformation`.
+          </p>
+
+          <p>
+An `IsoDrivingLicenceMachineReadableInformation` object has a required
+`protectedComponentIndex` property that contains information about which
+data groups are digitally signed. `protectedComponentIndex` is a
+two byte/16 bit value that is multibase-base64url encoded for a total of
+4 characters in the JSON-LD credential. The deterministic list of components
+associated with this type is the list of data groups defined in [[?ISO18013-2]],
+sorted in ascending order of data group number (i.e.,
+`['DG1', 'DG2' ... 'DG11']`), and the first 11 bits of the
+`protectedComponentIndex` value correspond to these data groups. If a bit
+in position `i` of `protectedComponentIndex` is `1`, the data group in
+position `i` of the deterministic list of components is protected by the
+digital signature. The remaining bits in `protectedComponentIndex` are
+padding bits and are set to `0`. For more information, see Section
+[[[#create-opticaldatabytes]]].
+          </p>
+          <p>
+Implementers are expected to character-encode CBOR-LD encoded
+`IsoDrivingLicenceMachineReadableInformation` credentials as base64url
+before encoding them in a PDF417. A multibase header can be prepended to
+the base-encoded VCB data. The encoded VCB is expected to be placed
+in Data Group 11, for optional and jurisdiction-specific data. If the VCB
+is placed into one of the 11 Data Groups, the corresponding element of
+`protectedComponentIndex` is set to 0.
+          </p>
+        </section>
+
+            <section id="iso-idl-component-extraction">
+              <h3>Component Extraction</h3>
+
+              <p>
+For a |credentialSubject| of type
+`IsoDrivingLicenceMachineReadableInformation`, |opticalData| is the
+compact-encoded machine-readable data [[?ISO18013-2]] on the licence, and
+the protected components are extracted as follows. The ordering rules for
+this type are ascending order of data group number.
+              </p>
+
+              <ol class="algorithm">
+                <li>
+Set |dataToCanonicalize| to an empty array.
+                </li>
+                <li>
+Set |bitfieldDecoded| to be the first 11 bits of the
+length 16 bitstring resulting from decoding
+|credentialSubject|.`protectedComponentIndex` from multibase-base64url to
+binary.
+                </li>
+                <li>
+Set |dataGroupsOrdered| to be the deterministic list of components for this
+type, i.e., an array containing the data group identifiers defined in
+[[?ISO18013-2]] sorted in ascending order of data group number (i.e.,
+`['DG1', 'DG2' ... 'DG11']`).
+                </li>
+                <li>
+For each bit with value `1` in |bitfieldDecoded|:
+                  <ol class="algorithm">
+                    <li>
+Set the string |dataGroupName| to |dataGroupsOrdered|[|i|], where |i| is
+the index of the bit in |bitfieldDecoded|.
+                    </li>
+                    <li>
+Set the string |dataGroupData| to a base64url encoding of the contents
+of the data group identified by |dataGroupName| in |opticalData|, as delimited by
+the data group delimiter character.
+                    </li>
+                    <li>
+Concatenate |dataGroupData| to the end of |dataGroupName|, concatenate a
+newline character (`\n`, `U+000A`) to the end, and append the result to
+|dataToCanonicalize|.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Return |dataToCanonicalize|.
+                </li>
+              </ol>
+            </section>
     </section>
 
     <section class="informative">
@@ -2122,7 +2583,7 @@ the credential.
             <h4>Status Checking</h4>
             <p>
 The last step is to check the status information on the Driver's License
-credential. We apply <a href="#convert-status-list-entries"></a>
+credential. We apply <a href="#terse-to-bitstring"></a>
 to convert the `TerseBitstringStatusListEntry` into a `BitstringStatusListEntry`.
 Here we check two status types, 'revocation' and 'suspension', passing those
 strings as values of |statusPurpose|.

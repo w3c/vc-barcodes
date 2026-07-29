@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Verifiable Credential Barcodes Threat Model</title>
+  <script src="https://www.w3.org/Tools/respec/respec-w3c"
+    class="remove"></script>
+  <script src="threats/threat-model.js"></script>
+
+  <script class='remove'>
+    // See https://github.com/w3c/respec/wiki/ for how to configure ReSpec
+    var respecConfig = {
+      specStatus: "NOTE",
+      group: "vc",
+      edDraftURI: "https://w3c.github.io/vc-barcodes/threat-model/",
+      latestVersion: "https://www.w3.org/TR/vc-barcodes/threat-model/",
+      github: {
+        repoURL: "https://github.com/w3c/vc-barcodes/",
+        branch: "main"
+      },
+      editors: [{
+        name: "Wesley Smith",
+        company: "Digital Bazaar",
+        w3cid: 152091
+      }],
+      noRecTrack: "true",
+      maxTocLevel: 4,
+      threatModelTocSelector: "#threat-model-toc",
+      threatModelDetailsSelector: "#threat-model-details",
+      preProcess: [window.ThreatModel.render],
+      postProcess: [() => {
+        respecConfig.thisVersion = respecConfig.thisVersion + '/threat-model/';
+      }]
+    };
+  </script>
+  <script src="threats/outline.js"></script>
+  <link rel="stylesheet" href="threats/threat-model.css" />
+  <script src="threats/t1-barcode-data-tampering.js"></script>
+  <script src="threats/t2-forgery-of-documents-without-machine-readable-information.js"></script>
+  <script src="threats/t3-issuer-spoofing-via-forged-barcode.js"></script>
+  <script src="threats/t4-acceptance-of-a-revoked-or-suspended-document.js"></script>
+  <script src="threats/t5-optical-data-duplication.js"></script>
+  <script src="threats/t6-unsigned-field-substitution.js"></script>
+  <script src="threats/t7-untrusted-verification-software.js"></script>
+  <script src="threats/t8-failure-to-surface-signed-vs-unsigned-coverage.js"></script>
+  <script src="threats/t9-verifier-trust-anchor-misconfiguration.js"></script>
+  <script src="threats/t10-denial-of-service-of-status-services.js"></script>
+  <script src="threats/t11-stale-status-via-aggressive-caching.js"></script>
+  <script src="threats/t12-under-inclusive-protected-component-index.js"></script>
+  <script src="threats/t13-quishing-via-malicious-barcode-injection.js"></script>
+  <script src="threats/t14-physical-medium-information-leakage.js"></script>
+  <script src="threats/t15-correlation-via-status-list-retrieval.js"></script>
+  <script src="threats/t16-compelled-presentation-and-over-disclosure.js"></script>
+  <script src="threats/t17-cross-verifier-linkage-of-the-holder.js"></script>
+  <script src="threats/t18-cryptographically-relevant-quantum-computer-breaks-ecdsa.js"></script>
+  <script src="threats/t19-compromise-of-the-issuer-signing-key.js"></script>
+  <script src="threats/t20-key-resolution-and-key-management-spoofing.js"></script>
+  <script src="threats/t21-base-encoding-and-multibase-header-confusion.js"></script>
+  <script src="threats/t22-biometric-falsification.js"></script>
+  <script src="threats/t23-credential-subject-type-confusion.js"></script>
+</head>
+
+<body>
+  <section id="abstract">
+    <p>
+This document describes a threat model for the
+<a href="https://w3c.github.io/vc-barcodes/">Verifiable Credential
+Barcodes</a> specification. It identifies and analyzes security and privacy
+threats specific to ecosystems that embed
+verifiable credentials in optical barcodes in order to provide
+authenticity, integrity, and real-time status management for physical documents.
+    </p>
+  </section>
+  <section id="sotd">
+    <p>
+This threat model is a work in progress. It is published alongside the
+Verifiable Credential Barcodes specification to inform implementers and
+ecosystem designers of the security and privacy considerations relevant to
+deployments of the specification. Feedback and proposed additions are welcome
+via the
+<a href="https://github.com/w3c/vc-barcodes/issues">issue tracker</a>.
+    </p>
+  </section>
+  <section id="Introduction">
+    <h2>Introduction</h2>
+    <p>
+This document provides a threat model for the Verifiable Credential Barcodes
+specification, which supports two use cases:
+    </p>
+    <ul>
+      <li>
+<strong>Encoding generic verifiable credentials as barcodes.</strong> Any
+appropriate verifiable credential can be compressed with CBOR-LD, character-encoded,
+and printed as a barcode. In this use case, the credential's Data Integrity proof covers
+exactly the claims included in the credential itself.
+      </li>
+      <li>
+<strong>Securing existing optical data with
+<code>OpticalBarcodeCredential</code>.</strong> Verifiable Credentials of
+type <code>OpticalBarcodeCredential</code> can use the <code>ecdsa-xi-2023</code>
+Data Integrity cryptosuite to protect via digital signature not only
+the claims in the credential itself, but also other machine-readable data already printed
+on a physical document - such as the PDF417 on a driver's license or a machine-readable zone.
+      </li>
+    </ul>
+    <p>
+In both cases, a credential that successfully verifies is guaranteed to have
+originated from the claimed issuing authority (authenticity) and to carry data
+unmodified since issuance (integrity), and the document's revocation or
+suspension status can be checked in real time - all without a privacy-invasive
+"phone home" to a source-of-truth database. The two use cases differ in what
+the digital signature covers: a generic credential's signature covers only the
+credential's own claims, while an <code>OpticalBarcodeCredential</code>'s
+signature also covers selected optical data on the document.
+    </p>
+    <p>
+This threat model follows the methodology described in the
+<a href="https://www.w3.org/TR/threat-modeling-guide/">W3C Threat
+Modeling Guide</a> and uses the STRIDE taxonomy for classifying threats.
+Threats are grouped into four categories:
+    </p>
+    <ul>
+      <li>
+<strong>Target Threats</strong> - threats the specification was designed
+to address.
+      </li>
+      <li>
+<strong>Implementation Threats</strong> - threats that implementers must
+handle; the specification leaves the choice of mitigation open.
+      </li>
+      <li>
+<strong>External Threats</strong> - real-world risks acknowledged as out
+of scope for this version of the specification.
+      </li>
+      <li>
+<strong>Dependency Threats</strong> - threats inherited from technologies
+the specification depends upon.
+      </li>
+    </ul>
+
+<section id="threat-model-description">
+      <h3>Description</h3>
+      <p>
+The Verifiable Credential Barcodes ecosystem enables an [=E1|issuing authority=]
+— such as a state motor vehicle agency, a passport authority, or another
+document-issuing body - to either encode generic Verifiable Credentials
+as barcodes ([=O4|O4=]) or issue a specific type of Verifiable Credentials,
+<code>OpticalBarcodeCredentials</code> ([=O1|O1=]),
+that secure non-Verifiable Credential optical data on a physical document.
+In the first case, the [=E1|issuer=] signs the credential with an ordinary
+Data Integrity proof over the claims it contains. In the second, the
+[=E1|issuer=] signs with the <code>ecdsa-xi-2023</code> cryptosuite, which
+covers selected fields of the barcode - the [=O2|optical data bytes=] - 
+as "extra information". In both cases, the credential is
+compressed with CBOR-LD, character-encoded, and printed into a barcode (a
+PDF417, a QR code, or a machine-readable zone) on a document carried by the
+[=E2|holder=].
+      </p>
+      <p>
+A [=E3|verifier=] who scans a physical document must
+be able to cryptographically verify
+whether the credential was issued by a trusted [=E1|authority=], whether its
+signed content has been tampered with, and (optionally) whether the document remains valid —
+and, for an [=O1|OpticalBarcodeCredential=], whether the document's other signed optical
+data matches what was signed. The specification addresses this by signing over
+the credential (and, for [=O1|OpticalBarcodeCredentials=], the optical data),
+by carrying a <code>TerseBitstringStatusListEntry</code> for status checks, and
+by advising verifiers to compare the signed data against the data visible on
+the document and against the physical attributes of the person presenting it —
+while trusting only what each credential's proof actually covers.
+      </p>
+      <p>
+For this threat model, we consider a minimal instantiation of the Verifiable
+Credential Barcodes ecosystem consisting of four external roles: the
+<strong>[=E1|Issuing Authority=] (E1)</strong> who creates and signs 
+[=O1|OpticalBarcodeCredentials=] and/or [=O4|generic verifiable credentials=]
+and publishes status information, the
+<strong>[=E2|Holder=] (E2)</strong> who carries and presents the physical
+document, the <strong>[=E3|Verifier=] (E3)</strong> who scans, verifies, and
+cross-checks the document, and the <strong>[=E4|Document Manufacturer=]
+(E4)</strong> who renders the encoded credential onto a physical card.
+In this instantiation we assume that the holder and presenter of a physical
+document containing a Verifiable Credential Barcode are the same individual.
+      </p>
+      <p>
+Both use cases appear in the data flow diagram below. The specification's general
+algorithms can encode any
+[=O4|Generic Verifiable Credential Expressed as Barcode=] into a barcode; that flow bypasses the
+[=O2|optical data=] binding entirely - the credential's proof covers only its
+own claims. All threats that do not
+depend on the <code>ecdsa-xi-2023</code> binding (issuer spoofing, revocation,
+duplication, status, privacy, key management, and encoding threats, among
+others) apply to both flows.
+      </p>
+    </section>
+
+<section id="threat-model-data-flow-diagram">
+      <h3>Data Flow Diagram for the Verifiable Credential Barcodes Ecosystem</h3>
+      <p>
+The data flow diagram below illustrates the key elements and data flows in a
+minimal Verifiable Credential Barcodes ecosystem, organized into three
+system boundaries: the [=C1|issuer system=] (C1), the
+[=C2|manufacturer system=] (C2), and the [=C3|verifier system=] (C3). An
+[=E1|issuing authority=] (E1) creates and signs either a
+[=O4|generic verifiable credential=] (O4) or an
+[=O1|OpticalBarcodeCredential=] (O1) - in the latter case taking the
+[=O2|optical data bytes=] (O2) as an input to signing - then compresses and
+encodes the credential (P2) and delivers it via [=F1|F1=] to the
+[=E4|document manufacturer=] (E4). Within the [=C2|manufacturer system=], the
+manufacturer renders and personalizes the [=S4|physical document=] (S4) at
+[=P8|P8=]; custody of that document then transfers across the boundary to the
+[=E2|holder=] (E2). The holder [=F2|presents the document=] to a
+[=E3|verifier=] (E3), who scans and decodes it (P3) and verifies the proof (P4),
+obtaining key material either from the [=S3|verifier trust store=] ([=F3|F3a=])
+or through [=S5|external verification-method resolution=] ([=F3|F3b=]).
+Proof verification passes its verified claims and protected-field coverage to
+the [=P5|identity and attribute cross-check=] (P5) and the validated status
+entry and issuer context to the [=P6|status check=] (P6), which may optionally
+[=F4|fetch the status list=] (O3) to confirm the document has not been revoked
+or suspended.
+      </p>
+
+      <img src="diagrams/dfd.svg" alt="Data flow diagram of the Verifiable Credential Barcodes ecosystem">
+
+      <p>
+The following notation is used in the diagram description and dictionary. Every
+element is labelled with a type letter and an index (for example, <code>P4</code>
+or <code>F3a</code>), and every data flow carries an identifier so it can be
+referenced from threats and responses.
+      </p>
+      <ul>
+        <li>
+<strong>E</strong> - External Entity (human or legal person outside the
+system boundary), drawn as a rounded blue box.
+        </li>
+        <li>
+<strong>P</strong> - Process (running algorithm that transforms data), drawn as
+a green box.
+        </li>
+        <li>
+<strong>F</strong> - Data Flow (movement of data between elements), drawn as a
+labelled arrow. All data flows are drawn with solid lines; a flow that is not
+always performed (such as [=F4|F4=]) is noted as optional in its dictionary
+entry rather than by a distinct line style.
+        </li>
+        <li>
+<strong>S</strong> - Data Store (persistent or ephemeral storage), drawn as a
+yellow box.
+        </li>
+        <li>
+<strong>O</strong> - Data Object (self-contained, transferable artifact), drawn
+as an orange box.
+        </li>
+        <li>
+<strong>C</strong> - Contained System Boundary (collection of elements under a
+single controlling authority), drawn as a dashed rectangle enclosing its
+elements. A data flow that crosses a boundary line represents data, custody, or
+control passing between authorities. Elements drawn outside every boundary
+(such as the [=S5|external verification method=] store) are dependencies not
+controlled by any modelled party.
+        </li>
+      </ul>
+
+      <p>
+The diagram records the following <dfn data-lt="threat-model-assumptions">
+assumptions</dfn>, which constrain its scope and are called out here rather than
+left implicit:
+      </p>
+      <ul>
+        <li>
+<strong>A1: Status services co-located with the issuer.</strong> The
+[=S2|status list store=] is drawn inside the [=C1|issuer system=]. In
+deployment, a status authority, hosting provider, or content distribution
+network may be operationally distinct from the credential issuer; placing
+[=S2|S2=] inside [=C1|C1=] is an intentional scope choice for this baseline
+model.
+        </li>
+        <li>
+<strong>A2: The holder and presenter of a credential are the same person.</strong>
+This holds for typical identity documents but not necessarily for
+generic verifiable credentials about goods, organizations, licenses, or
+certifications.
+        </li>
+      </ul>
+    </section>
+
+<section id="threat-model-architecture-dictionary">
+      <h3>Dictionary</h3>
+      <style>
+        table.dictionary,
+        table.dictionary th,
+        table.dictionary td {
+          border: thin solid rgb(176, 176, 176);
+          border-collapse: collapse;
+          padding: 5px;
+        }
+        table.dictionary td.left {
+          width: 12em;
+        }
+      </style>
+      <table class="dictionary">
+        <tbody>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="E1|Issuing Authority">E1 Issuing Authority</dfn>
+            </td>
+            <td>
+An entity - such as a state motor vehicle agency, a passport authority, or
+another document-issuing body - that creates and cryptographically signs
+credentials for optical barcodes - both
+[=O4|generic verifiable credentials=] and
+<code>OpticalBarcodeCredential</code> resources - and operates the status
+infrastructure for the documents it issues. The issuing authority controls
+the signing keys and the verification method against which its credentials
+are validated, and is the authority for any credential it issues.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="E2|Holder">E2 Holder</dfn>
+            </td>
+            <td>
+The person who carries a physical document bearing a Verifiable
+Credential Barcode - for example the person named on a driver's license,
+employment authorization document, or travel document - and who presents that
+document to a verifier. The holder does not operate a system in this model;
+they carry the [=S4|physical document=].
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="E3|Verifier">E3 Verifier</dfn>
+            </td>
+            <td>
+An entity - such as a law enforcement officer, a border control or customs
+agent, an age-verification clerk, or an automated inspection kiosk - that
+scans the optical barcode, verifies the credential it carries - a
+[=O4|generic verifiable credential=] or an
+<code>OpticalBarcodeCredential</code> - cross-checks the signed data against
+the visible document and the person when relevant, and optionally checks status
+information. The verifier is configured to determine from each credential's type
+and proof what its signature actually covers.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="E4|Document Manufacturer">E4 Document Manufacturer</dfn>
+            </td>
+            <td>
+An organization or entity that renders an encoded credential —
+a [=O4|generic verifiable credential=] or an
+<code>OpticalBarcodeCredential</code> - into an optical barcode on a physical
+card or document.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="P1|Credential Creation and Signing">P1 Credential Creation and Signing</dfn>
+            </td>
+            <td>
+The process by which an issuing authority assembles and signs a credential for
+an optical barcode. For a [=O4|generic verifiable credential=], the issuer
+signs an ordinary Data Integrity proof over the claims the credential contains.
+For an <code>OpticalBarcodeCredential</code>, the issuer computes the
+[=O2|optical data bytes=] over the fields selected by the credential type's
+component extraction rules (for example using <code>protectedComponentIndex</code>
+against PDF417 key-value pairs) and signs with
+the <code>ecdsa-xi-2023</code> cryptosuite so the proof covers both the
+credential and the optical data.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="P2|CBOR-LD Compression and Encoding">P2 CBOR-LD Compression and Encoding</dfn>
+            </td>
+            <td>
+The process by which a signed credential - a
+[=O4|generic verifiable credential=] or an <code>OpticalBarcodeCredential</code> - is
+compressed using CBOR-LD and then character-encoded so that it can be rendered into an
+optical barcode.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="P3|Barcode Scan and Decode">P3 Barcode Scan and Decode</dfn>
+            </td>
+            <td>
+The process by which a verifier optically scans the barcode, reverses the
+character encoding, and decompresses the CBOR-LD payload to recover the
+credential and, when it is an <code>OpticalBarcodeCredential</code>, to
+reconstruct the [=O2|optical data bytes=] from the document for verification.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="P4|Proof Verification">P4 Proof Verification</dfn>
+            </td>
+            <td>
+The process by which a verifier checks the credential's proof. For a
+[=O4|generic verifiable credential=], it verifies a standard Data Integrity
+proof over the credential's claims. For an
+<code>OpticalBarcodeCredential</code>, it additionally recomputes the hash of
+the reconstructed [=O2|optical data bytes=] as required by
+<code>ecdsa-xi-2023</code>. In both cases it resolves the issuer's
+<code>verificationMethod</code> and confirms the signature is valid and that
+the resolving issuer is trusted. The process produces an error if any check
+fails.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="P5|Identity and Attribute Cross-Check">P5 Identity and Attribute Cross-Check</dfn>
+            </td>
+            <td>
+The process by which a verifier confirms that the signed data matches the data
+visible on the document, that the signed data matches the physical attributes
+of the person presenting it, and that the visible data matches that person.
+Only fields protected by the signature are relied upon for fraud detection —
+for a [=O4|generic verifiable credential=], that is solely the credential's own
+claims, since its signature covers no other data on the document.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="P6|Status Check">P6 Status Check</dfn>
+            </td>
+            <td>
+The process by which a verifier expands the
+<code>TerseBitstringStatusListEntry</code> into a
+<code>BitstringStatusListEntry</code> and checks the corresponding entry in the
+issuer's status list to determine whether the document has been revoked or
+suspended. This process is performed after proof verification succeeds.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="P7|Status List Publication">P7 Status List Publication</dfn>
+            </td>
+            <td>
+The process by which an issuing authority creates and updates the
+<code>BitstringStatusListCredential</code> that records the status of the documents
+it has issued, and makes it available for retrieval.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="P8|Barcode Rendering and Personalization">P8 Barcode Rendering and Personalization</dfn>
+            </td>
+            <td>
+The process, operated by the [=E4|document manufacturer=] within the
+[=C2|manufacturer system=], that receives the encoded credential via
+[=F1|Render and Print Barcode=], renders it as an optical barcode, and
+creates the [=S4|physical document=] that carries it.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="F1|Render and Print Barcode">F1 Render and Print Barcode</dfn>
+            </td>
+            <td>
+The data flow by which an encoded credential is
+delivered to the [=E4|document manufacturer=] and rendered as an optical
+barcode on a physical document.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="F2|Present Document">F2 Present Document</dfn>
+            </td>
+            <td>
+The data flow by which a holder presents a physical document with an
+optical barcode to a verifier for scanning. This flow crosses the security
+boundary between the holder's possession and the
+[=C3|verifier's system=].
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="F3|Resolve Verification Method|F3a|F3b">F3 Resolve Verification Method</dfn>
+            </td>
+            <td>
+The data flow by which a verifier obtains the issuer's public key material in
+order to verify the credential. The model distinguishes two sub-flows:
+<strong>F3a</strong>, a lookup in the verifier's [=S3|local trust store=] of
+already-trusted key material and policy; and <strong>F3b</strong>, external
+verification-method resolution, such as resolving a <code>did:web</code>
+identifier from the [=S5|external verification method=] store. This threat model
+treats threats in resolving an external verification method as largely out of scope,
+as they are not specific to barcodes or other optical media in any way.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="F4|Fetch Status List">F4 Fetch Status List</dfn>
+            </td>
+            <td>
+The data flow by which a verifier retrieves, typically with a standard HTTP GET
+request, the <code>BitstringStatusListCredential</code> Verifiable Credential
+from the host identified by <code>terseStatusListBaseUrl</code>, receiving the
+status list in response, in order to perform a status check. This flow is
+<strong>optional</strong>: it occurs only when a verifier performs an online
+[=P6|status check=], and is omitted when status is not checked or a cached
+result is reused.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="F5|Publish Status">F5 Publish Status</dfn>
+            </td>
+            <td>
+The data flow by which an issuing authority writes revocation and suspension
+updates into the status list store from which verifiers retrieve them.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="S1|Issuer Key Store">S1 Issuer Key Store</dfn>
+            </td>
+            <td>
+The persistent storage within the [=C1|issuer system=] that holds the issuing
+authority's private signing keys. Compromise of this store undermines the
+authenticity guarantees of every credential signed with the affected key.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="S2|Status List Store">S2 Status List Store</dfn>
+            </td>
+            <td>
+The persistent storage, typically a publicly retrievable web endpoint, where
+the issuing authority publishes <code>BitstringStatusListCredential</code>
+resources. Verifiers retrieve status lists from this store via
+[=F4|Fetch Status List=].
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="S3|Verifier Trust Store">S3 Verifier Trust Store</dfn>
+            </td>
+            <td>
+The storage within the [=C3|verifier system=] that holds the set of issuing
+authorities and verification methods the verifier considers authoritative.
+It is consulted during [=P4|proof verification=] to decide whether a resolving
+issuer is trusted.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="S4|Physical Document">S4 Physical Document / Barcode</dfn>
+            </td>
+            <td>
+The physical document that carries the printed optical barcode. As a
+data store, it persistently holds one or more encoded Verifiable Credentials
+and is the medium presented by the holder and scanned by the verifier. It is
+outside any compute boundary and is readable by anything with optical access to it.
+This store moves from the custody of the [=E4|Document Manufacturer=], inside the
+[=C2|manufacturer system boundary=], to the custody of the [=E2|holder=].
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="S5|External Verification Method">S5 External Verification Method</dfn>
+            </td>
+            <td>
+The external storage from which a verifier obtains issuer key material via
+[=F3|F3b=] when the verification method is not already present in the
+[=S3|verifier trust store=]. This document treats this store outside the existing boundaries
+for generality, although in many deployments this store will be controlled by
+a modelled entity such as the issuer.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="O1|OpticalBarcodeCredential">O1 OpticalBarcodeCredential</dfn>
+            </td>
+            <td>
+A compact, cryptographically-signed verifiable credential that secures the contents
+of an optical barcode. It carries the issuer, a proof produced by the
+<code>ecdsa-xi-2023</code> cryptosuite, a <code>credentialSubject</code> whose
+type is a subclass of the general <code>MachineReadableInformation</code> superclass
+ and optionally a <code>TerseBitstringStatusListEntry</code>. Each subclass defines the optical
+data it secures, its component extraction rules, and its character encoding.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="O2|Optical Data Bytes">O2 Optical Data Bytes (xi)</dfn>
+            </td>
+            <td>
+The canonicalized "extra information" that is hashed
+and bound into the <code>ecdsa-xi-2023</code> signature. It extends the credential's
+digital signature to cover other machine readable data on the document rather than
+covering the credential alone.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="O3|BitstringStatusListCredential">O3 BitstringStatusListCredential</dfn>
+            </td>
+            <td>
+A verifiable credential, published by the issuing authority, that encodes status information
+of a large set of Verifiable Credentials as a compressed
+bitstring. Verifiers consult it during [=P6|status check=] after expanding the
+credential's <code>TerseBitstringStatusListEntry</code>.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="O4|Generic Verifiable Credential Expressed as Barcode">
+O4 Generic Verifiable Credential Expressed as Barcode</dfn>
+            </td>
+            <td>
+Generic verifiable credentials can be encoded into a barcode using this specification's
+general encoding algorithms (CBOR-LD compressed, base45-multibase-encoded, prefixed with
+<code>VC1-</code>). Here, the credential's Data Integrity proof covers only the claims
+explicitly included in the credential itself and the digital signature covers no other
+machine-readable data on the physical document.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="C1|Issuer System">C1 Issuer System</dfn>
+            </td>
+            <td>
+The system boundary - typically the servers and key-management infrastructure
+operated by the issuing authority - that runs the
+[=P1|Credential Creation and Signing=], [=P2|CBOR-LD Compression and Encoding=]
+(in part), and [=P7|Status List Publication=] processes and maintains the
+[=S1|Issuer Key Store=] and [=S2|Status List Store=].
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="C2|Manufacturer System">C2 Manufacturer System</dfn>
+            </td>
+            <td>
+The supply-chain system boundary controlled by the [=E4|document manufacturer=].
+Its controlling authority is the manufacturer; its input is the encoded
+credential delivered by [=F1|Render and Print Barcode=]; its process is
+[=P8|Barcode Rendering and Personalization=]; and it holds the
+[=S4|physical document=] while that document is in production, before custody
+transfers to the [=E2|holder=]. The manufacturer is frequently a distinct
+organization from the issuer, so the boundary between [=C1|C1=] and
+<code>C2</code> is a genuine supply-chain trust boundary.
+            </td>
+          </tr>
+          <tr>
+            <td class="left">
+              <dfn class="lint-ignore"
+                data-lt="C3|Verifier System">C3 Verifier System</dfn>
+            </td>
+            <td>
+The system boundary that runs the [=P3|Barcode Scan and Decode=], [=P4|Proof Verification=],
+[=P5|Identity and Attribute Cross-Check=], and [=P6|Status Check=] processes
+and holds the [=S3|Verifier Trust Store=].
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+
+<section id="threat-model-stakeholders">
+    <h2>Stakeholders</h2>
+
+    <h3>E1 Issuing Authority</h3>
+    <p>
+An issuing authority creates and signs credentials for optical barcodes - both
+[=O4|generic verifiable credentials=] and <code>OpticalBarcodeCredential</code>
+resources - and operates the status infrastructure for the documents it
+issues.
+    </p>
+    <p>
+Issuing authorities typically have an interest in ensuring that only unmodified documents they
+genuinely issued can pass verification, that their signing keys are not
+compromised, and that they can revoke or suspend documents after issuance. They
+bear operational responsibility for the availability and integrity of the
+status lists they publish and for the consequences of signing
+documents that remain in circulation for years.
+    </p>
+
+    <h3>E2 Holder</h3>
+    <p>
+A holder is a person carrying a physical document that bears a
+Verifiable Credential Barcode - examples include an importer presenting credentials at a border,
+a driver presenting a license, or an employee presenting an employment
+authorization document.
+    </p>
+    <p>
+A holder's primary goal is for their genuine documents to be accepted while
+their personal information is not over-exposed. Because a barcode can be read at
+a distance and discloses all of its signed contents at once, holders' privacy
+considerations here differ slightly from Verifiable Credential ecosystems where
+credentials are stored and presented digitally.
+    </p>
+
+    <h3>E3 Verifier</h3>
+    <p>
+A verifier receives a physical document from a holder and must determine whether
+to accept it. Verifiers range from automated border-control kiosks processing
+travelers at high volume to human officers and clerks checking a license or
+permit by hand.
+    </p>
+    <p>
+The verifier's primary goal is to confirm that the document was issued by a
+genuinely trusted authority, that its signed data has not been tampered with,
+(optionally) that its status entries do not render it invalid, and that it
+belongs to the person presenting it. Because the two credential kinds differ
+in what their proofs cover, the verifier must also determine whether a given barcode carries an
+<code>OpticalBarcodeCredential</code> that binds the document's optical data or
+a [=O4|generic verifiable credential=] whose signature covers only its own
+claims, and scope trust accordingly. Verifiers also have a strong interest in availability - a denial
+of service against the status lists they depend on directly impairs their
+ability to function - and in the trustworthiness of the verification software
+they run.
+    </p>
+
+    <h3>E4 Document Manufacturer</h3>
+    <p>
+A document manufacturer is the organization that renders
+the encoded credential into a barcode on a physical document. In many cases
+this is a distinct organization from the issuing authority.
+    </p>
+    <p>
+The manufacturer handles the encoded credential and the physical medium, and it may inject data,
+such as serial numbers, that the issuer did not sign. Faithful rendering and
+correct application of the specification's encoding conventions are essential to
+the document verifying as intended.
+    </p>
+  </section>
+
+  <section id="threat-model-threats">
+    <h2>Threats</h2>
+    <section id="threat-model-toc">
+    </section>
+    <section id="threat-model-details">
+    </section>
+  </section>
+
+  <section id="threat-model-contributing">
+    <h3>Contributing</h3>
+    <p>
+This threat model is maintained alongside the Verifiable Credential Barcodes
+specification. Feedback, bug reports, and proposed additions are welcome
+via the <a
+href="https://github.com/w3c/vc-barcodes/issues/new">issue tracker</a>.
+    </p>
+  </section>
+
+</body>
+
+</html>
