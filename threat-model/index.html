@@ -11,10 +11,12 @@
   <script class='remove'>
     // See https://github.com/w3c/respec/wiki/ for how to configure ReSpec
     var respecConfig = {
-      specStatus: "NOTE",
+      specStatus: "DNOTE",
       group: "vc",
       edDraftURI: "https://w3c.github.io/vc-barcodes/threat-model/",
       latestVersion: "https://www.w3.org/TR/vc-barcodes/threat-model/",
+      shortName: "vc-barcodes-threat-model-1.0",
+      publishDate:  "2026-10-08",
       github: {
         repoURL: "https://github.com/w3c/vc-barcodes/",
         branch: "main"
@@ -59,6 +61,18 @@
   <script src="threats/t21-base-encoding-and-multibase-header-confusion.js"></script>
   <script src="threats/t22-biometric-falsification.js"></script>
   <script src="threats/t23-credential-subject-type-confusion.js"></script>
+  <style>
+    table.dictionary,
+    table.dictionary th,
+    table.dictionary td {
+      border: thin solid rgb(176, 176, 176);
+      border-collapse: collapse;
+      padding: 5px;
+    }
+    table.dictionary td.left {
+      width: 12em;
+    }
+  </style>
 </head>
 
 <body>
@@ -286,19 +300,7 @@ certifications.
     </section>
 
 <section id="threat-model-architecture-dictionary">
-      <h3>Dictionary</h3>
-      <style>
-        table.dictionary,
-        table.dictionary th,
-        table.dictionary td {
-          border: thin solid rgb(176, 176, 176);
-          border-collapse: collapse;
-          padding: 5px;
-        }
-        table.dictionary td.left {
-          width: 12em;
-        }
-      </style>
+    <h3>Dictionary</h3>
       <table class="dictionary">
         <tbody>
           <tr>
