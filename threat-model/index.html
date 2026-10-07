@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Verifiable Credential Barcodes Threat Model</title>
+  <title>Verifiable Credential Barcodes Threat Model v1.0</title>
   <script src="https://www.w3.org/Tools/respec/respec-w3c"
     class="remove"></script>
   <script src="threats/threat-model.js" class="remove"></script>
@@ -31,9 +31,7 @@
       threatModelTocSelector: "#threat-model-toc",
       threatModelDetailsSelector: "#threat-model-details",
       preProcess: [window.ThreatModel.render],
-      postProcess: [() => {
-        respecConfig.thisVersion = respecConfig.thisVersion + '/threat-model/';
-      }]
+      postProcess: []
     };
   </script>
   <script src="threats/outline.js" class="remove"></script>
