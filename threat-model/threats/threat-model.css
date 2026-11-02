@@ -1,14 +1,14 @@
 table.visual-terminology,
 table.dfd-dictionary  {
   padding: 1em;
-  border: 1px solid black;
+  border: 1px solid var(--datacell-border);
 }
 
 table.visual-terminology th,
 table.visual-terminology td,
 table.dfd-dictionary th,
 table.dfd-dictionary td {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid var(--datacell-border);
     border-collapse: collapse;
       padding: .5em;
 }
@@ -85,7 +85,7 @@ ol.threat-toc h5 {
 }
 
 table.threat {
-  border: thin solid black;
+  border: thin solid var(--datacell-border);
   border-collapse:collapse;
   margin: 1em 0 1em 0;
   width:100%;
@@ -97,7 +97,7 @@ table.threat a.self-link {
 table.threat h3,
 table.threat h4,
 table.threat h5 {
-  color:black;
+  color:var(--text);
   margin:0 0 0 -5px;
   font-weight: bold;
   font-style:normal;
@@ -105,27 +105,39 @@ table.threat h5 {
 table.threat td {
   padding: 1em;
   position:relative;
-  border-bottom: thin solid black;
+  border-bottom: thin solid var(--datacell-border);
 }
 
 table.threat td.threat-name {
   font-weight:bold;
   background-color: #c9daf7;
+  .darkmode & {
+    background-color: #2c3d54;
+  }
 }
 
 table.threat td.response-name {
   font-weight:bold;
   background-color: #d9ead4;
+  .darkmode & {
+    background-color: #445240;
+  }
 }
 
 table.threat td.affected-component {
   background-color: #fff2ce;
+  .darkmode & {
+    background-color: #433b1e;
+  }
 }
 table.threat span.component-entry {
   font-weight:bold;
 }
 table.threat td.analysis-taxonomy {
   background-color: #fce5ce;
+  .darkmode & {
+    background-color: #5d4b38;
+  }
 }
 
 p.threatCategory {
@@ -140,19 +152,27 @@ section.threatDetail {
 }
 
 span.threat-tag {
-        border-radius: 8px;
-        padding: 2px 5px;
-        color: white;
-        margin: 0px 2px;
-        font-weight: normal;
-        color: black;
-        background-color: #a9c9e8;
+  border-radius: 8px;
+  padding: 2px 5px;
+  margin: 0px 2px;
+  font-weight: normal;
+  color: var(--text);
+  background-color: #a9c9e8;
+  .darkmode & {
+    background-color: #32526c;
+  }
 }
 
 span.threat-tag.threat-tag-security {
-        background-color: #f4a7a3;
+  background-color: #f4a7a3;
+  .darkmode & {
+    background-color: #7b3a3a;
+  }
 }
 
 span.threat-tag.threat-tag-privacy {
-        background-color: #f8c49a;
+  background-color: #f8c49a;
+  .darkmode & {
+    background-color: #6d4421;
+  }
 }
