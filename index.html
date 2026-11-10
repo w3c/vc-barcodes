@@ -1202,9 +1202,8 @@ Section 4.1: Add Proof</a> in the Data Integrity
 [[VC-DATA-INTEGRITY]] specification MUST be executed.
 For that algorithm, the cryptographic suite specific
 <a href="https://www.w3.org/TR/vc-data-integrity/#dfn-transformation-algorithm">
-transformation algorithm</a> is defined in the
-<a href="https://www.w3.org/TR/vc-di-ecdsa/#transformation-ecdsa-rdfc-2019">
-Transformation (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]], the
+transformation algorithm</a> is defined in Section
+<a href="#transformation-ecdsa-xi-2023"></a>, the
 <a href="https://www.w3.org/TR/vc-data-integrity/#dfn-hashing-algorithm">
 hashing algorithm</a> is defined in Section
 <a href="#hashing-ecdsa-xi-2023"></a>, and the
@@ -1225,9 +1224,8 @@ Section 4.2: Verify Proof</a> in the Data Integrity [[VC-DATA-INTEGRITY]]
 specification MUST be executed. For that algorithm, the cryptographic suite
 specific
 <a href="https://www.w3.org/TR/vc-data-integrity/#dfn-transformation-algorithm">
-transformation algorithm</a> is defined in the
-<a href="https://www.w3.org/TR/vc-di-ecdsa/#transformation-ecdsa-rdfc-2019">
-Transformation (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]], the
+transformation algorithm</a> is defined in Section
+<a href="#transformation-ecdsa-xi-2023"></a>, the
 <a href="https://www.w3.org/TR/vc-data-integrity/#dfn-hashing-algorithm">
 hashing algorithm</a> is defined in
 Section <a href="#hashing-ecdsa-xi-2023"></a>, and the
@@ -1236,6 +1234,25 @@ proof verification algorithm</a> is defined in the
 <a href="https://www.w3.org/TR/vc-di-ecdsa/#proof-verification-ecdsa-rdfc-2019">
 Proof Verification (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]].
             </p>
+          </section>
+
+          <section id="transformation-ecdsa-xi-2023">
+            <h4>Transformation (ecdsa-xi-2023)</h4>
+
+            <p>
+Use the algorithm in
+<a href="https://www.w3.org/TR/vc-di-ecdsa/#transformation-ecdsa-rdfc-2019">
+Transformation (ecdsa-rdfc-2019)</a> of [[[VC-DI-ECDSA]]],
+replacing step 1 with the following:
+            </p>
+            <ol class="algorithm">
+              <li>
+If <var>options</var>.<var>type</var> is not `DataIntegrityProof` or
+<var>options</var>.<var>cryptosuite</var> is not `ecdsa-xi-2023`, raise an error
+that SHOULD convey an error type of
+<a data-cite="VC-DATA-INTEGRITY#PROOF_TRANSFORMATION_ERROR">PROOF_TRANSFORMATION_ERROR</a>.
+              </li>
+            </ol>
           </section>
 
           <section>
