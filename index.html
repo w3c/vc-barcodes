@@ -1366,14 +1366,14 @@ Return |dataToCanonicalize|.
 The proof configuration algorithm is what is defined in the
 <a href="https://www.w3.org/TR/vc-di-ecdsa/#proof-configuration-ecdsa-rdfc-2019">
 Proof Configuration (ecdsa-rdfc-2019)</a> section of the [[[VC-DI-ECDSA]]] with
-step 4 replaced with the following step:
+step 2 replaced with the following step:
             </p>
 
             <ol class="algorithm">
               <li>
-If <var>options</var>.<var>type</var> is not set to `DataIntegrityProof` and
+If <var>proofConfig</var>.<var>type</var> is not set to `DataIntegrityProof` or
 <var>proofConfig</var>.<var>cryptosuite</var> is not set to `ecdsa-xi-2023`, an
-`INVALID_PROOF_CONFIGURATION` error MUST be raised.
+error MUST be raised and SHOULD convey an error type of `PROOF_GENERATION_ERROR`.
               </li>
             </ol>
 
