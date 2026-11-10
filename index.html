@@ -996,7 +996,8 @@ wishes to add to the `OpticalBarcodeCredential`.
                 </li>
                 <li>
 Set |unsignedCredential|.|credentialStatus| to the result of applying the
-algorithm in Section [[[#bitstring-to-terse]]] to |statusListEntry|.
+algorithm in Section [[[#bitstring-to-terse]]] to |statusListEntry| and the
+|listLength| defined in Section [[[#tersebitstringstatuslistentry]]].
                 </li>
               </ol>
             </li>
@@ -1015,6 +1016,11 @@ the use case.
 
         <section>
           <h3>Decode `OpticalBarcodeCredential`</h3>
+
+          <p>
+When the credential contains a status entry, this algorithm also takes a string
+|statusPurpose| supplied by the verifier, such as `revocation` or `suspension`.
+          </p>
 
           <ol class="algorithm">
             <li>
@@ -1046,12 +1052,17 @@ Set |statusResult| to null. If |credential|.|credentialStatus| is present:
               <ol>
                 <li>
 Set |statusListEntry| to the result of applying the algorithm in Section
-[[[#terse-to-bitstring]]] to |credential|.
+[[[#terse-to-bitstring]]] to |credential|, the |listLength| defined in Section
+[[[#tersebitstringstatuslistentry]]], and |statusPurpose|.
+                </li>
+                <li>
+Set |credentialToValidate| to a copy of |credential| with its
+|credentialStatus| set to |statusListEntry|.
                 </li>
                 <li>
 Set |statusResult| to the result of applying the algorithm in
 <a data-cite="VC-BITSTRING-STATUS-LIST#validate-algorithm">
-Bitstring Status List v1.0: Validate Algorithm</a> to |statusListEntry|.
+Bitstring Status List v1.0: Validate Algorithm</a> to |credentialToValidate|.
                 </li>
               </ol>
             </li>
@@ -1117,7 +1128,7 @@ Return |result|.
             </ol>
 
             <p>
-|result| can be used as input to the
+Use |result| as the |credentialStatus| of a copy of |vc| when invoking the
 <a data-cite="VC-BITSTRING-STATUS-LIST#validate-algorithm">
 validation algorithm</a> in the [[[VC-BITSTRING-STATUS-LIST]]] specification.
             </p>
