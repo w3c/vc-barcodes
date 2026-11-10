@@ -1106,7 +1106,7 @@ Set |result|.|statusListCredential| to the concatenation of the following values
 Set |result|.|type| to 'BitstringStatusListEntry'.
               </li>
               <li>
-Set |result|.|statusListIndex| to |statusListIndex|.
+Set |result|.|statusListIndex| to the base-10 string representation of |statusListIndex|.
               </li>
               <li>
 Set |result|.|statusPurpose| to |statusPurpose|.
@@ -2593,7 +2593,7 @@ strings as values of |statusPurpose|.
 {
   type: 'BitstringStatusListEntry',
   statusListCredential: 'https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists/revocation/29385',
-  statusListIndex: 8321,
+  statusListIndex: '8321',
   statusPurpose: 'revocation'
 }
             </pre>
@@ -2602,7 +2602,7 @@ strings as values of |statusPurpose|.
 {
   type: 'BitstringStatusListEntry',
   statusListCredential: 'https://sandbox.platform.veres.dev/statuses/z19rJ4oGrbFCqf3cNTVDHSbNd/status-lists/suspension/29385',
-  statusListIndex: 8321,
+  statusListIndex: '8321',
   statusPurpose: 'suspension'
 }
             </pre>
